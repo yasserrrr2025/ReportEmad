@@ -2,10 +2,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headerEl = document.getElementById('appHeader');
   const footerEl = document.getElementById('appFooter');
 
-  // Determine base path based on current URL
-  const path = window.location.pathname;
-  const isPagesDir = path.includes('/pages/');
-  const basePath = isPagesDir ? '../shared/' : './shared/';
+  // Use absolute path from root
+  const basePath = '/shared/';
 
   if (headerEl) {
     try {

@@ -16,7 +16,7 @@ window.appPdf = {
     let originalHeaderSrc = '';
     if (headerImg) {
       originalHeaderSrc = headerImg.src;
-      headerImg.src = '../assets/header.jpg';
+      headerImg.src = '/assets/header.jpg';
     }
 
     // Wait a bit for image to apply
