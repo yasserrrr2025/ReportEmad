@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap");
 
 :root {
   --primary-color: #179b9b;
@@ -19,7 +19,7 @@
 }
 
 body {
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   direction: rtl;
@@ -52,7 +52,7 @@ body {
   background: #fff;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.2s;
 }
@@ -96,7 +96,7 @@ body {
   height: 297mm;
   margin: 20px auto;
   padding: 0;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -117,7 +117,7 @@ body {
   border-radius: 14px;
   margin-bottom: 5px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   page-break-inside: avoid;
   break-inside: avoid;
 }
@@ -159,7 +159,8 @@ body {
   font-size: 10px;
 }
 
-.report-grid-item input, .report-grid-item textarea,
+.report-grid-item input,
+.report-grid-item textarea,
 .plc-input input {
   width: 100%;
   border: none;
@@ -204,7 +205,7 @@ body {
   border-radius: 14px;
   margin-bottom: 5px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   font-size: 14px;
 }
 
@@ -213,7 +214,7 @@ body {
   border-radius: 14px;
   margin-bottom: 5px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   page-break-inside: avoid;
   break-inside: avoid;
 }
@@ -229,7 +230,7 @@ body {
 }
 
 .plc-section-title::before {
-  content: '•';
+  content: "•";
   margin-left: 8px;
 }
 
@@ -271,7 +272,8 @@ body {
   align-items: center;
 }
 
-.plc-input input, .plc-input textarea {
+.plc-input input,
+.plc-input textarea {
   width: 100%;
   border: none;
   background: transparent;
@@ -365,7 +367,7 @@ body {
   border-radius: 14px;
   overflow: hidden;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .signature-header {
@@ -447,7 +449,7 @@ body {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
   overflow: hidden;
@@ -524,7 +526,7 @@ body {
 }
 
 .plc-actions button:hover {
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Footer styling */
