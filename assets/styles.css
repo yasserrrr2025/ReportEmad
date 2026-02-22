@@ -258,12 +258,13 @@ body {
 .photo-box img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   position: absolute;
   top: 0;
   left: 0;
   display: none;
   z-index: 1;
+  background-color: white;
 }
 
 .photo-box input[type="file"] {

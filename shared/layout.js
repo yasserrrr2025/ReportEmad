@@ -3,13 +3,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const footerEl = document.getElementById('appFooter');
 
   // Determine base path based on current URL
-  const isRoot = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
-  const basePath = isRoot ? './shared/' : '../shared/';
+  const path = window.location.pathname;
+  const isPagesDir = path.includes('/pages/');
+  const basePath = isPagesDir ? '../shared/' : './shared/';
 
   if (headerEl) {
     try {
       const res = await fetch(basePath + 'header.html');
-      headerEl.innerHTML = await res.text();
+      if (res.ok) {
+        headerEl.innerHTML = await res.text();
+      } else {
+        console.error('Failed to load header: ', res.status);
+      }
     } catch (e) {
       console.error('Failed to load header', e);
     }
@@ -18,7 +23,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (footerEl) {
     try {
       const res = await fetch(basePath + 'footer.html');
-      footerEl.innerHTML = await res.text();
+      if (res.ok) {
+        footerEl.innerHTML = await res.text();
+      } else {
+        console.error('Failed to load footer: ', res.status);
+      }
     } catch (e) {
       console.error('Failed to load footer', e);
     }

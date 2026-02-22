@@ -24,11 +24,11 @@ window.appStorage = {
     localStorage.setItem(key, JSON.stringify(data));
     
     // Show a brief visual feedback
-    const btn = document.querySelector('.dropdown > .btn');
+    const btn = document.querySelector('.dropdown > .btn-dark') || document.querySelector('.dropdown > .btn');
     if(btn) {
-      const originalText = btn.innerText;
-      btn.innerText = 'تم الحفظ ✓';
-      setTimeout(() => btn.innerText = originalText, 2000);
+      const originalText = btn.innerHTML;
+      btn.innerHTML = 'تم الحفظ ✓';
+      setTimeout(() => btn.innerHTML = originalText, 2000);
     }
   },
 
@@ -56,8 +56,15 @@ window.appStorage = {
         if (data[`photo_${index}`]) {
           img.src = data[`photo_${index}`];
           img.style.display = 'block';
-          const span = img.previousElementSibling;
-          if(span && span.tagName === 'SPAN') span.style.display = 'none';
+          
+          const box = img.parentElement;
+          if (box) {
+            const textDiv = box.querySelector('.photo-box-text');
+            if(textDiv) textDiv.style.display = 'none';
+            
+            const span = box.querySelector('span');
+            if(span) span.style.display = 'none';
+          }
         }
       });
 

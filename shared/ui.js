@@ -1,7 +1,10 @@
 window.appUI = {
   savePdf: function() {
-    const titleEl = document.querySelector('.form-title');
-    const title = titleEl ? titleEl.innerText.trim().replace(/\s+/g, '-') : 'document';
+    const titleEl = document.querySelector('.form-title') || document.querySelector('#reportTitle');
+    let title = 'document';
+    if (titleEl) {
+      title = titleEl.value ? titleEl.value.trim().replace(/\s+/g, '-') : titleEl.innerText.trim().replace(/\s+/g, '-');
+    }
     
     // Trigger save first
     if (window.currentPageKey) {
@@ -29,6 +32,9 @@ window.appUI = {
         }
         img.src = e.target.result;
         img.style.display = 'block';
+        
+        const textDiv = box.querySelector('.photo-box-text');
+        if(textDiv) textDiv.style.display = 'none';
         
         const span = box.querySelector('span');
         if(span) span.style.display = 'none';
