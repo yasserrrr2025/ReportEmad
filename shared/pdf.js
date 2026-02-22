@@ -3,30 +3,24 @@ window.appPdf = {
     const sheet = document.querySelector(sheetSelector);
     if (!sheet) return;
 
-    // Temporarily hide noprint elements
-    const noPrintEls = sheet.querySelectorAll('.noprint, [data-nopdf="true"], input[type="file"]');
-    const originalDisplays = [];
-    noPrintEls.forEach(el => {
-      originalDisplays.push(el.style.display);
-      el.style.display = 'none';
-    });
-
-    // Ensure header image is loaded locally for PDF
+    // Wait for header image to be fully loaded
     const headerImg = document.getElementById('officialHeaderImg');
-    let originalHeaderSrc = '';
-    if (headerImg) {
-      originalHeaderSrc = headerImg.src;
-      headerImg.src = '/assets/header.jpg';
+    if (headerImg && !headerImg.complete) {
+      await new Promise((resolve) => {
+        headerImg.onload = resolve;
+        headerImg.onerror = resolve;
+      });
     }
-
-    // Wait a bit for image to apply
-    await new Promise(r => setTimeout(r, 500));
 
     try {
       const canvas = await html2canvas(sheet, {
         scale: 2,
-        useCORS: true,
-        logging: false
+        useCORS: false,
+        allowTaint: false,
+        logging: false,
+        ignoreElements: (element) => {
+          return element.classList.contains('noprint') || element.hasAttribute('data-nopdf') || (element.tagName.toLowerCase() === 'input' && element.type === 'file');
+        }
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -50,14 +44,6 @@ window.appPdf = {
     } catch (e) {
       console.error('PDF generation failed', e);
       alert('حدث خطأ أثناء إنشاء ملف PDF');
-    } finally {
-      // Restore elements
-      noPrintEls.forEach((el, i) => {
-        el.style.display = originalDisplays[i];
-      });
-      if (headerImg) {
-        headerImg.src = originalHeaderSrc;
-      }
     }
   }
 };

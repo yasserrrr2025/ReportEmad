@@ -17,9 +17,8 @@
   <script src="../shared/ui.js"></script>
 </head>
 <body>
-  <div id="appHeader"></div>
-
   <div class="sheet">
+    <div id="appHeader"></div>
     <div class="sheet-content">
       <!-- Section 1: Report Details -->
       <div class="report-section">
@@ -45,7 +44,7 @@
       </div>
 
       <!-- Section 2: Goals & Summary -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
         <div class="report-section" style="margin-bottom: 0;">
           <div class="report-section-header light">الأهداف</div>
           <div style="padding: 15px;">
@@ -61,42 +60,44 @@
       </div>
 
       <!-- Section 3: Photos -->
-      <div class="photos-grid">
-        <div class="photo-box">
-          <div class="photo-box-text">
-            <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
-            <div class="photo-box-badge">JPG / JPEG</div>
-            <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+      <div class="report-section" style="border: none; box-shadow: none;">
+        <div class="photos-grid">
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
           </div>
-          <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
-          <img src="" alt="">
-        </div>
-        <div class="photo-box">
-          <div class="photo-box-text">
-            <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
-            <div class="photo-box-badge">JPG / JPEG</div>
-            <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
           </div>
-          <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
-          <img src="" alt="">
-        </div>
-        <div class="photo-box">
-          <div class="photo-box-text">
-            <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
-            <div class="photo-box-badge">JPG / JPEG</div>
-            <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
           </div>
-          <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
-          <img src="" alt="">
-        </div>
-        <div class="photo-box">
-          <div class="photo-box-text">
-            <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
-            <div class="photo-box-badge">JPG / JPEG</div>
-            <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
           </div>
-          <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
-          <img src="" alt="">
         </div>
       </div>
 
