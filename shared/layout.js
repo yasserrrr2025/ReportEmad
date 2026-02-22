@@ -2,15 +2,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headerEl = document.getElementById('appHeader');
   const footerEl = document.getElementById('appFooter');
 
-  // Determine base path based on current URL
-  const path = window.location.pathname;
-  const isPagesDir = path.includes('/pages/');
-  const basePath = isPagesDir ? '../shared/' : './shared/';
+  // Determine depth of current path to correctly load shared assets
+  const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
+  // Find where we are relative to the project structure
+  // 'pages' or 'shared' generally indicates we are inside a subfolder
+  const inPagesFolder = pathParts.includes('pages');
+  const basePath = inPagesFolder ? '../shared/' : './shared/';
+
+  const assetsPath = inPagesFolder ? '../assets/' : './assets/';
 
   const fallbackHeader = `
     <div class="official-header">
       <div class="header-bg">
-        <img src="../assets/header.jpg" alt="Header Background" onerror="this.src='./assets/header.jpg'">
+        <img src="${assetsPath}header.jpg" alt="Header Background">
       </div>
       <div class="header-actions noprint">
         <div class="dropdown">
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const fallbackFooter = `
     <div class="official-footer">
-      <img src="../assets/footer.jpg" alt="Footer Background" onerror="this.src='./assets/footer.jpg'">
+      <img src="${assetsPath}footer.jpg" alt="Footer Background">
     </div>`;
 
   if (headerEl) {
