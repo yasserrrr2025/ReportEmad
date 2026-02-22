@@ -1,235 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تقرير تنفيذ برنامج</title>
-    <link rel="stylesheet" href="../assets/styles.css" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير تنفيذ برنامج</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+  
+  <!-- PDF Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Shared Scripts -->
+  <script src="../shared/layout.js"></script>
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/pdf.js"></script>
+  <script src="../shared/ui.js"></script>
 
-    <!-- PDF Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- DatePicker Library (Flatpickr) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+</head>
+<body>
+  <div class="sheet">
+    <div id="appHeader"></div>
+    <div class="sheet-content">
+      <!-- Section 1: Report Details -->
+      <div class="report-section">
+        <div class="report-section-header">
+          <input type="text" id="reportTitle" value="اسم التقرير" data-save="1" style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none;">
+        </div>
+        <div class="report-grid">
+          <div class="report-grid-item label">مقدم البرنامج</div>
+          <div class="report-grid-item"><input type="text" id="progPresenter" data-save="1"></div>
+          <div class="report-grid-item label">المكان</div>
+          <div class="report-grid-item"><input type="text" id="progLocation" data-save="1"></div>
+          
+          <div class="report-grid-item label">التاريخ</div>
+          <div class="report-grid-item"><input type="text" id="progDate" data-save="1" placeholder="اختر التاريخ"></div>
+          <div class="report-grid-item label">المستفيدون</div>
+          <div class="report-grid-item"><input type="text" id="progTarget" data-save="1"></div>
+          
+          <div class="report-grid-item label">عدد الحضور</div>
+          <div class="report-grid-item"><input type="text" id="progAttendance" data-save="1"></div>
+          <div class="report-grid-item label">مدة البرنامج</div>
+          <div class="report-grid-item"><input type="text" id="progDuration" data-save="1"></div>
+        </div>
+      </div>
 
-    <!-- Shared Scripts -->
-    <script src="../shared/layout.js"></script>
-    <script src="../shared/storage.js"></script>
-    <script src="../shared/pdf.js"></script>
-    <script src="../shared/ui.js"></script>
-  </head>
-  <body>
-    <div class="sheet">
-      <div id="appHeader"></div>
-      <div class="sheet-content">
-        <!-- Section 1: Report Details -->
-        <div class="report-section">
-          <div class="report-section-header">
-            <input
-              type="text"
-              id="reportTitle"
-              value="اسم التقرير"
-              data-save="1"
-              style="
-                background: transparent;
-                border: none;
-                color: white;
-                text-align: center;
-                font-size: 18px;
-                font-weight: bold;
-                width: 100%;
-                outline: none;
-              "
-            />
-          </div>
-          <div class="report-grid">
-            <div class="report-grid-item label">مقدم البرنامج</div>
-            <div class="report-grid-item">
-              <input type="text" id="progPresenter" data-save="1" />
-            </div>
-            <div class="report-grid-item label">المكان</div>
-            <div class="report-grid-item">
-              <input type="text" id="progLocation" data-save="1" />
-            </div>
-
-            <div class="report-grid-item label">التاريخ (هجري أم القرى)</div>
-            <div class="report-grid-item">
-              <input
-                type="text"
-                id="progDate"
-                data-save="1"
-                placeholder="مثال: ٤ رمضان ١٤٤٧ هـ"
-              />
-            </div>
-            <div class="report-grid-item label">المستفيدون</div>
-            <div class="report-grid-item">
-              <input type="text" id="progTarget" data-save="1" />
-            </div>
-
-            <div class="report-grid-item label">عدد الحضور</div>
-            <div class="report-grid-item">
-              <input type="text" id="progAttendance" data-save="1" />
-            </div>
-            <div class="report-grid-item label">مدة البرنامج</div>
-            <div class="report-grid-item">
-              <input type="text" id="progDuration" data-save="1" />
-            </div>
+      <!-- Section 2: Goals & Summary -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+        <div class="report-section" style="margin-bottom: 0;">
+          <div class="report-section-header light">الأهداف</div>
+          <div style="padding: 10px;">
+            <textarea id="progGoals" data-save="1" class="fit-text" placeholder="اكتب الأهداف هنا..."></textarea>
           </div>
         </div>
-
-        <!-- Section 2: Goals & Summary -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 10px;
-          "
-        >
-          <div class="report-section" style="margin-bottom: 0">
-            <div class="report-section-header light">الأهداف</div>
-            <div style="padding: 10px">
-              <textarea
-                id="progGoals"
-                data-save="1"
-                class="fit-text"
-                placeholder="اكتب الأهداف هنا..."
-              ></textarea>
-            </div>
-          </div>
-          <div class="report-section" style="margin-bottom: 0">
-            <div class="report-section-header light">نبذة عن البرنامج</div>
-            <div style="padding: 10px">
-              <textarea
-                id="progSummary"
-                data-save="1"
-                class="fit-text"
-                placeholder="اكتب النبذة هنا..."
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 3: Photos -->
-        <div class="report-section" style="border: none; box-shadow: none">
-          <div class="photos-grid">
-            <div class="photo-box">
-              <div class="photo-box-text">
-                <p>
-                  تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة
-                </p>
-                <div class="photo-box-badge">JPG / JPEG</div>
-                <p>
-                  لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها
-                  تلقائياً).
-                </p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onchange="window.appUI.handleImageUpload(this)"
-                data-nopdf="true"
-              />
-              <img src="" alt="" />
-            </div>
-            <div class="photo-box">
-              <div class="photo-box-text">
-                <p>
-                  تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة
-                </p>
-                <div class="photo-box-badge">JPG / JPEG</div>
-                <p>
-                  لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها
-                  تلقائياً).
-                </p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onchange="window.appUI.handleImageUpload(this)"
-                data-nopdf="true"
-              />
-              <img src="" alt="" />
-            </div>
-            <div class="photo-box">
-              <div class="photo-box-text">
-                <p>
-                  تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة
-                </p>
-                <div class="photo-box-badge">JPG / JPEG</div>
-                <p>
-                  لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها
-                  تلقائياً).
-                </p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onchange="window.appUI.handleImageUpload(this)"
-                data-nopdf="true"
-              />
-              <img src="" alt="" />
-            </div>
-            <div class="photo-box">
-              <div class="photo-box-text">
-                <p>
-                  تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة
-                </p>
-                <div class="photo-box-badge">JPG / JPEG</div>
-                <p>
-                  لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها
-                  تلقائياً).
-                </p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onchange="window.appUI.handleImageUpload(this)"
-                data-nopdf="true"
-              />
-              <img src="" alt="" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 4: Signatures -->
-        <div class="signatures-container">
-          <div class="signature-card">
-            <div class="signature-header">المعلم</div>
-            <div class="signature-body">
-              <input
-                type="text"
-                id="sigTeacher"
-                data-save="1"
-                value="اسم المعلم"
-              />
-            </div>
-          </div>
-          <div class="signature-card">
-            <div class="signature-header">مدير المدرسة</div>
-            <div class="signature-body">
-              <input
-                type="text"
-                id="sigManager"
-                data-save="1"
-                value="عابد عبيد الجدعاني"
-              />
-            </div>
+        <div class="report-section" style="margin-bottom: 0;">
+          <div class="report-section-header light">نبذة عن البرنامج</div>
+          <div style="padding: 10px;">
+            <textarea id="progSummary" data-save="1" class="fit-text" placeholder="اكتب النبذة هنا..."></textarea>
           </div>
         </div>
       </div>
-      <div id="appFooter"></div>
+
+      <!-- Section 3: Photos -->
+      <div class="report-section" style="border: none; box-shadow: none;">
+        <div class="photos-grid">
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
+          </div>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
+          </div>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
+          </div>
+          <div class="photo-box">
+            <div class="photo-box-text">
+              <p>تنبيه مهم: صانع التقارير يعتمد معالجة الصور وتصديرها بصيغة</p>
+              <div class="photo-box-badge">JPG / JPEG</div>
+              <p>لأفضل وضوح داخل ملف PDF (حتى لو رفعت PNG سيتم تحويلها تلقائياً).</p>
+            </div>
+            <input type="file" accept="image/*" onchange="window.appUI.handleImageUpload(this)" data-nopdf="true">
+            <img src="" alt="">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Signatures -->
+      <div class="signatures-container">
+        <div class="signature-card">
+          <div class="signature-header">المعلم</div>
+          <div class="signature-body">
+            <input type="text" id="sigTeacher" data-save="1" value="اسم المعلم">
+          </div>
+        </div>
+        <div class="signature-card">
+          <div class="signature-header">مدير المدرسة</div>
+          <div class="signature-body">
+            <input type="text" id="sigManager" data-save="1" value="عابد عبيد الجدعاني">
+          </div>
+        </div>
+      </div>
     </div>
+    <div id="appFooter"></div>
+  </div>
 
-    <script>
-      window.currentPageKey = "storage_report_program_v1";
-      window.getPageExtraData = () => ({});
+  <script>
+    window.currentPageKey = 'storage_report_program_v1';
+    window.getPageExtraData = () => ({});
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      window.appStorage.restorePage(window.currentPageKey);
+      window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
 
-      document.addEventListener("DOMContentLoaded", () => {
-        window.appStorage.restorePage(window.currentPageKey);
-        window.appStorage.setupAutoSave(
-          window.currentPageKey,
-          window.getPageExtraData,
-        );
-      });
-    </script>
-  </body>
+      // Initialize DatePicker
+      const dateInput = document.getElementById('progDate');
+      if (dateInput) {
+        flatpickr(dateInput, {
+          locale: "ar",
+          dateFormat: "Y-m-d", // Standard Gregorian format
+          altInput: true,
+          altFormat: "j F Y", // Display format
+          defaultDate: !dateInput.value ? "today" : dateInput.value,
+          allowInput: true, // Allow manual entry (e.g., if user wants to type Hijri manually)
+        });
+      }
+    });
+  </script>
+</body>
 </html>

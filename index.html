@@ -1,32 +1,70 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>نظام إدارة النماذج والتقارير المدرسية</title>
   <link rel="stylesheet" href="./assets/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
+
 <body>
-  <div class="container">
-    <header class="dashboard-header">
-      <img src="https://www.raed.net/img?id=1516942" alt="الشعار الرسمي" onerror="this.src='./assets/logo.png'">
-      <h1>نظام إدارة النماذج والتقارير المدرسية</h1>
-      <p>وزارة التعليم</p>
+  <!-- Decorative Background Elements -->
+  <div class="bg-shape bg-shape-1"></div>
+  <div class="bg-shape bg-shape-2"></div>
+
+  <div class="container main-container">
+    <header class="dashboard-header glass-effect">
+      <div class="logo-container">
+        <img src="https://www.raed.net/img?id=1516942" alt="الشعار الرسمي" onerror="this.src='./assets/logo.png'">
+      </div>
+      <div class="header-text">
+        <h1>نظام إدارة النماذج والتقارير المدرسية</h1>
+        <p class="subtitle"><i class="fa-solid fa-building-columns"></i> وزارة التعليم</p>
+      </div>
     </header>
 
+    <div class="dashboard-welcome">
+      <h2>مرحباً بك في لوحة التحكم 👋</h2>
+      <p>اختر النموذج الذي ترغب في تعبئته من القائمة أدناه</p>
+    </div>
+
     <main class="cards-grid">
-      <div class="card">
+      <div class="card glass-effect hover-float">
+        <div class="card-icon gradient-1">
+          <i class="fa-solid fa-file-signature"></i>
+        </div>
         <h3>تقرير تنفيذ برنامج</h3>
-        <p>نموذج لتوثيق البرامج المنفذة، يشمل الأهداف، النبذة، الصور، والتوقيعات.</p>
-        <a href="./pages/report-program.html" class="btn">فتح النموذج</a>
+        <p>نموذج لتوثيق البرامج المنفذة، يشمل الأهداف، النبذة، الصور، والتوقيعات الرسمية بشكل منظم وحيوي.</p>
+        <div class="card-action">
+          <a href="./pages/report-program.html" class="modern-btn btn-primary">
+            <span>فتح النموذج</span>
+            <i class="fa-solid fa-arrow-left"></i>
+          </a>
+        </div>
       </div>
-      
-      <div class="card">
+
+      <div class="card glass-effect hover-float">
+        <div class="card-icon gradient-2">
+          <i class="fa-solid fa-users-viewfinder"></i>
+        </div>
         <h3>استمارة مجتمع تعلم مهني</h3>
-        <p>نموذج لتوثيق أنشطة مجتمعات التعلم المهنية مع جدول ديناميكي للأعضاء.</p>
-        <a href="./pages/plc-form.html" class="btn">فتح النموذج</a>
+        <p>نموذج احترافي لتوثيق أنشطة مجتمعات التعلم المهنية مع جدول ديناميكي للأعضاء المشاركين.</p>
+        <div class="card-action">
+          <a href="./pages/plc-form.html" class="modern-btn btn-primary">
+            <span>فتح النموذج</span>
+            <i class="fa-solid fa-arrow-left"></i>
+          </a>
+        </div>
       </div>
     </main>
+
+    <footer class="dashboard-footer text-center">
+      <p>جميع الحقوق محفوظة &copy; 2026 - نظام إدارة النماذج والتقارير المدرسية</p>
+    </footer>
   </div>
 </body>
+
 </html>
