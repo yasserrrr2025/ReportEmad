@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استمارة مجتمع تعلم مهني</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  
+  <!-- PDF Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Shared Scripts -->
+  <script src="/shared/layout.js"></script>
+  <script src="/shared/storage.js"></script>
+  <script src="/shared/pdf.js"></script>
+  <script src="/shared/ui.js"></script>
+
+  <style>
+    /* Specific styles for PLC form to handle columns if needed */
+    .members-container {
+      display: flex;
+      gap: 20px;
+    }
+    .members-col {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="appHeader"></div>
+
+  <div class="sheet">
+    <div class="sheet-content">
+      
+      <div class="plc-header-row">
+        <div>استمارة مجتمع تعلم مهني</div>
+        <div>تقرير نشاط مجتمع تعلم مهني</div>
+        <div>رقم ( <input type="text" id="plcNumber" data-save="1" style="width:30px; background:transparent; border:none; color:white; text-align:center; outline:none; font-weight:bold;" value="1"> )</div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-grid">
+          <div class="plc-label">اسم المجتمع:</div>
+          <div class="plc-input"><input type="text" id="plcName" data-save="1" placeholder="اكتب اسم المجتمع هنا..."></div>
+          <div class="plc-label">التاريخ (هجري):</div>
+          <div class="plc-input"><input type="text" id="plcDate" data-save="1" placeholder="٨ رمضان ١٤٤٧ هـ"></div>
+        </div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-section-title">بيانات النشاط</div>
+        <div class="plc-grid four-cols">
+          <div class="plc-label">عنوان النشاط</div>
+          <div class="plc-input"><input type="text" id="plcActivityTitle" data-save="1"></div>
+          <div class="plc-label">أسلوب النشاط</div>
+          <div class="plc-input"><input type="text" id="plcActivityMethod" data-save="1" placeholder="مثال: لقاء / ورشة / زيارة تربوية / حلقة نقاش..."></div>
+          <div class="plc-label">مكان التنفيذ</div>
+          <div class="plc-input" style="grid-column: span 3;"><input type="text" id="plcLocation" data-save="1"></div>
+        </div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-section-title">تنفيذ النشاط</div>
+        <div class="plc-grid four-cols">
+          <div class="plc-label">تاريخ التنفيذ</div>
+          <div class="plc-input"><input type="text" id="plcExecDate" data-save="1"></div>
+          <div class="plc-label">اسم المنفذ</div>
+          <div class="plc-input"><input type="text" id="plcExecutor" data-save="1" placeholder="قد يكون عضو/فريق/طرف خارجي"></div>
+          <div class="plc-label">المستهدف</div>
+          <div class="plc-input"><input type="text" id="plcTarget" data-save="1"></div>
+          <div class="plc-label">عدد الحضور</div>
+          <div class="plc-input"><input type="text" id="plcAttendance" data-save="1"></div>
+        </div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-section-title" style="justify-content: space-between;">
+          <span>وصف النشاط</span>
+          <span style="font-size: 12px; font-weight: normal;">سجل هدف واحد + أدوات/روابط إن وجدت</span>
+        </div>
+        <div class="plc-grid">
+          <div class="plc-label">الهدف</div>
+          <div class="plc-input"><input type="text" id="plcGoal" data-save="1" placeholder="يسجل هنا هدف واحد فقط..."></div>
+          <div class="plc-label">الأدوات المستخدمة</div>
+          <div class="plc-input"><input type="text" id="plcTools" data-save="1"></div>
+        </div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-section-title" style="justify-content: space-between;">
+          <span>النتائج والتحقق</span>
+          <span style="font-size: 12px; font-weight: normal;">تحسينات ومعوقات</span>
+        </div>
+        <div class="plc-grid">
+          <div class="plc-label">عوامل التحسن المتوقعة</div>
+          <div class="plc-input"><textarea id="plcImprovements" data-save="1"></textarea></div>
+          <div class="plc-label">أبرز المعوقات</div>
+          <div class="plc-input"><textarea id="plcObstacles" data-save="1"></textarea></div>
+        </div>
+      </div>
+
+      <div class="plc-section">
+        <div class="plc-section-title" style="justify-content: space-between; padding: 0;">
+          <div style="padding: 8px 15px; display: flex; align-items: center;">أعضاء فريق مجتمع التعلم</div>
+          <div class="plc-actions noprint">
+            <button type="button" onclick="addMemberRow()">+ إضافة صف</button>
+            <button type="button" onclick="removeMemberRow()">حذف آخر صف</button>
+            <button type="button" onclick="clearMembers()">تفريغ</button>
+          </div>
+        </div>
+        
+        <div class="members-container" id="membersContainer" style="display: flex;">
+          <div class="members-col" style="flex: 1;">
+            <table class="members-table" id="membersTable1">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>الوظيفة</th>
+                  <th>التوقيع</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows -->
+              </tbody>
+            </table>
+          </div>
+          <div class="members-col" id="col2" style="flex: 1; display: none; border-right: 1px solid var(--border-color);">
+            <table class="members-table" id="membersTable2">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>الوظيفة</th>
+                  <th>التوقيع</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="signatures-container">
+        <div class="signature-card">
+          <div class="signature-header">منسق الفريق</div>
+          <div class="signature-body">
+            <input type="text" id="sigCoordinator" data-save="1" value="اكتب الاسم هنا">
+          </div>
+        </div>
+        <div class="signature-card">
+          <div class="signature-header">مدير المدرسة</div>
+          <div class="signature-body">
+            <input type="text" id="sigManagerPlc" data-save="1" value="عابد عبيد الجدعاني">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id="appFooter"></div>
+  </div>
+
+  <script>
+    window.currentPageKey = 'storage_plc_form_v1';
+    let membersData = [];
+
+    window.getPageExtraData = () => {
+      // Collect table data
+      const rows = document.querySelectorAll('#membersContainer tbody tr');
+      const data = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        if(inputs.length >= 2) {
+          data.push({
+            name: inputs[0].value,
+            job: inputs[1].value
+          });
+        }
+      });
+      return { teamData: data };
+    };
+
+    function renderTable() {
+      const tbody1 = document.querySelector('#membersTable1 tbody');
+      const tbody2 = document.querySelector('#membersTable2 tbody');
+      const col2 = document.getElementById('col2');
+      
+      tbody1.innerHTML = '';
+      tbody2.innerHTML = '';
+      
+      if (membersData.length > 6) {
+        col2.style.display = 'block';
+      } else {
+        col2.style.display = 'none';
+      }
+
+      membersData.forEach((member, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="text" class="form-control" value="${member.name || ''}" oninput="updateMember(${index}, 'name', this.value)"></td>
+          <td><input type="text" class="form-control" value="${member.job || ''}" oninput="updateMember(${index}, 'job', this.value)"></td>
+          <td></td>
+        `;
+        
+        if (index < 6) {
+          tbody1.appendChild(tr);
+        } else if (index < 12) {
+          tbody2.appendChild(tr);
+        }
+      });
+    }
+
+    function addMemberRow() {
+      if (membersData.length >= 12) {
+        alert('الحد الأقصى 12 صف في الصفحة الواحدة');
+        return;
+      }
+      membersData.push({ name: '', job: '' });
+      renderTable();
+      saveCurrentState();
+    }
+
+    function removeMemberRow() {
+      if (membersData.length > 0) {
+        membersData.pop();
+        renderTable();
+        saveCurrentState();
+      }
+    }
+
+    function clearMembers() {
+      if(confirm('هل أنت متأكد من تفريغ الجدول؟')) {
+        membersData = [];
+        renderTable();
+        saveCurrentState();
+      }
+    }
+
+    function updateMember(index, field, value) {
+      if (membersData[index]) {
+        membersData[index][field] = value;
+        saveCurrentState();
+      }
+    }
+
+    function saveCurrentState() {
+      window.appStorage.savePage(window.currentPageKey, window.getPageExtraData());
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const restored = window.appStorage.restorePage(window.currentPageKey, (data) => {
+        if (data && data.teamData && Array.isArray(data.teamData)) {
+          membersData = data.teamData;
+        } else {
+          // Default 3 rows
+          membersData = [{name:'', job:''}, {name:'', job:''}, {name:'', job:''}];
+        }
+        renderTable();
+      });
+      
+      if (!restored) {
+        membersData = [{name:'', job:''}, {name:'', job:''}, {name:'', job:''}];
+        renderTable();
+      }
+
+      window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
+    });
+  </script>
+</body>
+</html>

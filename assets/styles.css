@@ -1,0 +1,491 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+:root {
+  --primary-color: #179b9b;
+  --secondary-color: #127a7a;
+  --dark-teal: #235d5e;
+  --plc-green: #5c955c;
+  --bg-color: #e9ecef;
+  --text-color: #333;
+  --border-color: #b2d8d8;
+  --light-bg: #f4f9f9;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  direction: rtl;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Dashboard Styles */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-header img {
+  max-width: 150px;
+  margin-bottom: 10px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.btn:hover {
+  background-color: var(--secondary-color);
+}
+
+/* Form Pages Styles */
+.sheet {
+  background: #fff;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 20px auto;
+  padding: 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sheet-content {
+  padding: 15mm 20mm;
+}
+
+/* Report Specific Styles */
+.report-section {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.report-section-header {
+  background-color: var(--dark-teal);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.report-section-header.light {
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+}
+
+.report-grid-item {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.report-grid-item.label {
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  font-weight: bold;
+  justify-content: center;
+  text-align: center;
+}
+
+.report-grid-item input, .report-grid-item textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+/* PLC Specific Styles */
+.plc-header-row {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--plc-green);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.plc-section {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.plc-section-title {
+  background-color: var(--plc-green);
+  color: white;
+  padding: 8px 15px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.plc-section-title::before {
+  content: '•';
+  margin-left: 8px;
+}
+
+.plc-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.plc-grid.four-cols {
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+}
+
+.plc-label {
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plc-input {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.plc-input input, .plc-input textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.plc-input textarea {
+  min-height: 40px;
+  resize: vertical;
+}
+
+/* Photos Grid */
+.photos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding: 15px;
+}
+
+.photo-box {
+  border: 2px dashed var(--primary-color);
+  border-radius: 8px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--primary-color);
+  background-color: var(--light-bg);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.photo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 1;
+}
+
+.photo-box input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.photo-box-text {
+  z-index: 0;
+}
+
+.photo-box-badge {
+  background-color: #d0e8e8;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin: 8px auto;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* Signatures */
+.signatures-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.signature-card {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.signature-header {
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.signature-body {
+  padding: 15px;
+}
+
+.signature-body input {
+  width: 100%;
+  text-align: center;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  outline: none;
+}
+
+/* Official Header */
+.official-header {
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+.official-header h2 {
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.official-header h3 {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.official-header h4 {
+  font-size: 16px;
+}
+
+.header-actions {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.btn-dark {
+  background-color: #125e5e;
+  color: white;
+  border: 1px solid #0f4d4d;
+  border-radius: 6px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  right: 0;
+}
+
+.dropdown-content button {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: right;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dropdown-content button:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Members Table */
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.members-table th {
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.members-table td {
+  border: 1px solid var(--border-color);
+  padding: 0;
+}
+
+.members-table input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  text-align: center;
+  outline: none;
+}
+
+.plc-actions {
+  background-color: var(--plc-green);
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.plc-actions button {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.plc-actions button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* Footer styling */
+.app-footer-bar {
+  background-color: var(--dark-teal);
+  height: 6mm;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: none;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+  }
+  .sheet {
+    margin: 0;
+    box-shadow: none;
+    width: 210mm;
+    min-height: 297mm;
+    page-break-after: always;
+  }
+  .noprint {
+    display: none !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
