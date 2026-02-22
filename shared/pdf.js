@@ -12,6 +12,15 @@ window.appPdf = {
       });
     }
 
+    // Wait for footer image to be fully loaded
+    const footerImg = document.getElementById('footerPic');
+    if (footerImg && !footerImg.complete) {
+      await new Promise((resolve) => {
+        footerImg.onload = resolve;
+        footerImg.onerror = resolve;
+      });
+    }
+
     try {
       const canvas = await html2canvas(sheet, {
         scale: 2,
