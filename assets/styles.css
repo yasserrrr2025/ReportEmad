@@ -105,7 +105,7 @@ body {
 }
 
 .sheet-content {
-  padding: 10mm 15mm;
+  padding: 2mm 10.5mm;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@ body {
 .report-section {
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   page-break-inside: avoid;
@@ -126,9 +126,9 @@ body {
   background-color: var(--dark-teal);
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 6px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .report-section-header.light {
@@ -144,7 +144,7 @@ body {
 
 .report-grid-item {
   border: 1px solid var(--border-color);
-  padding: 4px 8px; /* Compact padding */
+  padding: 2px 4px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -156,6 +156,7 @@ body {
   font-weight: bold;
   justify-content: center;
   text-align: center;
+  font-size: 10px;
 }
 
 .report-grid-item input, .report-grid-item textarea,
@@ -164,12 +165,13 @@ body {
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   outline: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
+  line-height: normal;
+  padding: 2px 0;
 }
 
 .fit-text {
@@ -185,11 +187,11 @@ body {
 }
 
 .report-section .fit-text {
-  height: 80px;
+  height: 60px;
 }
 
 .plc-input .fit-text {
-  height: 50px;
+  height: 40px;
 }
 
 /* PLC Specific Styles */
@@ -198,17 +200,18 @@ body {
   justify-content: space-between;
   background-color: var(--plc-green);
   color: white;
-  padding: 10px 20px;
+  padding: 6px 15px;
   border-radius: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  font-size: 14px;
 }
 
 .plc-section {
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   page-break-inside: avoid;
@@ -218,10 +221,11 @@ body {
 .plc-section-title {
   background-color: var(--plc-green);
   color: white;
-  padding: 8px 15px;
+  padding: 4px 10px;
   font-weight: bold;
   display: flex;
   align-items: center;
+  font-size: 12px;
 }
 
 .plc-section-title::before {
@@ -249,7 +253,7 @@ body {
 .plc-label {
   background-color: var(--light-bg);
   color: var(--primary-color);
-  padding: 5px 8px;
+  padding: 2px 4px;
   font-weight: bold;
   text-align: center;
   border: 1px solid var(--border-color);
@@ -261,7 +265,7 @@ body {
 }
 
 .plc-input {
-  padding: 5px;
+  padding: 2px 4px;
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -272,12 +276,14 @@ body {
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 10px;
+  font-size: 12px;
   outline: none;
+  line-height: normal;
+  padding: 2px 0;
 }
 
 .plc-input textarea {
-  min-height: 40px;
+  min-height: 30px;
   resize: vertical;
 }
 
@@ -285,8 +291,8 @@ body {
 .photos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  padding: 15px;
+  gap: 10px;
+  padding: 10px;
   page-break-inside: avoid;
   break-inside: avoid;
 }
@@ -294,7 +300,7 @@ body {
 .photo-box {
   border: 2px dashed var(--primary-color);
   border-radius: 14px;
-  height: 150px;
+  height: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -305,8 +311,8 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  padding: 10px;
-  font-size: 12px;
+  padding: 8px;
+  font-size: 10px;
 }
 
 .photo-box img {
@@ -347,7 +353,7 @@ body {
 .signatures-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 10px;
   margin-top: auto; /* Push to bottom of available space */
   page-break-inside: avoid;
   break-inside: avoid;
@@ -365,12 +371,13 @@ body {
 .signature-header {
   color: var(--primary-color);
   font-weight: bold;
-  padding: 10px;
+  padding: 6px;
   border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
 }
 
 .signature-body {
-  padding: 15px;
+  padding: 10px;
 }
 
 .signature-body input {
@@ -378,7 +385,7 @@ body {
   text-align: center;
   border: none;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   outline: none;
 }
 
@@ -389,7 +396,7 @@ body {
   height: 3.18cm;
   min-height: 3.18cm;
   max-height: 3.18cm;
-  margin: 10mm auto 0 auto;
+  margin: 2mm auto 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -478,9 +485,10 @@ body {
 .members-table th {
   background-color: var(--light-bg);
   color: var(--primary-color);
-  padding: 10px;
+  padding: 4px;
   border: 1px solid var(--border-color);
   text-align: center;
+  font-size: 10px;
 }
 
 .members-table td {
@@ -490,10 +498,12 @@ body {
 
 .members-table input {
   width: 100%;
-  padding: 10px;
+  padding: 4px;
   border: none;
   text-align: center;
   outline: none;
+  font-size: 12px;
+  line-height: normal;
 }
 
 .plc-actions {
