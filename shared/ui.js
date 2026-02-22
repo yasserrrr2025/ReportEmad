@@ -12,6 +12,11 @@ window.appUI = {
       window.appStorage.savePage(window.currentPageKey, extraData);
     }
 
+    // Fit text before PDF
+    if (window.appUI.fitAllTexts) {
+      window.appUI.fitAllTexts();
+    }
+
     // Generate PDF
     if (window.appPdf && window.appPdf.makePdf) {
       window.appPdf.makePdf('.sheet', title);
@@ -47,5 +52,51 @@ window.appUI = {
       }
       reader.readAsDataURL(input.files[0]);
     }
+  },
+
+  initTooltips: function() {
+    const inputs = document.querySelectorAll('input[type="text"], textarea');
+    inputs.forEach(el => {
+      el.addEventListener('blur', () => {
+        el.title = el.value.trim();
+        if (el.classList.contains('fit-text')) {
+          window.appUI.fitTextToBox(el);
+        }
+      });
+      // Initial title
+      el.title = el.value ? el.value.trim() : '';
+    });
+  },
+
+  fitTextToBox: function(el, minFont = 9, maxFont = 13) {
+    el.style.fontSize = maxFont + 'px';
+    let currentFont = maxFont;
+    while (el.scrollHeight > el.clientHeight && currentFont > minFont) {
+      currentFont -= 0.5;
+      el.style.fontSize = currentFont + 'px';
+    }
+  },
+
+  fitAllTexts: function() {
+    document.querySelectorAll('.fit-text').forEach(el => {
+      window.appUI.fitTextToBox(el);
+    });
   }
 };
+
+// Run on load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.appUI && window.appUI.initTooltips) {
+      window.appUI.initTooltips();
+      window.appUI.fitAllTexts();
+    }
+  }, 500);
+});
+
+// Run before print
+window.addEventListener('beforeprint', () => {
+  if (window.appUI && window.appUI.fitAllTexts) {
+    window.appUI.fitAllTexts();
+  }
+});
