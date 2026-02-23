@@ -7,6 +7,25 @@ window.appPdf = {
     const sheet = document.querySelector(sheetSelector);
     if (!sheet) return;
 
+    // Detect mobile devices
+    const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+
+    // On mobile: use native browser print (100% reliable, no memory issues)
+    if (isMobile) {
+      // Hide action bar and non-print elements before printing
+      const noprints = document.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf]');
+      noprints.forEach(el => el.style.display = 'none');
+
+      window.print();
+
+      // Restore elements after print dialog closes
+      setTimeout(() => {
+        noprints.forEach(el => el.style.display = '');
+      }, 1000);
+      return;
+    }
+
+    // Desktop: use html2pdf for direct PDF download
     // Wait for header image to be fully loaded
     const headerImg = document.getElementById('officialHeaderImg');
     if (headerImg && !headerImg.complete) {
@@ -31,16 +50,12 @@ window.appPdf = {
     }
 
     try {
-      // Use lower scale on mobile to prevent memory overflow with embedded images
-      const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
-      const canvasScale = isMobile ? 1.0 : 1.5;
-
       const opt = {
         margin: 0,
         filename: `${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: isMobile ? 0.80 : 0.98 },
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
-          scale: canvasScale,
+          scale: 2,
           windowWidth: 794,
           useCORS: true,
           logging: false,
@@ -51,25 +66,11 @@ window.appPdf = {
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      // Add a temporary wrapper to enforce A4 width during capture if it's on a mobile screen
-      const originalWidth = sheet.style.width;
-      const originalMaxWidth = sheet.style.maxWidth;
-      const originalMargin = sheet.style.margin;
-
-      sheet.style.width = '210mm';
-      sheet.style.maxWidth = '210mm';
-      sheet.style.margin = '0';
-
       await html2pdf().set(opt).from(sheet).save();
-
-      // Restore styling
-      sheet.style.width = originalWidth;
-      sheet.style.maxWidth = originalMaxWidth;
-      sheet.style.margin = originalMargin;
 
     } catch (e) {
       console.error('PDF generation failed', e);
-      alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى التأكد من مساحة الذاكرة والمحاولة مرة أخرى.');
+      alert('حدث خطأ أثناء إنشاء ملف PDF.');
     }
   }
 };
