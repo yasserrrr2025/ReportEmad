@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pwaStyles.innerHTML = `
         .pwa-banner {
             position: fixed;
-            bottom: -150px;
+            top: -150px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
@@ -28,12 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
             justify-content: space-between;
             padding: 15px 20px;
             z-index: 99999;
-            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid #e1e8ed;
             direction: rtl;
         }
         .pwa-banner.visible {
-            bottom: max(30px, calc(env(safe-area-inset-bottom, 20px) + 20px));
+            top: 25px;
         }
         .pwa-banner-content {
             display: flex;
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 width: 85%;
             }
             .pwa-banner.visible {
-                bottom: 80px;
+                top: 20px;
             }
             .pwa-banner-content {
                 flex-direction: column;

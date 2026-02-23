@@ -32,8 +32,9 @@ window.appPdf = {
 
     try {
       // Add html2canvas option to capture specifically in a wide width regardless of the device width (solves mobile layout breaking)
+      // Scale set to 1.5 to avoid iOS Safari memory limit crashes (canvas too large)
       const canvas = await html2canvas(sheet, {
-        scale: 2,
+        scale: 1.5,
         windowWidth: 794,
         useCORS: false,
         allowTaint: false,
