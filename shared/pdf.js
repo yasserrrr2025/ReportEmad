@@ -31,41 +31,41 @@ window.appPdf = {
     }
 
     try {
-      // Add html2canvas option to capture specifically in a wide width regardless of the device width (solves mobile layout breaking)
-      // Scale set to 1.5 to avoid iOS Safari memory limit crashes (canvas too large)
-      const canvas = await html2canvas(sheet, {
-        scale: 1.5,
-        windowWidth: 794,
-        useCORS: false,
-        allowTaint: false,
-        logging: false,
-        ignoreElements: (element) => {
-          return element.classList.contains('noprint') || element.hasAttribute('data-nopdf') || (element.tagName.toLowerCase() === 'input' && element.type === 'file');
-        }
-      });
+      const opt = {
+        margin: 0,
+        filename: `${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 1.5, // 1.5 is a sweet spot for quality vs iOS memory limits
+          windowWidth: 794,
+          useCORS: true,
+          logging: false,
+          ignoreElements: (element) => {
+            return element.classList.contains('noprint') || element.hasAttribute('data-nopdf') || (element.tagName.toLowerCase() === 'input' && element.type === 'file');
+          }
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
 
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      // Add a temporary wrapper to enforce A4 width during capture if it's on a mobile screen
+      const originalWidth = sheet.style.width;
+      const originalMaxWidth = sheet.style.maxWidth;
+      const originalMargin = sheet.style.margin;
 
-      // A4 size: 210mm x 297mm
-      const pdf = new jspdf.jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
+      sheet.style.width = '210mm';
+      sheet.style.maxWidth = '210mm';
+      sheet.style.margin = '0';
 
-      const pdfWidth = 210; // Exactly 210mm
-      const pdfHeight = 297; // Exactly 297mm
+      await html2pdf().set(opt).from(sheet).save();
 
-      // Draw exactly within A4 dimension constraint
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-
-      const date = new Date();
-      const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      pdf.save(`${filenameBase}-${dateStr}.pdf`);
+      // Restore styling
+      sheet.style.width = originalWidth;
+      sheet.style.maxWidth = originalMaxWidth;
+      sheet.style.margin = originalMargin;
 
     } catch (e) {
       console.error('PDF generation failed', e);
-      alert('حدث خطأ أثناء إنشاء ملف PDF');
+      alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى التأكد من مساحة الذاكرة والمحاولة مرة أخرى.');
     }
   }
 };

@@ -155,7 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Handle Android/Desktop Install Prompt
     let deferredPrompt;
-    const isPwaDismissed = localStorage.getItem('pwaDismissed') === 'true';
+    // Force new cache key to ensure the user sees it during this testing phase, ignoring old dismissals
+    const pwaKey = 'pwaDismissed_v2';
+    const isPwaDismissed = localStorage.getItem(pwaKey) === 'true';
 
     window.addEventListener('beforeinstallprompt', (e) => {
         // Prevent the mini-infobar from appearing on mobile
@@ -165,14 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show the custom install banner if not dismissed
         if (!isPwaDismissed) {
-            setTimeout(() => banner.classList.add('visible'), 1500);
+            setTimeout(() => banner.classList.add('visible'), 500); // reduced delay
         }
     });
 
     installBtn.addEventListener('click', async () => {
         // If it's iOS and we override the button logic
         if (isIos() && !isInStandaloneMode()) {
-            alert('يرجى الضغط على زر المشاركة أرسل [Share] أسفل الشاشة ثم اختيار "الإضافة للشاشة الرئيسية" (Add to Home Screen)');
+            alert('طريقة التثبيت: اضغط على أيقونة المشاركة (Share) المربعة بداخلها سهم للأعلى أسفل شاشة جوالك، ثم اختر "الإضافة للشاشة الرئيسية" (Add to Home Screen)');
             banner.classList.remove('visible');
             return;
         }
@@ -192,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dismissBtn.addEventListener('click', () => {
         banner.classList.remove('visible');
-        localStorage.setItem('pwaDismissed', 'true');
+        localStorage.setItem(pwaKey, 'true');
     });
 
     window.addEventListener('appinstalled', (evt) => {

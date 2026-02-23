@@ -10,6 +10,7 @@
   <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- Shared Scripts -->
   <script src="../shared/layout.js"></script>
@@ -31,12 +32,14 @@
       <!-- Section 1: Report Details -->
       <div class="report-section">
         <div class="report-section-header">
-          <input type="text" id="reportTitle" value="اسم التقرير" data-save="1"
-            style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none;">
+          <textarea id="reportTitle" data-save="1" rows="1"
+            style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none; resize:none; overflow:hidden;"
+            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">اسم التقرير</textarea>
         </div>
         <div class="report-grid">
           <div class="report-grid-item label">مقدم البرنامج</div>
-          <div class="report-grid-item"><input type="text" id="progPresenter" data-save="1"></div>
+          <div class="report-grid-item"><textarea id="progPresenter" data-save="1" class="fit-text"
+              style="height:40px; text-align:right" placeholder="مقدم البرنامج"></textarea></div>
           <div class="report-grid-item label">المكان</div>
           <div class="report-grid-item"><input type="text" id="progLocation" data-save="1"></div>
 
@@ -115,7 +118,10 @@
         <div class="signature-card">
           <div class="signature-header">المعلم</div>
           <div class="signature-body">
-            <input type="text" id="sigTeacher" data-save="1" value="اسم المعلم">
+            <textarea id="sigTeacher" data-save="1"
+              style="width:100%; text-align:center; border:none; font-family:inherit; font-weight:bold; font-size:14px; resize:none; outline:none;"
+              rows="1"
+              oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">اسم المعلم</textarea>
           </div>
         </div>
         <div class="signature-card">
