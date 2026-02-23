@@ -114,20 +114,42 @@ window.appPdf = {
       const scaleCanvas = isMobile ? 1 : 2;
       const imgQuality = isMobile ? 0.8 : 0.98;
 
-      const opt = {
-        margin: 0,
-        filename: `${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: imgQuality },
-        html2canvas: {
-          scale: scaleCanvas,
-          useCORS: true,
-          logging: false
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all'] } // Prevent it from trying to split into multiple pages
-      };
+      // Use html2canvas directly to get the full image, then fit it on ONE single jsPDF page
+      const canvas = await html2canvas(clone, {
+        scale: scaleCanvas,
+        useCORS: true,
+        logging: false
+      });
 
-      await html2pdf().set(opt).from(clone).save();
+      const imgData = canvas.toDataURL('image/jpeg', imgQuality);
+
+      // Access jsPDF from the global window object
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const ratio = imgProps.width / imgProps.height;
+
+      let targetWidth = pdfWidth;
+      let targetHeight = targetWidth / ratio;
+
+      let x = 0;
+      let y = 0;
+
+      // Shrink-to-fit logic if the form is extremely long (like peer-visit.html)
+      // This guarantees the PDF is ALWAYS exactly 1 page
+      if (targetHeight > pdfHeight) {
+        targetHeight = pdfHeight;
+        targetWidth = targetHeight * ratio;
+        // Center horizontally if shrunk
+        x = (pdfWidth - targetWidth) / 2;
+      }
+
+      pdf.addImage(imgData, 'JPEG', x, y, targetWidth, targetHeight);
+      pdf.save(`${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`);
 
       // Cleanup
       document.body.removeChild(wrapper);
