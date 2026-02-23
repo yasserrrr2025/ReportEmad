@@ -1,4 +1,4 @@
-const CACHE_NAME = 'school-forms-pwa-v1';
+const CACHE_NAME = 'school-forms-pwa-v3';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -9,37 +9,48 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+    // Force the new SW to activate immediately
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            // Intentionally not failing on error, to ensure SW installs even if an asset is missing
             return cache.addAll(ASSETS_TO_CACHE).catch(err => console.error('Cache addAll failed', err));
         })
     );
-    self.skipWaiting();
 });
 
+// NETWORK-FIRST strategy: Always try the network first, fall back to cache only if offline
 self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            // Return cached version or fetch from network
-            return cachedResponse || fetch(event.request).catch(() => {
-                // Fallback or do nothing
-            });
-        })
+        fetch(event.request)
+            .then((networkResponse) => {
+                // Clone the response and update the cache with the fresh version
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
+                return networkResponse;
+            })
+            .catch(() => {
+                // Network failed (offline), try the cache
+                return caches.match(event.request);
+            })
     );
 });
 
 self.addEventListener('activate', (event) => {
+    // Delete ALL old caches immediately
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((name) => {
                     if (name !== CACHE_NAME) {
+                        console.log('Deleting old cache:', name);
                         return caches.delete(name);
                     }
                 })
             );
         })
     );
+    // Take control of all pages immediately
     self.clients.claim();
 });
