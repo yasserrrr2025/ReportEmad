@@ -703,6 +703,16 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
+.btn-action.btn-home {
+  color: #475569;
+  border-color: #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.btn-action.btn-home:hover {
+  background-color: #f1f5f9;
+}
+
 .btn-action.btn-pdf {
   color: #059669;
   border-color: #a7f3d0;
