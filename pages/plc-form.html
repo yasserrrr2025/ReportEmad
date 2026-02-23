@@ -18,6 +18,12 @@
     <script src="../shared/pdf.js?v=3"></script>
     <script src="../shared/ui.js?v=3"></script>
 
+    <!-- DatePicker Library (Flatpickr) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+
 
     <style>
         /* Specific styles for PLC form to be more professional */
@@ -64,7 +70,6 @@
             margin: 0;
             font-size: 22px;
             font-weight: 800;
-            letter-spacing: 0.5px;
         }
 
         .professional-title .subtitle-row {
@@ -166,6 +171,7 @@
             font-size: 13px;
             color: #1e293b;
             outline: none;
+            text-align: right;
         }
 
         .cell-input input::placeholder {
@@ -246,15 +252,26 @@
             font-weight: 800;
             font-size: 11px;
             border-color: #e2e8f0;
+            padding: 8px;
         }
 
         .members-table td {
             border-color: #e2e8f0;
+            padding: 0;
+            height: 38px;
         }
 
         .members-table input {
             color: #334155;
-            font-weight: 500;
+            font-weight: 700;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            padding: 8px 10px;
+            font-size: 12px;
+            text-align: right;
+            outline: none;
         }
     </style>
 </head>
@@ -282,8 +299,8 @@
                     <div class="cell-input"><input type="text" id="plcName" data-save="1"
                             placeholder="اكتب اسم المجتمع هنا..."></div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">التاريخ (هجري / ميلادي)</div>
-                    <div class="cell-input" style="border-left: none;"><input type="date" id="plcDate" data-save="1"
-                            style="font-family: inherit; cursor: pointer;"></div>
+                    <div class="cell-input" style="border-left: none;"><input type="text" id="plcDate" data-save="1"
+                            style="font-family: inherit; cursor: pointer;" placeholder="اختر التاريخ..."></div>
                 </div>
             </div>
 
@@ -320,11 +337,11 @@
                 </div>
                 <div class="grid-modern cols-8">
                     <div class="cell-label">تاريخ التنفيذ</div>
-                    <div class="cell-input"><input type="date" id="plcExecDate" data-save="1"
-                            style="font-family: inherit; cursor: pointer;"></div>
+                    <div class="cell-input"><input type="text" id="plcExecDate" data-save="1"
+                            style="font-family: inherit; cursor: pointer;" placeholder="اختر التاريخ..."></div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المنفذ</div>
-                    <div class="cell-input"><input type="text" id="plcExecutor" data-save="1"
-                            placeholder="اسم المنفذ..."></div>
+                    <div class="cell-input"><textarea id="plcExecutor" data-save="1" placeholder="اسم المنفذ..."
+                            style="min-height:30px; line-height:30px; font-weight: bold;"></textarea></div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المستهدف</div>
                     <div class="cell-input"><input type="text" id="plcTarget" data-save="1"></div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">الحضور</div>
@@ -431,7 +448,7 @@
                 <div class="sig-block">
                     <div class="sig-title">منسق الفريق</div>
                     <div class="sig-input">
-                        <input type="text" id="sigCoordinator" data-save="1" placeholder="اسم المنسق">
+                        <input type="text" id="sigCoordinator" data-save="1" placeholder="انقر هنا لكتابة اسم المنسق">
                     </div>
                 </div>
                 <div class="sig-block">
@@ -546,6 +563,22 @@
                 membersData = [{ name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }];
                 renderTable();
             }
+
+            // Initialize Flatpickr for date inputs
+            const dateInputs = ['plcDate', 'plcExecDate'];
+            dateInputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    flatpickr(el, {
+                        locale: "ar",
+                        dateFormat: "Y/m/d",
+                        altInput: true,
+                        altFormat: "l - Y/m/d",
+                        defaultDate: !el.value ? "today" : el.value,
+                        allowInput: true,
+                    });
+                }
+            });
 
             window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
         });
