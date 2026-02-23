@@ -31,12 +31,16 @@ window.appPdf = {
     }
 
     try {
+      // Use lower scale on mobile to prevent memory overflow with embedded images
+      const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+      const canvasScale = isMobile ? 1.0 : 1.5;
+
       const opt = {
         margin: 0,
         filename: `${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg', quality: isMobile ? 0.80 : 0.98 },
         html2canvas: {
-          scale: 1.5, // 1.5 is a sweet spot for quality vs iOS memory limits
+          scale: canvasScale,
           windowWidth: 794,
           useCORS: true,
           logging: false,
