@@ -221,6 +221,10 @@ body {
   background: linear-gradient(135deg, #10b981, #059669);
 }
 
+.gradient-3 {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+}
+
 .card h3 {
   color: var(--text-header);
   font-size: 22px;

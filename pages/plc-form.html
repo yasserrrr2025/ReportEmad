@@ -1,270 +1,553 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>استمارة مجتمع تعلم مهني</title>
-  <link rel="stylesheet" href="../assets/styles.css">
-  
-  <!-- PDF Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
-  <!-- Shared Scripts -->
-  <script src="../shared/layout.js"></script>
-  <script src="../shared/storage.js"></script>
-  <script src="../shared/pdf.js"></script>
-  <script src="../shared/ui.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمارة مجتمع تعلم مهني</title>
+    <link rel="stylesheet" href="../assets/styles.css">
 
-  <style>
-    /* Specific styles for PLC form to handle columns if needed */
-    .members-container {
-      display: flex;
-      gap: 20px;
-    }
-    .members-col {
-      flex: 1;
-    }
-  </style>
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/layout.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/pdf.js"></script>
+    <script src="../shared/ui.js"></script>
+
+    <style>
+        /* Specific styles for PLC form to be more professional */
+        .members-container {
+            display: flex;
+            gap: 15px;
+            padding: 10px;
+            background: #f8fafc;
+        }
+
+        .members-col {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .professional-title {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--dark-teal), var(--primary-color));
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .professional-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            pointer-events: none;
+        }
+
+        .professional-title h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .professional-title .subtitle-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .report-section-modern {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .section-header-modern {
+            background: #f1f5f9;
+            color: var(--dark-teal);
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header-modern svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary-color);
+        }
+
+        .grid-modern {
+            display: grid;
+            grid-template-columns: auto 1fr;
+        }
+
+        .grid-modern.cols-4 {
+            grid-template-columns: auto 1fr auto 1fr;
+        }
+
+        .grid-modern.cols-6 {
+            grid-template-columns: auto 1fr auto 1fr auto 1fr;
+        }
+
+        .grid-modern.cols-8 {
+            grid-template-columns: auto 1.5fr auto 1fr auto 1.5fr auto 1fr;
+        }
+
+        .cell-label {
+            background: #fdfdfd;
+            color: #475569;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .cell-input {
+            padding: 4px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .cell-input:focus-within {
+            background: #f0fdfa;
+        }
+
+        /* Remove left border for last item in row */
+        .grid-modern .cell-label:last-child,
+        .grid-modern .cell-input:last-child {
+            border-left: none;
+        }
+
+        .cell-input input,
+        .cell-input textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: #1e293b;
+            outline: none;
+        }
+
+        .cell-input input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .cell-input textarea {
+            min-height: 40px;
+            resize: none;
+            padding-top: 4px;
+            line-height: 1.5;
+        }
+
+        .signatures-area {
+            display: flex;
+            justify-content: space-around;
+            padding: 30px 20px 10px 20px;
+            margin-top: 10px;
+            page-break-inside: avoid;
+            background: url('data:image/svg+xml;utf8,<svg width="100%" height="2" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="1" x2="100%" y2="1" stroke="%23e2e8f0" stroke-width="2" stroke-dasharray="8 8"/></svg>') top center no-repeat;
+        }
+
+        .sig-block {
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .sig-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .sig-title::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        .sig-input input {
+            text-align: center;
+            border: none;
+            border-bottom: 1px dashed #cbd5e1;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e293b;
+            padding: 4px;
+            width: 80%;
+            outline: none;
+            background: transparent;
+        }
+
+        .sig-input input:focus {
+            border-bottom-color: var(--primary-color);
+        }
+
+        .header-btn-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        /* Modern Table inside members */
+        .members-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 800;
+            font-size: 11px;
+            border-color: #e2e8f0;
+        }
+
+        .members-table td {
+            border-color: #e2e8f0;
+        }
+
+        .members-table input {
+            color: #334155;
+            font-weight: 500;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="sheet">
-    <div id="appHeader"></div>
-    <div class="sheet-content">
-      
-      <div class="plc-header-row">
-        <div>استمارة مجتمع تعلم مهني</div>
-        <div>تقرير نشاط مجتمع تعلم مهني</div>
-        <div>رقم ( <input type="text" id="plcNumber" data-save="1" style="width:30px; background:transparent; border:none; color:white; text-align:center; outline:none; font-weight:bold;" value="1"> )</div>
-      </div>
+    <div class="sheet">
+        <div id="appHeader"></div>
+        <div class="sheet-content">
 
-      <div class="plc-section">
-        <div class="plc-grid four-cols">
-          <div class="plc-label">اسم المجتمع:</div>
-          <div class="plc-input"><input type="text" id="plcName" data-save="1" placeholder="اكتب اسم المجتمع هنا..."></div>
-          <div class="plc-label">التاريخ (هجري):</div>
-          <div class="plc-input"><input type="text" id="plcDate" data-save="1" placeholder="مثال: ٨ رمضان ١٤٤٧ هـ"></div>
-        </div>
-      </div>
+            <div class="professional-title">
+                <h2>استمارة مجتمع تعلم مهني</h2>
+                <div class="subtitle-row">
+                    <span>تقرير نشاط مجتمع تعلم مهني</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px;">
+                        رقم الإجتماع: <input type="text" id="plcNumber" data-save="1"
+                            style="width:25px; background:transparent; border:none; border-bottom: 1px solid white; color:white; text-align:center; outline:none; font-weight:bold;"
+                            value="1">
+                    </span>
+                </div>
+            </div>
 
-      <div class="plc-section">
-        <div class="plc-section-title">بيانات النشاط</div>
-        <div class="plc-grid six-cols">
-          <div class="plc-label">عنوان النشاط</div>
-          <div class="plc-input"><input type="text" id="plcActivityTitle" data-save="1"></div>
-          <div class="plc-label">أسلوب النشاط</div>
-          <div class="plc-input"><input type="text" id="plcActivityMethod" data-save="1" placeholder="مثال: لقاء / ورشة / زيارة تربوية / حلقة نقاش..."></div>
-          <div class="plc-label">مكان التنفيذ</div>
-          <div class="plc-input"><input type="text" id="plcLocation" data-save="1"></div>
-        </div>
-      </div>
+            <div class="report-section-modern">
+                <div class="grid-modern cols-4">
+                    <div class="cell-label">اسم المجتمع المهني</div>
+                    <div class="cell-input"><input type="text" id="plcName" data-save="1"
+                            placeholder="اكتب اسم المجتمع هنا..."></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">التاريخ (هجري / ميلادي)</div>
+                    <div class="cell-input" style="border-left: none;"><input type="date" id="plcDate" data-save="1"
+                            style="font-family: inherit; cursor: pointer;"></div>
+                </div>
+            </div>
 
-      <div class="plc-section">
-        <div class="plc-section-title">تنفيذ النشاط</div>
-        <div class="plc-grid eight-cols">
-          <div class="plc-label">تاريخ التنفيذ</div>
-          <div class="plc-input"><input type="text" id="plcExecDate" data-save="1" placeholder="مثال: ١٥ / ٠٨ / ١٤٤٦ هـ"></div>
-          <div class="plc-label">اسم المنفذ</div>
-          <div class="plc-input"><input type="text" id="plcExecutor" data-save="1" placeholder="قد يكون عضو/فريق/طرف خارجي"></div>
-          <div class="plc-label">المستهدف</div>
-          <div class="plc-input"><input type="text" id="plcTarget" data-save="1"></div>
-          <div class="plc-label">عدد الحضور</div>
-          <div class="plc-input"><input type="text" id="plcAttendance" data-save="1"></div>
-        </div>
-      </div>
+            <div class="report-section-modern">
+                <div class="section-header-modern">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    بيانات النشاط
+                </div>
+                <div class="grid-modern cols-6">
+                    <div class="cell-label">عنوان النشاط</div>
+                    <div class="cell-input"><input type="text" id="plcActivityTitle" data-save="1"
+                            placeholder="اكتب العنوان..."></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">الأسلوب</div>
+                    <div class="cell-input"><input type="text" id="plcActivityMethod" data-save="1"
+                            placeholder="لقاء، ورشة، الخ..."></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المكان</div>
+                    <div class="cell-input" style="border-left: none;"><input type="text" id="plcLocation" data-save="1"
+                            placeholder="مكان التنفيذ..."></div>
+                </div>
+            </div>
 
-      <div class="plc-section">
-        <div class="plc-section-title" style="justify-content: space-between;">
-          <span>وصف النشاط</span>
-          <span style="font-size: 12px; font-weight: normal;">سجل هدف واحد + أدوات/روابط إن وجدت</span>
-        </div>
-        <div class="plc-grid">
-          <div class="plc-label">الهدف</div>
-          <div class="plc-input"><input type="text" id="plcGoal" data-save="1" placeholder="يسجل هنا هدف واحد فقط..."></div>
-          <div class="plc-label">الأدوات المستخدمة</div>
-          <div class="plc-input"><input type="text" id="plcTools" data-save="1"></div>
-        </div>
-      </div>
+            <div class="report-section-modern">
+                <div class="section-header-modern">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    تنفيذ النشاط
+                </div>
+                <div class="grid-modern cols-8">
+                    <div class="cell-label">تاريخ التنفيذ</div>
+                    <div class="cell-input"><input type="date" id="plcExecDate" data-save="1"
+                            style="font-family: inherit; cursor: pointer;"></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المنفذ</div>
+                    <div class="cell-input"><input type="text" id="plcExecutor" data-save="1"
+                            placeholder="اسم المنفذ..."></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المستهدف</div>
+                    <div class="cell-input"><input type="text" id="plcTarget" data-save="1"></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">الحضور</div>
+                    <div class="cell-input" style="border-left: none;"><input type="number" id="plcAttendance"
+                            data-save="1" style="width:40px; text-align:center;"></div>
+                </div>
+            </div>
 
-      <div class="plc-section">
-        <div class="plc-section-title" style="justify-content: space-between;">
-          <span>النتائج والتحقق</span>
-          <span style="font-size: 12px; font-weight: normal;">تحسينات ومعوقات</span>
-        </div>
-        <div class="plc-grid">
-          <div class="plc-label">عوامل التحسن المتوقعة</div>
-          <div class="plc-input"><textarea id="plcImprovements" data-save="1" class="fit-text"></textarea></div>
-          <div class="plc-label">أبرز المعوقات</div>
-          <div class="plc-input"><textarea id="plcObstacles" data-save="1" class="fit-text"></textarea></div>
-        </div>
-      </div>
+            <div class="report-section-modern">
+                <div class="section-header-modern" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        وصف النشاط
+                    </div>
+                </div>
+                <div class="grid-modern cols-4">
+                    <div class="cell-label">الهدف الأساسي</div>
+                    <div class="cell-input"><input type="text" id="plcGoal" data-save="1"
+                            placeholder="يسجل هنا هدف واحد فقط..."></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0;">الأدوات المستخدمة</div>
+                    <div class="cell-input" style="border-left: none;"><input type="text" id="plcTools" data-save="1"
+                            placeholder="أدوات، روابط، عروض..."></div>
+                </div>
+            </div>
 
-      <div class="plc-section">
-        <div class="plc-section-title" style="justify-content: space-between; padding: 0;">
-          <div style="padding: 8px 15px; display: flex; align-items: center;">أعضاء فريق مجتمع التعلم</div>
-          <div class="plc-actions noprint">
-            <button type="button" onclick="addMemberRow()">+ إضافة صف</button>
-            <button type="button" onclick="removeMemberRow()">حذف آخر صف</button>
-            <button type="button" onclick="clearMembers()">تفريغ</button>
-          </div>
-        </div>
-        
-        <div class="members-container" id="membersContainer" style="display: flex;">
-          <div class="members-col" style="flex: 1;">
-            <table class="members-table" id="membersTable1">
-              <thead>
-                <tr>
-                  <th>الاسم</th>
-                  <th>الوظيفة</th>
-                  <th>التوقيع</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows -->
-              </tbody>
-            </table>
-          </div>
-          <div class="members-col" id="col2" style="flex: 1; display: none; border-right: 1px solid var(--border-color);">
-            <table class="members-table" id="membersTable2">
-              <thead>
-                <tr>
-                  <th>الاسم</th>
-                  <th>الوظيفة</th>
-                  <th>التوقيع</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+            <div class="report-section-modern">
+                <div class="section-header-modern" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        النتائج والتحقق
+                    </div>
+                </div>
+                <!-- Remove columns on borders directly using inline styles to avoid nested CSS clashes -->
+                <div class="grid-modern cols-4" style="border-bottom: none;">
+                    <div class="cell-label" style="border-bottom: none;">عوامل التحسن المتوقعة</div>
+                    <div class="cell-input" style="border-bottom: none;"><textarea id="plcImprovements" data-save="1"
+                            placeholder="ما هي التحسينات التي تمت ملاحظتها..."></textarea></div>
+                    <div class="cell-label" style="border-right: 1px solid #e2e8f0; border-bottom: none;">أبرز المعوقات
+                    </div>
+                    <div class="cell-input" style="border-left: none; border-bottom: none;"><textarea id="plcObstacles"
+                            data-save="1" placeholder="المعوقات التي واجهت التنفيذ..."></textarea></div>
+                </div>
+            </div>
 
-      <div class="signatures-container">
-        <div class="signature-card">
-          <div class="signature-header">منسق الفريق</div>
-          <div class="signature-body">
-            <input type="text" id="sigCoordinator" data-save="1" value="اكتب الاسم هنا">
-          </div>
-        </div>
-        <div class="signature-card">
-          <div class="signature-header">مدير المدرسة</div>
-          <div class="signature-body">
-            <input type="text" id="sigManagerPlc" data-save="1" value="عابد عبيد الجدعاني">
-          </div>
-        </div>
-      </div>
+            <div class="report-section-modern" style="margin-bottom: 5px;">
+                <div class="header-btn-row section-header-modern">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        أعضاء فريق مجتمع التعلم
+                    </div>
+                    <div class="plc-actions noprint" style="background: transparent; padding: 0;">
+                        <button type="button" onclick="addMemberRow()"
+                            style="color: var(--primary-color); border-color: var(--primary-color);">+ إضافة صف</button>
+                        <button type="button" onclick="removeMemberRow()"
+                            style="color: #64748b; border-color: #cbd5e1;">حذف صف</button>
+                    </div>
+                </div>
 
+                <div class="members-container" id="membersContainer">
+                    <div class="members-col">
+                        <table class="members-table" id="membersTable1">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%">الاسم</th>
+                                    <th style="width: 30%">الوظيفة</th>
+                                    <th style="width: 30%">التوقيع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="members-col" id="col2" style="display: none;">
+                        <table class="members-table" id="membersTable2">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%">الاسم</th>
+                                    <th style="width: 30%">الوظيفة</th>
+                                    <th style="width: 30%">التوقيع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signatures-area">
+                <div class="sig-block">
+                    <div class="sig-title">منسق الفريق</div>
+                    <div class="sig-input">
+                        <input type="text" id="sigCoordinator" data-save="1" placeholder="اسم المنسق">
+                    </div>
+                </div>
+                <div class="sig-block">
+                    <div class="sig-title">مدير المدرسة</div>
+                    <div class="sig-input">
+                        <input type="text" id="sigManagerPlc" data-save="1" value="عابد عبيد الجدعاني">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="appFooter"></div>
     </div>
-    <div id="appFooter"></div>
-  </div>
 
-  <script>
-    window.currentPageKey = 'storage_plc_form_v1';
-    let membersData = [];
+    <script>
+        window.currentPageKey = 'storage_plc_form_v1';
+        let membersData = [];
 
-    window.getPageExtraData = () => {
-      // Collect table data
-      const rows = document.querySelectorAll('#membersContainer tbody tr');
-      const data = [];
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
-        if(inputs.length >= 2) {
-          data.push({
-            name: inputs[0].value,
-            job: inputs[1].value
-          });
-        }
-      });
-      return { teamData: data };
-    };
+        window.getPageExtraData = () => {
+            const rows = document.querySelectorAll('#membersContainer tbody tr');
+            const data = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    data.push({
+                        name: inputs[0].value,
+                        job: inputs[1].value
+                    });
+                }
+            });
+            return { teamData: data };
+        };
 
-    function renderTable() {
-      const tbody1 = document.querySelector('#membersTable1 tbody');
-      const tbody2 = document.querySelector('#membersTable2 tbody');
-      const col2 = document.getElementById('col2');
-      
-      tbody1.innerHTML = '';
-      tbody2.innerHTML = '';
-      
-      if (membersData.length > 6) {
-        col2.style.display = 'block';
-      } else {
-        col2.style.display = 'none';
-      }
+        function renderTable() {
+            const tbody1 = document.querySelector('#membersTable1 tbody');
+            const tbody2 = document.querySelector('#membersTable2 tbody');
+            const col2 = document.getElementById('col2');
 
-      membersData.forEach((member, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><input type="text" class="form-control" value="${member.name || ''}" oninput="updateMember(${index}, 'name', this.value)"></td>
-          <td><input type="text" class="form-control" value="${member.job || ''}" oninput="updateMember(${index}, 'job', this.value)"></td>
-          <td></td>
+            tbody1.innerHTML = '';
+            tbody2.innerHTML = '';
+
+            if (membersData.length > 5) {
+                col2.style.display = 'table';
+            } else {
+                col2.style.display = 'none';
+            }
+
+            membersData.forEach((member, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td><input type="text" class="form-control" placeholder="الاسم ثلاثي" value="${member.name || ''}" oninput="updateMember(${index}, 'name', this.value)"></td>
+          <td><input type="text" class="form-control" placeholder="معلم، إداري..." value="${member.job || ''}" oninput="updateMember(${index}, 'job', this.value)"></td>
+          <td style="color: #94a3b8; font-size: 10px; text-align: center;">يوقع هنا</td>
         `;
-        
-        if (index < 6) {
-          tbody1.appendChild(tr);
-        } else if (index < 12) {
-          tbody2.appendChild(tr);
+
+                if (index < 5) {
+                    tbody1.appendChild(tr);
+                } else if (index < 10) {
+                    tbody2.appendChild(tr);
+                }
+            });
         }
-      });
-    }
 
-    function addMemberRow() {
-      if (membersData.length >= 12) {
-        alert('الحد الأقصى 12 صف في الصفحة الواحدة');
-        return;
-      }
-      membersData.push({ name: '', job: '' });
-      renderTable();
-      saveCurrentState();
-    }
-
-    function removeMemberRow() {
-      if (membersData.length > 0) {
-        membersData.pop();
-        renderTable();
-        saveCurrentState();
-      }
-    }
-
-    function clearMembers() {
-      if(confirm('هل أنت متأكد من تفريغ الجدول؟')) {
-        membersData = [];
-        renderTable();
-        saveCurrentState();
-      }
-    }
-
-    function updateMember(index, field, value) {
-      if (membersData[index]) {
-        membersData[index][field] = value;
-        saveCurrentState();
-      }
-    }
-
-    function saveCurrentState() {
-      window.appStorage.savePage(window.currentPageKey, window.getPageExtraData());
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const restored = window.appStorage.restorePage(window.currentPageKey, (data) => {
-        if (data && data.teamData && Array.isArray(data.teamData)) {
-          membersData = data.teamData;
-        } else {
-          // Default 3 rows
-          membersData = [{name:'', job:''}, {name:'', job:''}, {name:'', job:''}];
+        function addMemberRow() {
+            if (membersData.length >= 10) {
+                alert('الحد الأقصى 10 صفوف في الصفحة الواحدة للحفاظ على التنسيق');
+                return;
+            }
+            membersData.push({ name: '', job: '' });
+            renderTable();
+            saveCurrentState();
         }
-        renderTable();
-      });
-      
-      if (!restored) {
-        membersData = [{name:'', job:''}, {name:'', job:''}, {name:'', job:''}];
-        renderTable();
-      }
 
-      window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
-    });
-  </script>
+        function removeMemberRow() {
+            if (membersData.length > 0) {
+                membersData.pop();
+                renderTable();
+                saveCurrentState();
+            }
+        }
+
+        function clearMembers() {
+            if (confirm('هل أنت متأكد من تفريغ الجدول؟')) {
+                membersData = [];
+                renderTable();
+                saveCurrentState();
+            }
+        }
+
+        function updateMember(index, field, value) {
+            if (membersData[index]) {
+                membersData[index][field] = value;
+                saveCurrentState();
+            }
+        }
+
+        function saveCurrentState() {
+            window.appStorage.savePage(window.currentPageKey, window.getPageExtraData());
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const restored = window.appStorage.restorePage(window.currentPageKey, (data) => {
+                if (data && data.teamData && Array.isArray(data.teamData) && data.teamData.length > 0) {
+                    membersData = data.teamData;
+                } else {
+                    membersData = [{ name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }];
+                }
+                renderTable();
+            });
+
+            if (!restored) {
+                membersData = [{ name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }, { name: '', job: '' }];
+                renderTable();
+            }
+
+            window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
+        });
+    </script>
 </body>
+
 </html>

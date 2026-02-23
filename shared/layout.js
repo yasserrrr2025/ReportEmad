@@ -4,17 +4,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Determine depth of current path to correctly load shared assets
   const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
-  // Find where we are relative to the project structure
-  // 'pages' or 'shared' generally indicates we are inside a subfolder
   const inPagesFolder = pathParts.includes('pages');
-  const basePath = inPagesFolder ? '../shared/' : './shared/';
-
   const assetsPath = inPagesFolder ? '../assets/' : './assets/';
 
-  const fallbackHeader = `
+  const headerContent = `
     <div class="official-header">
       <div class="header-bg">
-        <img src="${assetsPath}header.jpg" alt="Header Background">
+        <img src="${assetsPath}header.jpg" alt="Header Background" onerror="this.onerror=null; this.src='../assets/header.jpg';">
       </div>
       <div class="header-actions noprint">
         <div class="dropdown">
@@ -26,38 +22,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     </div>`;
 
-  const fallbackFooter = `
+  const footerContent = `
     <div class="official-footer">
-      <img src="${assetsPath}footer.jpg" alt="Footer Background">
+      <img src="${assetsPath}footer.jpg" alt="Footer Background" onerror="this.onerror=null; this.src='../assets/footer.jpg';">
     </div>`;
 
   if (headerEl) {
-    try {
-      const res = await fetch(basePath + 'header.html');
-      if (res.ok) {
-        headerEl.innerHTML = await res.text();
-      } else {
-        console.error('Failed to load header: ', res.status);
-        headerEl.innerHTML = fallbackHeader;
-      }
-    } catch (e) {
-      console.error('Failed to load header', e);
-      headerEl.innerHTML = fallbackHeader;
-    }
+    headerEl.innerHTML = headerContent;
   }
 
   if (footerEl) {
-    try {
-      const res = await fetch(basePath + 'footer.html');
-      if (res.ok) {
-        footerEl.innerHTML = await res.text();
-      } else {
-        console.error('Failed to load footer: ', res.status);
-        footerEl.innerHTML = fallbackFooter;
-      }
-    } catch (e) {
-      console.error('Failed to load footer', e);
-      footerEl.innerHTML = fallbackFooter;
-    }
+    footerEl.innerHTML = footerContent;
   }
 });
