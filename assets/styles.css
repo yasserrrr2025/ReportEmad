@@ -1063,28 +1063,4 @@ body {
   input[type="file"] {
     display: none !important;
   }
-
-  body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .sheet {
-    width: 794px !important;
-    max-width: 794px !important;
-    height: 297mm !important;
-    max-height: 297mm !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-  }
-
-  @page {
-    size: A4 portrait;
-    margin: 0;
-  }
 }

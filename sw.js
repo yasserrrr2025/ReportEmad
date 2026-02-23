@@ -1,4 +1,4 @@
-const CACHE_NAME = 'school-forms-pwa-v4';
+const CACHE_NAME = 'school-forms-pwa-v5';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
