@@ -88,14 +88,21 @@ window.appPdf = {
         image: { type: 'jpeg', quality: imgQuality },
         html2canvas: {
           scale: scaleCanvas,
-          windowWidth: 794,
           useCORS: true,
           logging: false
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all'] } // Prevent it from trying to split into multiple pages
       };
 
-      await html2pdf().set(opt).from(clone).save();
+      // We use the 'toPdf' method to access the jsPDF instance directly and force fitting to 1 page
+      await html2pdf().set(opt).from(clone).toPdf().get('pdf').then((pdf) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        // If for some reason it created more than 1 page, delete the extra ones
+        for (let i = totalPages; i > 1; i--) {
+          pdf.deletePage(i);
+        }
+      }).save();
 
       // Cleanup
       document.body.removeChild(wrapper);
