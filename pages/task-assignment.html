@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج تكليف بمهام</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/layout.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/pdf.js"></script>
+    <script src="../shared/ui.js"></script>
+
+    <style>
+        .assignment-title {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .assignment-title h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .assignment-title p {
+            margin: 8px 0 0 0;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .card-box {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-header {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark-teal);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .card-header i {
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #1e293b;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+
+        .tasks-area {
+            width: 100%;
+            min-height: 150px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.8;
+            outline: none;
+            resize: none;
+            background: #fafbfc;
+        }
+
+        .tasks-area:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+
+        .acknowledgement {
+            background: #f0fdfa;
+            border: 1px solid #ccfbf1;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #115e59;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .acknowledgement::before {
+            content: 'إقرار وإشعار';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: #115e59;
+            color: white;
+            padding: 2px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .signatures-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            page-break-inside: avoid;
+        }
+
+        .sig-block {
+            text-align: center;
+            width: 200px;
+        }
+
+        .sig-block h4 {
+            margin: 0 0 30px 0;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .sig-block input {
+            width: 90%;
+            border: none;
+            border-bottom: 1px solid #94a3b8;
+            text-align: center;
+            padding: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sheet">
+        <div id="appHeader"></div>
+        <div class="sheet-content">
+
+            <div class="assignment-title">
+                <h2>نموذج تكليف بمهام</h2>
+                <p>إشعار وتكليف رسمي بالمهام والمسؤوليات</p>
+            </div>
+
+            <div class="card-box">
+                <div class="card-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    بيانات المكلف
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>الاسم الرباعي</label>
+                        <input type="text" id="assigneeName" data-save="1" placeholder="اسم الموظف / المعلم المكلف">
+                    </div>
+                    <div class="input-group">
+                        <label>المسمى الوظيفي</label>
+                        <input type="text" id="assigneeJob" data-save="1" placeholder="مثال: معلم، إداري، رائد نشاط">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>تاريخ التكليف (بداية المهمة)</label>
+                        <input type="date" id="assignStartDate" data-save="1">
+                    </div>
+                    <div class="input-group">
+                        <label>تاريخ نهاية التكليف (إن وجد)</label>
+                        <input type="date" id="assignEndDate" data-save="1"
+                            placeholder="نهاية العام الدراسي أو تاريخ محدد">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-box">
+                <div class="card-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    وصف المهام والمسؤوليات
+                </div>
+
+                <textarea class="tasks-area" id="assignedTasks" data-save="1" placeholder="يرجى تدوين المهام بوضوح، على سبيل المثال:
+1- الإشراف والمناوبة اليومية خلال الفصحى.
+2- متابعة سجلات الحضور والانصراف.
+3- ...
+"></textarea>
+            </div>
+
+            <div class="acknowledgement">
+                أقر أنا الموقع أدناه بأني قد استلمت مهامي الموضحة أعلاه، وأتعهد للقيام بها على الوجه المطلوب، وتحقيق
+                الأهداف المرجوة من هذا التكليف وفقاً للنطاق الزمني المحدد واللوائح المنظمة للعمل في المدرسة، والله
+                الموفق.
+            </div>
+
+            <div class="signatures-row">
+                <div class="sig-block">
+                    <h4>توقيع المكلف (الموظف)</h4>
+                    <input type="text" id="sigEmployeeName" data-save="1" placeholder="الاسم والتوقيع">
+                </div>
+                <div class="sig-block">
+                    <h4>مدير المدرسة</h4>
+                    <input type="text" id="sigManagerTask" data-save="1" value="عابد عبيد الجدعاني">
+                </div>
+            </div>
+
+        </div>
+        <div id="appFooter"></div>
+    </div>
+
+    <script>
+        window.currentPageKey = 'storage_task_assignment_v1';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.appStorage.restorePage(window.currentPageKey);
+            window.appStorage.setupAutoSave(window.currentPageKey);
+        });
+    </script>
+</body>
+
+</html>

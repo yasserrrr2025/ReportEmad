@@ -1,8 +1,8 @@
 window.appStorage = {
-  savePage: function(key, extraData = {}) {
+  savePage: function (key, extraData = {}) {
     const data = { ...extraData };
     const elements = document.querySelectorAll('[data-save="1"]');
-    
+
     elements.forEach(el => {
       if (el.id) {
         if (el.type === 'checkbox' || el.type === 'radio') {
@@ -22,24 +22,24 @@ window.appStorage = {
     });
 
     localStorage.setItem(key, JSON.stringify(data));
-    
+
     // Show a brief visual feedback
     const btn = document.querySelector('.dropdown > .btn-dark') || document.querySelector('.dropdown > .btn');
-    if(btn) {
+    if (btn) {
       const originalText = btn.innerHTML;
       btn.innerHTML = 'تم الحفظ ✓';
       setTimeout(() => btn.innerHTML = originalText, 2000);
     }
   },
 
-  restorePage: function(key, callback) {
+  restorePage: function (key, callback) {
     const saved = localStorage.getItem(key);
     if (!saved) return null;
 
     try {
       const data = JSON.parse(saved);
       const elements = document.querySelectorAll('[data-save="1"]');
-      
+
       elements.forEach(el => {
         if (el.id && data[el.id] !== undefined) {
           if (el.type === 'checkbox' || el.type === 'radio') {
@@ -56,14 +56,14 @@ window.appStorage = {
         if (data[`photo_${index}`]) {
           img.src = data[`photo_${index}`];
           img.style.display = 'block';
-          
+
           const box = img.parentElement;
           if (box) {
             const textDiv = box.querySelector('.photo-box-text');
-            if(textDiv) textDiv.style.display = 'none';
-            
+            if (textDiv) textDiv.style.display = 'none';
+
             const span = box.querySelector('span');
-            if(span) span.style.display = 'none';
+            if (span) span.style.display = 'none';
           }
         }
       });
@@ -75,8 +75,8 @@ window.appStorage = {
       return null;
     }
   },
-  
-  setupAutoSave: function(key, getExtraData) {
+
+  setupAutoSave: function (key, getExtraData) {
     const inputs = document.querySelectorAll('[data-save="1"]');
     inputs.forEach(input => {
       input.addEventListener('input', () => {
@@ -86,5 +86,12 @@ window.appStorage = {
         this.savePage(key, getExtraData ? getExtraData() : {});
       });
     });
+  },
+
+  clearPage: function (key) {
+    if (confirm('هل أنت متأكد من تفريغ كافة بيانات التقرير الحالي؟ سيتم مسح جميع المدخلات ولن يمكنك التراجع.')) {
+      localStorage.removeItem(key);
+      window.location.reload();
+    }
   }
 };

@@ -239,34 +239,55 @@
         /* Signatures Area */
         .signatures-area {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 60px 10px 60px;
-            margin-top: 5px;
+            justify-content: space-around;
+            padding: 30px 20px 10px 20px;
+            margin-top: 10px;
             page-break-inside: avoid;
+            background: url('data:image/svg+xml;utf8,<svg width="100%" height="2" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="1" x2="100%" y2="1" stroke="%23e2e8f0" stroke-width="2" stroke-dasharray="8 8"/></svg>') top center no-repeat;
         }
 
         .sig-block {
             text-align: center;
-            width: 250px;
+            flex: 1;
+            max-width: 250px;
         }
 
         .sig-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
-            color: var(--visit-text);
-            margin-bottom: 10px;
+            color: #475569;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .sig-title::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--visit-green);
+            border-radius: 2px;
+            opacity: 0.5;
         }
 
         .sig-input input {
             text-align: center;
             border: none;
+            border-bottom: 1px dashed #cbd5e1;
             font-weight: 700;
-            font-size: 16px;
-            color: var(--visit-text);
+            font-size: 14px;
+            color: #1e293b;
             padding: 4px;
-            width: 100%;
+            width: 80%;
             outline: none;
             background: transparent;
+        }
+
+        .sig-input input:focus {
+            border-bottom-color: var(--visit-green);
         }
     </style>
 </head>
@@ -525,14 +546,14 @@
                     <div class="sig-block">
                         <div class="sig-title">المعلم</div>
                         <div class="sig-input">
-                            <input type="text" id="sigTeacher" data-save="1" placeholder="اسم المعلم">
+                            <input type="text" id="sigTeacher" data-save="1" placeholder="اسم المعلم...">
                         </div>
                     </div>
                     <div class="sig-block">
                         <div class="sig-title">مدير المدرسة</div>
                         <div class="sig-input">
-                            <input type="text" id="sigManager" data-save="1" value="عابد عبيد الجدعاني">
-                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 5px;">(قابل للتحرير)</div>
+                            <input type="text" id="sigManager" data-save="1" placeholder="عابد عبيد الجدعاني"
+                                value="عابد عبيد الجدعاني">
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,9 @@
 window.appPdf = {
-  makePdf: async function(sheetSelector, filenameBase) {
+  exportToPDF: function () {
+    this.makePdf('.sheet', 'تقرير');
+  },
+
+  makePdf: async function (sheetSelector, filenameBase) {
     const sheet = document.querySelector(sheetSelector);
     if (!sheet) return;
 
@@ -22,8 +26,10 @@ window.appPdf = {
     }
 
     try {
+      // Add html2canvas option to capture specifically in a wide width regardless of the device width (solves mobile layout breaking)
       const canvas = await html2canvas(sheet, {
         scale: 2,
+        windowWidth: 794,
         useCORS: false,
         allowTaint: false,
         logging: false,
@@ -33,7 +39,7 @@ window.appPdf = {
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      
+
       // A4 size: 210mm x 297mm
       const pdf = new jspdf.jsPDF({
         orientation: 'portrait',
@@ -41,13 +47,14 @@ window.appPdf = {
         format: 'a4'
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfWidth = 210; // Exactly 210mm
+      const pdfHeight = 297; // Exactly 297mm
 
+      // Draw exactly within A4 dimension constraint
       pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      
+
       const date = new Date();
-      const dateStr = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+      const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
       pdf.save(`${filenameBase}-${dateStr}.pdf`);
 
     } catch (e) {
