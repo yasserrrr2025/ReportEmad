@@ -25,6 +25,11 @@ window.appPdf = {
       });
     }
 
+    // Wait for all fonts (like Tajawal) to be fully loaded before capturing
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+
     try {
       // Add html2canvas option to capture specifically in a wide width regardless of the device width (solves mobile layout breaking)
       const canvas = await html2canvas(sheet, {

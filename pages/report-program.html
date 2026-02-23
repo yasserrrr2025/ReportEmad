@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تقرير تنفيذ برنامج</title>
   <link rel="stylesheet" href="../assets/styles.css">
-  
+
   <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
+
   <!-- Shared Scripts -->
   <script src="../shared/layout.js"></script>
   <script src="../shared/storage.js"></script>
@@ -22,6 +23,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
 </head>
+
 <body>
   <div class="sheet">
     <div id="appHeader"></div>
@@ -29,19 +31,20 @@
       <!-- Section 1: Report Details -->
       <div class="report-section">
         <div class="report-section-header">
-          <input type="text" id="reportTitle" value="اسم التقرير" data-save="1" style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none;">
+          <input type="text" id="reportTitle" value="اسم التقرير" data-save="1"
+            style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none;">
         </div>
         <div class="report-grid">
           <div class="report-grid-item label">مقدم البرنامج</div>
           <div class="report-grid-item"><input type="text" id="progPresenter" data-save="1"></div>
           <div class="report-grid-item label">المكان</div>
           <div class="report-grid-item"><input type="text" id="progLocation" data-save="1"></div>
-          
+
           <div class="report-grid-item label">التاريخ</div>
           <div class="report-grid-item"><input type="text" id="progDate" data-save="1" placeholder="اختر التاريخ"></div>
           <div class="report-grid-item label">المستفيدون</div>
           <div class="report-grid-item"><input type="text" id="progTarget" data-save="1"></div>
-          
+
           <div class="report-grid-item label">عدد الحضور</div>
           <div class="report-grid-item"><input type="text" id="progAttendance" data-save="1"></div>
           <div class="report-grid-item label">مدة البرنامج</div>
@@ -129,7 +132,7 @@
   <script>
     window.currentPageKey = 'storage_report_program_v1';
     window.getPageExtraData = () => ({});
-    
+
     document.addEventListener('DOMContentLoaded', () => {
       window.appStorage.restorePage(window.currentPageKey);
       window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
@@ -139,14 +142,15 @@
       if (dateInput) {
         flatpickr(dateInput, {
           locale: "ar",
-          dateFormat: "Y-m-d", // Standard Gregorian format
+          dateFormat: "Y/m/d", // Standard Gregorian format
           altInput: true,
-          altFormat: "j F Y", // Display format
+          altFormat: "l - Y/m/d", // Display format e.g., الأحد - 2024/05/12
           defaultDate: !dateInput.value ? "today" : dateInput.value,
-          allowInput: true, // Allow manual entry (e.g., if user wants to type Hijri manually)
+          allowInput: true, // Allow manual entry
         });
       }
     });
   </script>
 </body>
+
 </html>

@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./assets/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="manifest" href="./manifest.json">
+  <script src="./pwa-handler.js" defer></script>
 </head>
 
 <body>
@@ -120,8 +122,50 @@
 
     <footer class="dashboard-footer text-center">
       <p>جميع الحقوق محفوظة &copy; 2026 - نظام إدارة النماذج والتقارير المدرسية</p>
-      <p>تم التنفيذ بواسطة : &copy; 2026 -ياسر الهذلي </p>
     </footer>
+  </div>
+
+  <!-- PWA Install Banners -->
+  <div id="pwa-install-banner" class="pwa-banner hidden" dir="rtl">
+    <div class="pwa-banner-content">
+      <div class="pwa-app-icon">
+        <i class="fa-solid fa-file-signature"></i>
+      </div>
+      <div class="pwa-text">
+        <h4>تثبيت التطبيق</h4>
+        <p>قم بتثبيت تطبيق النماذج المدرسية للوصول السريع والعمل بدون إنترنت.</p>
+      </div>
+    </div>
+    <div class="pwa-actions">
+      <button id="pwa-dismiss-btn" class="btn-dismiss">ليس الآن</button>
+      <button id="pwa-install-btn" class="btn-install">تثبيت <i class="fa-solid fa-download"></i></button>
+    </div>
+  </div>
+
+  <div id="pwa-ios-prompt" class="pwa-banner hidden" dir="rtl">
+    <div class="pwa-banner-content">
+      <div class="pwa-app-icon">
+        <i class="fa-brands fa-apple"></i>
+      </div>
+      <div class="pwa-text">
+        <h4>إضافة للشاشة الرئيسية</h4>
+        <div class="ios-instructions">
+          <p>للوصول السريع للتطبيق:</p>
+          <div class="ios-instructions-row">
+            <span>1. اضغط على زر المشاركة</span>
+            <i class="fa-solid fa-arrow-up-from-bracket ios-share-icon"></i>
+            <span>في الأسفل</span>
+          </div>
+          <div class="ios-instructions-row">
+            <span>2. اختر "إضافة إلى الصفحة الرئيسية"</span>
+            <i class="fa-regular fa-square-plus ios-share-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pwa-actions">
+      <button id="pwa-ios-dismiss-btn" class="btn-dismiss">فهمت</button>
+    </div>
   </div>
 </body>
 
