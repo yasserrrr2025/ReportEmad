@@ -37,6 +37,8 @@ window.appPdf = {
       // Create a temporary wrapper to enforce desktop dimensions for the canvas capture
       const originalContainer = sheet.parentElement;
       const clone = sheet.cloneNode(true);
+      const wrapper = document.createElement('div');
+
       // Place wrapper in the DOM but hidden underneath the current view
       // html2canvas often calculates wrong offsets if the element is too far off-screen (-9999px)
       wrapper.style.position = 'absolute';
