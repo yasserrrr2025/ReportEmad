@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             direction: rtl;
         }
         .pwa-banner.visible {
-            bottom: 30px;
+            bottom: max(30px, calc(env(safe-area-inset-bottom, 20px) + 20px));
         }
         .pwa-banner-content {
             display: flex;
@@ -110,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 text-align: center;
                 padding: 20px;
                 width: 85%;
+            }
+            .pwa-banner.visible {
+                bottom: 80px;
             }
             .pwa-banner-content {
                 flex-direction: column;
