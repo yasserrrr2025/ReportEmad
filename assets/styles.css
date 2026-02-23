@@ -656,24 +656,110 @@ body {
   display: block;
 }
 
-.header-actions {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  z-index: 4;
+/* Elegant Floating Actions Bar */
+.header-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 18.89cm;
+  /* perfectly align with the official-header width */
+  margin: 0 auto 15px auto;
+  padding: 10px 15px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  position: relative;
 }
 
-.btn-dark {
-  background-color: #125e5e;
-  color: white;
-  border: 1px solid #0f4d4d;
-  border-radius: 6px;
-  padding: 8px 15px;
+.actions-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-action {
+  background-color: #fff;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+
+.btn-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action.btn-pdf {
+  color: #059669;
+  border-color: #a7f3d0;
+  background-color: #ecfdf5;
+}
+
+.btn-action.btn-pdf:hover {
+  background-color: #d1fae5;
+}
+
+.btn-action.btn-print {
+  color: #2563eb;
+  border-color: #bfdbfe;
+  background-color: #eff6ff;
+}
+
+.btn-action.btn-print:hover {
+  background-color: #dbeafe;
+}
+
+.btn-action.btn-clear {
+  color: #dc2626;
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.btn-action.btn-clear:hover {
+  background-color: #fee2e2;
+}
+
+.btn-action:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 768px) {
+  .header-actions-bar {
+    width: auto;
+    margin: 0 15px 15px 15px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .actions-group {
+    gap: 6px;
+  }
+
+  .btn-text {
+    display: none;
+  }
+
+  .btn-action {
+    padding: 10px;
+  }
+
+  .btn-action svg {
+    margin: 0;
+  }
 }
 
 .dropdown {
