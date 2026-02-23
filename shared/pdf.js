@@ -1,6 +1,35 @@
 window.appPdf = {
   exportToPDF: function () {
-    this.makePdf('.sheet', 'تقرير');
+    let baseName = document.title || 'تقرير';
+
+    const titleInput = document.getElementById('reportTitle');
+    const plcName = document.getElementById('plcName');
+    const studentName = document.getElementById('incStudentName');
+    const visitingTeacher = document.getElementById('visitingTeacher');
+    const meetSubject = document.getElementById('meetSubject');
+
+    let specificName = '';
+
+    if (titleInput && titleInput.value && titleInput.value !== 'اسم التقرير') {
+      specificName = titleInput.value.trim();
+    } else if (plcName && plcName.value) {
+      specificName = plcName.value.trim();
+    } else if (studentName && studentName.value) {
+      specificName = studentName.value.trim();
+    } else if (visitingTeacher && visitingTeacher.value) {
+      specificName = visitingTeacher.value.trim();
+    } else if (meetSubject && meetSubject.value) {
+      specificName = meetSubject.value.trim();
+    }
+
+    if (specificName) {
+      baseName = `${baseName} - ${specificName}`;
+    }
+
+    // Clean invalid filename characters
+    baseName = baseName.replace(/[\/\?<>\\:\*\|":\n\r]/g, '').trim();
+
+    this.makePdf('.sheet', baseName);
   },
 
   makePdf: async function (sheetSelector, filenameBase) {
@@ -69,12 +98,15 @@ window.appPdf = {
       noprints.forEach(el => el.style.display = 'none');
 
       // Copy input/textarea values to the clone since cloneNode doesn't copy current values
-      const originalInputs = sheet.querySelectorAll('input, textarea');
-      const cloneInputs = clone.querySelectorAll('input, textarea');
+      // Copy input/textarea/select values to the clone since cloneNode doesn't copy current values
+      const originalInputs = sheet.querySelectorAll('input, textarea, select');
+      const cloneInputs = clone.querySelectorAll('input, textarea, select');
       for (let i = 0; i < originalInputs.length; i++) {
         cloneInputs[i].value = originalInputs[i].value;
         if (originalInputs[i].tagName === 'TEXTAREA') {
           cloneInputs[i].innerHTML = originalInputs[i].value;
+        } else if (originalInputs[i].tagName === 'SELECT') {
+          cloneInputs[i].selectedIndex = originalInputs[i].selectedIndex;
         }
       }
 
@@ -95,14 +127,7 @@ window.appPdf = {
         pagebreak: { mode: ['avoid-all'] } // Prevent it from trying to split into multiple pages
       };
 
-      // We use the 'toPdf' method to access the jsPDF instance directly and force fitting to 1 page
-      await html2pdf().set(opt).from(clone).toPdf().get('pdf').then((pdf) => {
-        const totalPages = pdf.internal.getNumberOfPages();
-        // If for some reason it created more than 1 page, delete the extra ones
-        for (let i = totalPages; i > 1; i--) {
-          pdf.deletePage(i);
-        }
-      }).save();
+      await html2pdf().set(opt).from(clone).save();
 
       // Cleanup
       document.body.removeChild(wrapper);
