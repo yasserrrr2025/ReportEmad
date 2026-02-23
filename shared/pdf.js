@@ -37,14 +37,27 @@ window.appPdf = {
       // Create a temporary wrapper to enforce desktop dimensions for the canvas capture
       const originalContainer = sheet.parentElement;
       const clone = sheet.cloneNode(true);
-      const wrapper = document.createElement('div');
-
-      // Force wrapper to have desktop width so mobile layout doesn't trigger
+      // Place wrapper in the DOM but hidden underneath the current view
+      // html2canvas often calculates wrong offsets if the element is too far off-screen (-9999px)
       wrapper.style.position = 'absolute';
-      wrapper.style.top = '-9999px';
-      wrapper.style.left = '-9999px';
-      wrapper.style.width = '794px';
+      wrapper.style.top = '0';
+      wrapper.style.left = '0';
+      wrapper.style.width = '210mm'; // Exactly A4 width
+      wrapper.style.zIndex = '-9999'; // Hide it behind the actual content
       wrapper.style.background = 'white';
+      wrapper.style.direction = 'rtl'; // Ensure RTL is preserved in clone
+
+      // Ensure the clone itself has the exact dimensions and no margins
+      clone.style.width = '210mm';
+      clone.style.maxWidth = '210mm';
+      clone.style.margin = '0';
+      clone.style.transform = 'none';
+
+      // Ensure the clone itself has the exact dimensions and no margins
+      clone.style.width = '210mm';
+      clone.style.maxWidth = '210mm';
+      clone.style.margin = '0';
+      clone.style.transform = 'none';
 
       wrapper.appendChild(clone);
       document.body.appendChild(wrapper);
