@@ -15,14 +15,11 @@
     <!-- Shared Scripts -->
     <script src="../shared/layout.js?v=3"></script>
     <script src="../shared/storage.js?v=3"></script>
-    <script src="../shared/pdf.js?v=5"></script>
+    <script src="../shared/pdf.js?v=6"></script>
     <script src="../shared/ui.js?v=3"></script>
 
-    <!-- DatePicker Library (Flatpickr) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+
+
 
 
     <style>
@@ -299,8 +296,12 @@
                     <div class="cell-input"><input type="text" id="plcName" data-save="1"
                             placeholder="اكتب اسم المجتمع هنا..."></div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">التاريخ (هجري / ميلادي)</div>
-                    <div class="cell-input" style="border-left: none;"><input type="text" id="plcDate" data-save="1"
-                            style="font-family: inherit; cursor: pointer;" placeholder="اختر التاريخ..."></div>
+                    <div class="cell-input" style="border-left: none; position: relative;">
+                        <input type="text" id="plcDateVisual" class="cell-text-overlay" placeholder="اختر التاريخ..."
+                            readonly style="cursor:pointer;width:100%;">
+                        <input type="date" id="plcDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
                 </div>
             </div>
 
@@ -337,8 +338,12 @@
                 </div>
                 <div class="grid-modern cols-8">
                     <div class="cell-label">تاريخ التنفيذ</div>
-                    <div class="cell-input"><input type="text" id="plcExecDate" data-save="1"
-                            style="font-family: inherit; cursor: pointer;" placeholder="اختر التاريخ..."></div>
+                    <div class="cell-input" style="position: relative;">
+                        <input type="text" id="plcExecDateVisual" class="cell-text-overlay"
+                            placeholder="اختر التاريخ..." readonly style="cursor:pointer;width:100%;">
+                        <input type="date" id="plcExecDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
                     <div class="cell-label" style="border-right: 1px solid #e2e8f0;">المنفذ</div>
                     <div class="cell-input"><textarea id="plcExecutor" data-save="1" placeholder="اسم المنفذ..."
                             style="min-height:30px; line-height:30px; font-weight: bold;"></textarea></div>
@@ -564,21 +569,35 @@
                 renderTable();
             }
 
-            // Initialize Flatpickr for date inputs
-            const dateInputs = ['plcDate', 'plcExecDate'];
-            dateInputs.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    flatpickr(el, {
-                        locale: "ar",
-                        dateFormat: "Y/m/d",
-                        altInput: true,
-                        altFormat: "l - Y/m/d",
-                        defaultDate: !el.value ? "today" : el.value,
-                        allowInput: true,
-                    });
-                }
-            });
+            // Date formatting without Flatpickr (offline-safe)
+            var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+            function formatDateAr(dateVal) {
+                if (!dateVal) return '';
+                var d = new Date(dateVal);
+                if (isNaN(d)) return '';
+                var day = daysAr[d.getDay()];
+                var y = d.getFullYear();
+                var m = String(d.getMonth() + 1).padStart(2, '0');
+                var dd = String(d.getDate()).padStart(2, '0');
+                return day + ' - ' + y + '/' + m + '/' + dd;
+            }
+
+            function setupDateSync(hiddenId, visibleId) {
+                var hidden = document.getElementById(hiddenId);
+                var visual = document.getElementById(visibleId);
+                if (!hidden || !visual) return;
+                // Restore visual from saved value
+                if (hidden.value) visual.value = formatDateAr(hidden.value);
+                hidden.addEventListener('change', function () {
+                    visual.value = formatDateAr(hidden.value);
+                    if (window.appStorage && window.appStorage.savePage)
+                        window.appStorage.savePage(window.currentPageKey);
+                });
+            }
+
+            setupDateSync('plcDate', 'plcDateVisual');
+            setupDateSync('plcExecDate', 'plcExecDateVisual');
 
             window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
         });

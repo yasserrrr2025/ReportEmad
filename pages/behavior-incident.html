@@ -15,15 +15,12 @@
     <!-- Shared Scripts -->
     <script src="../shared/layout.js?v=3"></script>
     <script src="../shared/storage.js?v=3"></script>
-    <script src="../shared/pdf.js?v=5"></script>
+    <script src="../shared/pdf.js?v=6"></script>
     <script src="../shared/ui.js?v=3"></script>
 
 
-    <!-- DatePicker Library (Flatpickr) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+
+
 
     <style>
         .incident-header {
@@ -295,7 +292,11 @@
                     </div>
 
                     <div class="grid-label">تاريخ المخالفة</div>
-                    <div class="grid-input"><input type="text" id="incDate" data-save="1" placeholder="اختر التاريخ">
+                    <div class="grid-input" style="position: relative;">
+                        <input type="text" id="incDateVisual" placeholder="اختر التاريخ" readonly
+                            style="width:100%;cursor:pointer;border:none;outline:none;font-family:inherit;font-size:13px;color:#1e293b;background:transparent;text-align:right;">
+                        <input type="date" id="incDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
                     </div>
 
                     <div class="grid-label">الحصة</div>
@@ -415,16 +416,21 @@
             window.appStorage.restorePage(window.currentPageKey);
             window.appStorage.setupAutoSave(window.currentPageKey);
 
-            // Initialize DatePicker
-            const dateInput = document.getElementById('incDate');
-            if (dateInput) {
-                flatpickr(dateInput, {
-                    locale: "ar",
-                    dateFormat: "Y/m/d", // Standard format like 2024/05/12
-                    altInput: true,
-                    altFormat: "l - Y/m/d", // Display format e.g., الأحد - 2024/05/12
-                    defaultDate: !dateInput.value ? "today" : dateInput.value,
-                    allowInput: true,
+            // Offline-safe date formatter
+            var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            function formatDateAr(v) {
+                var d = new Date(v);
+                if (!v || isNaN(d)) return '';
+                return daysAr[d.getDay()] + ' - ' + d.getFullYear() + '/' +
+                    String(d.getMonth() + 1).padStart(2, '0') + '/' +
+                    String(d.getDate()).padStart(2, '0');
+            }
+            var hiddenDate = document.getElementById('incDate');
+            var visualDate = document.getElementById('incDateVisual');
+            if (hiddenDate && visualDate) {
+                if (hiddenDate.value) visualDate.value = formatDateAr(hiddenDate.value);
+                hiddenDate.addEventListener('change', function () {
+                    visualDate.value = formatDateAr(hiddenDate.value);
                 });
             }
         });

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمارة الزيارة الصفية الإشرافية</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=4">
+
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/layout.js?v=3"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=6"></script>
+    <script src="../shared/ui.js?v=3"></script>
+
+    <style>
+        .visit-header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e3a5f, #2563eb);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visit-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' stroke='rgba(255,255,255,0.05)' stroke-width='2' fill='none'/%3E%3C/svg%3E") repeat;
+        }
+
+        .visit-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .visit-header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .section-title {
+            background: #f1f5f9;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #2563eb;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: auto 1fr auto 1fr;
+        }
+
+        .grid-label {
+            background: #fdfdfd;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .grid-input {
+            padding: 4px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .grid-input:nth-child(4n) {
+            border-left: none;
+        }
+
+        .grid-label:nth-last-child(-n+4),
+        .grid-input:nth-last-child(-n+4) {
+            border-bottom: none;
+        }
+
+        .grid-input input,
+        .grid-input select {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: #1e293b;
+            background: transparent;
+            text-align: right;
+        }
+
+        /* Evaluation Table */
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .eval-table th {
+            background: #eef2ff;
+            padding: 8px 10px;
+            font-weight: 800;
+            color: #1e40af;
+            border: 1px solid #c7d2fe;
+            text-align: center;
+        }
+
+        .eval-table td {
+            padding: 7px 10px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .eval-table tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .eval-table td:first-child {
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .rating-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .rating-group label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .rating-group input[type="radio"] {
+            accent-color: #2563eb;
+        }
+
+        .full-width-text {
+            padding: 10px;
+        }
+
+        .full-width-text textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: #1e293b;
+            min-height: 50px;
+            line-height: 1.6;
+        }
+
+        .sig-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-top: 2px dashed #e2e8f0;
+            page-break-inside: avoid;
+        }
+
+        .sig-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .sig-item-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 30px;
+        }
+
+        .sig-item input {
+            border: none;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: center;
+            width: 80%;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sheet">
+        <div id="appHeader"></div>
+        <div class="sheet-content">
+
+            <div class="visit-header">
+                <h2>استمارة الزيارة الصفية الإشرافية</h2>
+                <p>تقييم الأداء التدريسي للمعلم داخل الفصل الدراسي</p>
+            </div>
+
+            <!-- بيانات الزيارة -->
+            <div class="section-wrap">
+                <div class="section-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    بيانات الزيارة
+                </div>
+                <div class="grid-layout">
+                    <div class="grid-label">اسم المعلم</div>
+                    <div class="grid-input"><input type="text" id="cvTeacherName" data-save="1"
+                            placeholder="الاسم رباعياً"></div>
+
+                    <div class="grid-label">التخصص / المادة</div>
+                    <div class="grid-input"><input type="text" id="cvSubject" data-save="1" placeholder="اسم المادة">
+                    </div>
+
+                    <div class="grid-label">الصف والفصل</div>
+                    <div class="grid-input">
+                        <select id="cvGrade" data-save="1"
+                            style="flex:2; padding:4px; border:1px solid #e2e8f0; border-radius:4px; font-weight:bold; color:#1e293b;">
+                            <option value="" disabled selected>الصف</option>
+                            <option>الأول متوسط</option>
+                            <option>الثاني متوسط</option>
+                            <option>الثالث متوسط</option>
+                        </select>
+                        <span style="font-size:14px;font-weight:bold;color:#475569;margin:0 4px;">/</span>
+                        <select id="cvSection" data-save="1"
+                            style="flex:1; padding:4px; border:1px solid #e2e8f0; border-radius:4px; font-weight:bold; color:#1e293b;">
+                            <option value="" disabled selected>الفصل</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                    </div>
+
+                    <div class="grid-label">تاريخ الزيارة</div>
+                    <div class="grid-input" style="position:relative;">
+                        <input type="text" id="cvDateVisual" class="cell-text-overlay" placeholder="اختر التاريخ..."
+                            readonly style="cursor:pointer;width:100%;">
+                        <input type="date" id="cvDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
+
+                    <div class="grid-label">الحصة</div>
+                    <div class="grid-input">
+                        <select id="cvPeriod" data-save="1"
+                            style="width:100%; padding:4px; border:1px solid #e2e8f0; border-radius:4px; font-weight:bold; color:#1e293b;">
+                            <option value="" disabled selected>اختر الحصة</option>
+                            <option>الأولى</option>
+                            <option>الثانية</option>
+                            <option>الثالثة</option>
+                            <option>الرابعة</option>
+                            <option>الخامسة</option>
+                            <option>السادسة</option>
+                            <option>السابعة</option>
+                        </select>
+                    </div>
+
+                    <div class="grid-label">اسم المشرف / الزائر</div>
+                    <div class="grid-input"><input type="text" id="cvVisitorName" data-save="1"
+                            placeholder="اسم المشرف أو قائد المدرسة"></div>
+
+                    <div class="grid-label">موضوع الدرس</div>
+                    <div class="grid-input"><input type="text" id="cvLessonTopic" data-save="1"
+                            placeholder="عنوان الدرس المُقدَّم"></div>
+                </div>
+            </div>
+
+            <!-- تقييم الأداء -->
+            <div class="section-wrap">
+                <div class="section-title">
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                    معايير تقييم الأداء التدريسي
+                </div>
+                <div style="padding:10px; overflow-x:auto;">
+                    <table class="eval-table">
+                        <thead>
+                            <tr>
+                                <th style="width:40%;">المعيار</th>
+                                <th>ممتاز (4)</th>
+                                <th>جيد جداً (3)</th>
+                                <th>جيد (2)</th>
+                                <th>يحتاج تحسين (1)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>التخطيط وإعداد الدرس</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r1" id="r1_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r1" id="r1_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r1" id="r1_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r1" id="r1_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>مهارات التقديم والشرح</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r2" id="r2_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r2" id="r2_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r2" id="r2_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r2" id="r2_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>إدارة الفصل والوقت</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r3" id="r3_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r3" id="r3_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r3" id="r3_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r3" id="r3_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>التفاعل مع الطلاب وتحفيزهم</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r4" id="r4_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r4" id="r4_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r4" id="r4_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r4" id="r4_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>استخدام الوسائل التعليمية والتقنية</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r5" id="r5_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r5" id="r5_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r5" id="r5_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r5" id="r5_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>أساليب التقييم والتغذية الراجعة</td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r6" id="r6_4"
+                                                data-save="1" value="4">ممتاز</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r6" id="r6_3"
+                                                data-save="1" value="3">جيد جداً</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r6" id="r6_2"
+                                                data-save="1" value="2">جيد</label></div>
+                                </td>
+                                <td>
+                                    <div class="rating-group"><label><input type="radio" name="r6" id="r6_1"
+                                                data-save="1" value="1">يحتاج</label></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ملاحظات وتوصيات -->
+            <div class="section-wrap">
+                <div class="section-title">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    الملاحظات والتوصيات
+                </div>
+                <div class="full-width-text">
+                    <div style="font-size:12px;font-weight:bold;color:#1e293b;margin-bottom:5px;">نقاط القوة:</div>
+                    <textarea id="cvStrengths" data-save="1" placeholder="اذكر أبرز نقاط القوة الملاحظة في الدرس..."
+                        style="min-height:55px;"></textarea>
+                </div>
+                <div class="full-width-text" style="border-top:1px solid #e2e8f0;">
+                    <div style="font-size:12px;font-weight:bold;color:#1e293b;margin-bottom:5px;">جوانب التحسين
+                        والتوصيات:</div>
+                    <textarea id="cvImprove" data-save="1" placeholder="اذكر التوصيات والجوانب التي تحتاج إلى تطوير..."
+                        style="min-height:55px;"></textarea>
+                </div>
+            </div>
+
+            <!-- التوقيعات -->
+            <div class="sig-container">
+                <div class="sig-item">
+                    <div class="sig-item-title">المعلم</div>
+                    <input type="text" id="cvSigTeacher" data-save="1" placeholder="اسم المعلم وتوقيعه">
+                </div>
+                <div class="sig-item">
+                    <div class="sig-item-title">المشرف / الزائر</div>
+                    <input type="text" id="cvSigVisitor" data-save="1" placeholder="اسم المشرف وتوقيعه">
+                </div>
+                <div class="sig-item">
+                    <div class="sig-item-title">مدير المدرسة</div>
+                    <input type="text" id="cvSigManager" data-save="1" placeholder="عابد عبيد الجدعاني">
+                </div>
+            </div>
+
+        </div>
+        <div id="appFooter"></div>
+    </div>
+
+    <script>
+        window.currentPageKey = 'storage_classroom_visit_v1';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.appStorage.restorePage(window.currentPageKey);
+
+            var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            function formatDateAr(v) {
+                if (!v) return '';
+                var d = new Date(v);
+                if (isNaN(d)) return '';
+                return daysAr[d.getDay()] + ' - ' + d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0');
+            }
+            function setupDateSync(hId, vId) {
+                var h = document.getElementById(hId), v = document.getElementById(vId);
+                if (!h || !v) return;
+                if (h.value) v.value = formatDateAr(h.value);
+                h.addEventListener('change', function () {
+                    v.value = formatDateAr(h.value);
+                    if (window.appStorage && window.appStorage.savePage) window.appStorage.savePage(window.currentPageKey);
+                });
+            }
+            setupDateSync('cvDate', 'cvDateVisual');
+
+            window.appStorage.setupAutoSave(window.currentPageKey);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج قبول طالب</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=4">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="../shared/layout.js?v=3"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=6"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        .admit-header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #0c4a6e, #0284c7);
+            color: #fff;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, .25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admit-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' stroke='rgba(255,255,255,0.05)' stroke-width='2' fill='none'/%3E%3C/svg%3E") repeat;
+        }
+
+        .admit-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admit-header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: .9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .section-title {
+            background: #f0f9ff;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0c4a6e;
+            border-bottom: 1px solid #bae6fd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: auto 1fr auto 1fr;
+        }
+
+        .grid-label {
+            background: #fdfdfd;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .grid-input {
+            padding: 4px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .grid-input:nth-child(4n) {
+            border-left: none;
+        }
+
+        .grid-label:nth-last-child(-n+4),
+        .grid-input:nth-last-child(-n+4) {
+            border-bottom: none;
+        }
+
+        .grid-input input,
+        .grid-input select {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: #1e293b;
+            background: transparent;
+            text-align: right;
+        }
+
+        .doc-list {
+            padding: 12px 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .doc-item input[type=checkbox] {
+            accent-color: #0284c7;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .pledge-box {
+            background: #f0f9ff;
+            border: 1px dashed #7dd3fc;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 10px 15px;
+            font-size: 13px;
+            color: #0c4a6e;
+            line-height: 1.8;
+        }
+
+        .approval-band {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 12px 15px;
+            border-top: 1px solid #e2e8f0;
+            background: #fafbfc;
+        }
+
+        .approval-options {
+            display: flex;
+            gap: 20px;
+        }
+
+        .approval-options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .sig-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-top: 2px dashed #e2e8f0;
+        }
+
+        .sig-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .sig-item-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 30px;
+        }
+
+        .sig-item input {
+            border: none;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: center;
+            width: 80%;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sheet">
+        <div id="appHeader"></div>
+        <div class="sheet-content">
+            <div class="admit-header">
+                <h2>نموذج قبول طالب</h2>
+                <p>استمارة تسجيل وقبول الطلاب المستجدين والمنتقلين</p>
+            </div>
+
+            <!-- بيانات الطالب -->
+            <div class="section-wrap">
+                <div class="section-title"><i class="fa-solid fa-user-graduate"></i> بيانات الطالب</div>
+                <div class="grid-layout">
+                    <div class="grid-label">اسم الطالب رباعياً</div>
+                    <div class="grid-input" style="grid-column:span 3"><input type="text" id="adStudentName"
+                            data-save="1" placeholder="الاسم الأول - الأب - الجد - اللقب"></div>
+                    <div class="grid-label">رقم الهوية</div>
+                    <div class="grid-input"><input type="text" id="adStudentId" data-save="1" placeholder="10 أرقام">
+                    </div>
+                    <div class="grid-label">تاريخ الميلاد</div>
+                    <div class="grid-input" style="position:relative">
+                        <input type="text" id="adBirthVisual" placeholder="اختر التاريخ..." readonly
+                            style="cursor:pointer;width:100%;border:none;outline:none;font-family:inherit;font-size:13px;background:transparent;">
+                        <input type="date" id="adBirthDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
+                    <div class="grid-label">الجنسية</div>
+                    <div class="grid-input"><input type="text" id="adNationality" data-save="1"
+                            placeholder="سعودي / غير سعودي"></div>
+                    <div class="grid-label">المرحلة المطلوبة</div>
+                    <div class="grid-input">
+                        <select id="adStage" data-save="1"
+                            style="width:100%;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            <option value="" disabled selected>اختر</option>
+                            <option>الأول متوسط</option>
+                            <option>الثاني متوسط</option>
+                            <option>الثالث متوسط</option>
+                        </select>
+                    </div>
+                    <div class="grid-label">نوع القبول</div>
+                    <div class="grid-input">
+                        <select id="adType" data-save="1"
+                            style="width:100%;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            <option value="" disabled selected>اختر</option>
+                            <option>مستجد (صف أول)</option>
+                            <option>منتقل من مدرسة أخرى</option>
+                            <option>عائد من الخارج</option>
+                            <option>ساقط (من العام السابق)</option>
+                        </select>
+                    </div>
+                    <div class="grid-label">المدرسة السابقة</div>
+                    <div class="grid-input"><input type="text" id="adPrevSchool" data-save="1"
+                            placeholder="اسم المدرسة (إن وجد)"></div>
+                    <div class="grid-label">تاريخ التسجيل</div>
+                    <div class="grid-input" style="position:relative">
+                        <input type="text" id="adRegDateVisual" placeholder="اختر التاريخ..." readonly
+                            style="cursor:pointer;width:100%;border:none;outline:none;font-family:inherit;font-size:13px;background:transparent;">
+                        <input type="date" id="adRegDate" data-save="1"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- بيانات ولي الأمر -->
+            <div class="section-wrap">
+                <div class="section-title"><i class="fa-solid fa-user-tie"></i> بيانات ولي الأمر</div>
+                <div class="grid-layout">
+                    <div class="grid-label">اسم ولي الأمر</div>
+                    <div class="grid-input"><input type="text" id="adParentName" data-save="1" placeholder="رباعي">
+                    </div>
+                    <div class="grid-label">رقم الهوية</div>
+                    <div class="grid-input"><input type="text" id="adParentId" data-save="1" placeholder="10 أرقام">
+                    </div>
+                    <div class="grid-label">صلة القرابة</div>
+                    <div class="grid-input">
+                        <select id="adRelation" data-save="1"
+                            style="width:100%;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            <option value="" disabled selected>الصلة</option>
+                            <option>الأب</option>
+                            <option>الأم</option>
+                            <option>الأخ</option>
+                            <option>العم</option>
+                            <option>الجد</option>
+                            <option>كفيل</option>
+                        </select>
+                    </div>
+                    <div class="grid-label">رقم الجوال</div>
+                    <div class="grid-input"><input type="text" id="adParentPhone" data-save="1"
+                            placeholder="05xxxxxxxx"></div>
+                    <div class="grid-label">البريد الإلكتروني</div>
+                    <div class="grid-input"><input type="text" id="adParentEmail" data-save="1" placeholder="اختياري">
+                    </div>
+                    <div class="grid-label">العنوان الوطني</div>
+                    <div class="grid-input" style="grid-column:span 3"><input type="text" id="adAddress" data-save="1"
+                            placeholder="المنطقة - المدينة - الحي"></div>
+                </div>
+            </div>
+
+            <!-- الوثائق -->
+            <div class="section-wrap">
+                <div class="section-title"><i class="fa-solid fa-folder-open"></i> الوثائق المطلوبة</div>
+                <div class="doc-list">
+                    <label class="doc-item"><input type="checkbox" id="doc1" data-save="1"> صورة الهوية الوطنية
+                        للطالب</label>
+                    <label class="doc-item"><input type="checkbox" id="doc2" data-save="1"> صورة هوية ولي الأمر</label>
+                    <label class="doc-item"><input type="checkbox" id="doc3" data-save="1"> شهادة الميلاد</label>
+                    <label class="doc-item"><input type="checkbox" id="doc4" data-save="1"> نتيجة العام الدراسي
+                        السابق</label>
+                    <label class="doc-item"><input type="checkbox" id="doc5" data-save="1"> شهادة حسن السيرة
+                        والسلوك</label>
+                    <label class="doc-item"><input type="checkbox" id="doc6" data-save="1"> وثيقة النقل
+                        (للمنتقلين)</label>
+                    <label class="doc-item"><input type="checkbox" id="doc7" data-save="1"> صور شخصية (4 صور)</label>
+                    <label class="doc-item"><input type="checkbox" id="doc8" data-save="1"> سجل التطعيم الصحي</label>
+                </div>
+            </div>
+
+            <!-- تعهد ولي الأمر -->
+            <div class="section-wrap">
+                <div class="section-title"><i class="fa-solid fa-handshake"></i> تعهد ولي الأمر</div>
+                <div class="pledge-box">
+                    أتعهد أنا ولي أمر الطالب المذكور أعلاه بالتزام ابني بأنظمة المدرسة ولوائحها الداخلية، والحرص على
+                    انتظامه في الحضور والمواعيد، والتعاون مع الإدارة والهيئة التدريسية، وأن جميع البيانات المقدمة صحيحة
+                    وأتحمل المسؤولية الكاملة عن أي معلومات غير دقيقة.
+                </div>
+            </div>
+
+            <!-- قرار القبول -->
+            <div class="section-wrap">
+                <div class="section-title"><i class="fa-solid fa-clipboard-check"></i> قرار القبول — للاستخدام الرسمي
+                </div>
+                <div class="approval-band">
+                    <span style="font-size:13px;font-weight:800;color:#475569;">قرار الإدارة:</span>
+                    <div class="approval-options">
+                        <label><input type="radio" name="adDecision" id="adAccept" data-save="1"> ✅ مقبول</label>
+                        <label><input type="radio" name="adDecision" id="adReject" data-save="1"> ❌ مرفوض</label>
+                        <label><input type="radio" name="adDecision" id="adPending" data-save="1"> ⏳ قيد الدراسة</label>
+                    </div>
+                </div>
+                <div style="padding:10px 15px;border-top:1px solid #e2e8f0;">
+                    <div style="font-size:12px;font-weight:bold;color:#0c4a6e;margin-bottom:5px;">ملاحظة الإدارة:</div>
+                    <textarea id="adAdminNote" data-save="1" placeholder="سبب الرفض أو أي ملاحظة..."
+                        style="width:100%;border:none;outline:none;resize:none;font-family:inherit;font-size:13px;color:#1e293b;min-height:45px;line-height:1.6;"></textarea>
+                </div>
+            </div>
+
+            <!-- التوقيعات -->
+            <div class="sig-container">
+                <div class="sig-item">
+                    <div class="sig-item-title">توقيع ولي الأمر</div><input type="text" id="adSigParent" data-save="1"
+                        placeholder="الاسم والتوقيع">
+                </div>
+                <div class="sig-item">
+                    <div class="sig-item-title">موظف القبول</div><input type="text" id="adSigStaff" data-save="1"
+                        placeholder="الاسم والتوقيع">
+                </div>
+                <div class="sig-item">
+                    <div class="sig-item-title">مدير المدرسة</div><input type="text" id="adSigManager" data-save="1"
+                        placeholder="عابد عبيد الجدعاني">
+                </div>
+            </div>
+        </div>
+        <div id="appFooter"></div>
+    </div>
+    <script>
+        window.currentPageKey = 'storage_student_admission_v1';
+        document.addEventListener('DOMContentLoaded', () => {
+            window.appStorage.restorePage(window.currentPageKey);
+            var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            function formatDateAr(v) {
+                if (!v) return ''; var d = new Date(v); if (isNaN(d)) return '';
+                return daysAr[d.getDay()] + ' - ' + d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0');
+            }
+            function syncDate(hId, vId) {
+                var h = document.getElementById(hId), v = document.getElementById(vId);
+                if (!h || !v) return;
+                if (h.value) v.value = formatDateAr(h.value);
+                h.addEventListener('change', function () { v.value = formatDateAr(h.value); if (window.appStorage && window.appStorage.savePage) window.appStorage.savePage(window.currentPageKey); });
+            }
+            syncDate('adBirthDate', 'adBirthVisual');
+            syncDate('adRegDate', 'adRegDateVisual');
+            window.appStorage.setupAutoSave(window.currentPageKey);
+        });
+    </script>
+</body>
+
+</html>

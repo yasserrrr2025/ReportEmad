@@ -21,71 +21,33 @@ window.appPdf = {
 
     var isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent.toLowerCase());
 
-    try { await document.fonts.ready; } catch (e) { }
-
-    // ---- MOBILE: capture the original element directly to avoid off-screen clone issues ----
+    // On mobile, use window.print() — avoids canvas/CORS/file:// security restrictions on iOS
     if (isMobile) {
-      await this._exportMobile(sheet, filenameBase);
+      this._mobilePrint();
       return;
     }
 
-    // ---- DESKTOP: use a hidden clone ----
+    // Desktop: html2canvas + jsPDF clone approach
     await this._exportDesktop(sheet, filenameBase);
   },
 
-  // ---- MOBILE PATH ----
-  _exportMobile: async function (sheet, filenameBase) {
-    // Hide non-printable elements, capture, restore
-    var hidden = [];
-    sheet.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf]').forEach(function (el) {
-      if (el.style.display !== 'none') {
-        hidden.push({ el: el, prev: el.style.display });
-        el.style.display = 'none';
-      }
-    });
-
-    try {
-      var canvas = await html2canvas(sheet, {
-        scale: 1,
-        useCORS: true,
-        logging: false,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
-
-      // Restore hidden elements
-      hidden.forEach(function (item) { item.el.style.display = item.prev; });
-
-      var imgData = canvas.toDataURL('image/jpeg', 0.85);
-
-      var jsPDFCls = window.jspdf && window.jspdf.jsPDF;
-      if (!jsPDFCls) { alert('مكتبة PDF غير محملة.'); return; }
-
-      var pdf = new jsPDFCls({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-      var pdfW = pdf.internal.pageSize.getWidth();
-      var pdfH = pdf.internal.pageSize.getHeight();
-      var props = pdf.getImageProperties(imgData);
-      var ratio = props.width / props.height;
-
-      var dW = pdfW;
-      var dH = dW / ratio;
-      if (dH > pdfH) { dH = pdfH; dW = dH * ratio; }
-
-      var x = (pdfW - dW) / 2;
-      pdf.addImage(imgData, 'JPEG', x, 0, dW, dH);
-      pdf.save(filenameBase + '-' + new Date().toISOString().split('T')[0] + '.pdf');
-
-    } catch (e) {
-      hidden.forEach(function (item) { item.el.style.display = item.prev; });
-      console.error('Mobile PDF failed:', e);
-      alert('حدث خطأ أثناء إنشاء PDF: ' + e.message);
-    }
+  // ---- MOBILE: native print → PDF ----
+  _mobilePrint: function () {
+    // Brief instruction for iOS users
+    var msg = 'سيتم فتح قائمة الطباعة.\n' +
+      'لحفظ PDF على الجهاز:\n' +
+      '• iOS: اختر "PDF" أو "حفظ كـ PDF" من أسفل الشاشة\n' +
+      '• Android: اختر "حفظ كـ PDF" من قائمة الطابعات';
+    alert(msg);
+    window.print();
   },
 
   // ---- DESKTOP PATH ----
   _exportDesktop: async function (sheet, filenameBase) {
     var wrapper;
     try {
+      try { await document.fonts.ready; } catch (e) { }
+
       var clone = sheet.cloneNode(true);
       wrapper = document.createElement('div');
 
@@ -95,12 +57,12 @@ window.appPdf = {
       wrapper.appendChild(clone);
       document.body.appendChild(wrapper);
 
-      // Remove non-printable elements from clone
+      // Remove non-printable elements
       Array.from(clone.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf], input[type="file"], .flatpickr-calendar')).forEach(function (el) {
         if (el.parentNode) el.parentNode.removeChild(el);
       });
 
-      // Copy values by ID (Flatpickr-safe: uses attribute selector, not index)
+      // Copy input/select/textarea values by ID (Flatpickr-safe)
       Array.from(sheet.querySelectorAll('input[id], textarea[id], select[id]')).forEach(function (orig) {
         var cloneEl = clone.querySelector('[id="' + orig.id + '"]');
         if (!cloneEl) return;
@@ -112,25 +74,25 @@ window.appPdf = {
           cloneEl.innerHTML = orig.value;
         } else {
           cloneEl.value = orig.value;
-          // Flatpickr altInput: if original is hidden, sync the visible altInput too
+          // Sync visible Flatpickr altInput if original is hidden
           if (orig.style.display === 'none') {
             cloneEl.style.display = 'none';
             var altOrig = orig.nextElementSibling;
             if (altOrig && altOrig.classList && altOrig.classList.contains('flatpickr-input')) {
               var altClone = cloneEl.nextElementSibling;
-              if (altClone) { altClone.value = altOrig.value; }
+              if (altClone) altClone.value = altOrig.value;
             }
           }
         }
       });
 
-      // Copy radio/checkbox state by ID
+      // Copy radio/checkbox state
       Array.from(sheet.querySelectorAll('input[type="radio"][id], input[type="checkbox"][id]')).forEach(function (orig) {
         var cloneEl = clone.querySelector('[id="' + orig.id + '"]');
         if (cloneEl) cloneEl.checked = orig.checked;
       });
 
-      // Wait for images in clone to load
+      // Wait for images in clone
       await Promise.all(Array.from(clone.querySelectorAll('img')).map(function (img) {
         return img.complete ? Promise.resolve() : new Promise(function (r) { img.onload = r; img.onerror = r; });
       }));
@@ -148,7 +110,7 @@ window.appPdf = {
       var imgData = canvas.toDataURL('image/jpeg', 0.98);
 
       var jsPDFCls = window.jspdf && window.jspdf.jsPDF;
-      if (!jsPDFCls) { alert('مكتبة PDF غير محملة.'); return; }
+      if (!jsPDFCls) { alert('مكتبة PDF غير محملة. أعد تحديث الصفحة.'); return; }
 
       var pdf = new jsPDFCls({ unit: 'mm', format: 'a4', orientation: 'portrait' });
       var pdfW = pdf.internal.pageSize.getWidth();
@@ -160,13 +122,12 @@ window.appPdf = {
       var dH = dW / ratio;
       if (dH > pdfH) { dH = pdfH; dW = dH * ratio; }
 
-      var x = (pdfW - dW) / 2;
-      pdf.addImage(imgData, 'JPEG', x, 0, dW, dH);
+      pdf.addImage(imgData, 'JPEG', (pdfW - dW) / 2, 0, dW, dH);
       pdf.save(filenameBase + '-' + new Date().toISOString().split('T')[0] + '.pdf');
 
     } catch (e) {
       if (wrapper && wrapper.parentNode) document.body.removeChild(wrapper);
-      console.error('Desktop PDF failed:', e);
+      console.error('PDF generation failed:', e);
       alert('حدث خطأ أثناء إنشاء PDF: ' + e.message);
     }
   }
