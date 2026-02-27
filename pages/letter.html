@@ -252,13 +252,15 @@
                 display: none !important;
             }
 
-            .letter-body {
-                border: none;
-                min-height: 0;
+            /* Remove min-heights — these were causing a blank second page */
+            .letter-page {
+                min-height: 0 !important;
+                padding: 2mm 0 !important;
             }
 
-            .sheet-content {
-                padding-bottom: 0 !important;
+            .letter-body {
+                min-height: 0 !important;
+                border: none !important;
             }
         }
     </style>

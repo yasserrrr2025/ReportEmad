@@ -925,13 +925,10 @@ body {
   .sheet {
     display: block;
     width: 210mm;
-    min-height: 297mm;
+    /* NO min-height and NO padding-bottom here — they caused a blank second page */
     margin: 0;
     box-shadow: none;
     transform: none !important;
-    position: relative;
-    /* Reserve bottom space for the fixed footer */
-    padding-bottom: 28mm;
   }
 
   #appHeader {
@@ -939,8 +936,8 @@ body {
   }
 
   /*
-    Fixed footer: always sits at the absolute bottom of every printed page
-    regardless of how much content is on the page.
+    Fixed footer: always at the absolute bottom of every printed page.
+    Works correctly for both short and long content.
   */
   #appFooter {
     display: block;
@@ -952,7 +949,9 @@ body {
 
   .sheet-content {
     display: block;
-    padding: 2mm 10.5mm 0;
+    padding: 2mm 10.5mm;
+    /* Reserve space so content doesn't hide under the fixed footer (~18mm) */
+    padding-bottom: 22mm;
   }
 
   .sheet-content-inner {
