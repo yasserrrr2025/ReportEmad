@@ -324,6 +324,8 @@ body {
   padding: 2mm 10.5mm;
   display: flex;
   flex-direction: column;
+  /* Reserve space at bottom so content never hides behind fixed footer */
+  padding-bottom: 28mm;
 }
 
 /* .sheet-content-inner is added by layout.js and acts as the
@@ -920,41 +922,41 @@ body {
     margin: 0;
   }
 
-  /*
-    Switch to display:table so:
-    - #appHeader (table-header-group) repeats at top of every page
-    - #appFooter (table-footer-group) repeats at bottom of every page
-    - .sheet-content (table-row-group) fills the middle
-  */
   .sheet {
-    display: table;
-    border-collapse: collapse;
+    display: block;
     width: 210mm;
-    min-height: 0;
+    min-height: 297mm;
     margin: 0;
     box-shadow: none;
     transform: none !important;
+    position: relative;
+    /* Reserve bottom space for the fixed footer */
+    padding-bottom: 28mm;
   }
 
   #appHeader {
-    display: table-header-group;
-    margin-top: 0;
+    display: block;
   }
 
+  /*
+    Fixed footer: always sits at the absolute bottom of every printed page
+    regardless of how much content is on the page.
+  */
   #appFooter {
-    display: table-footer-group;
-    margin-top: 0;
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 210mm;
   }
 
   .sheet-content {
-    display: table-row-group;
-    padding: 0;
+    display: block;
+    padding: 2mm 10.5mm 0;
   }
 
   .sheet-content-inner {
-    display: table-cell;
-    padding: 2mm 10.5mm 4mm;
-    vertical-align: top;
+    display: block;
   }
 
   .noprint {
@@ -966,10 +968,8 @@ body {
     print-color-adjust: exact !important;
   }
 
-  .official-footer {
-    width: 100%;
-    print-color-adjust: exact !important;
-    -webkit-print-color-adjust: exact !important;
+  .official-footer img {
+    width: 210mm;
   }
 
   .fit-text {

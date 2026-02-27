@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="../shared/layout.js?v=4"></script>
+    <script src="../shared/layout.js?v=3"></script>
     <script src="../shared/storage.js?v=3"></script>
     <script src="../shared/pdf.js?v=6"></script>
     <script src="../shared/ui.js?v=3"></script>
@@ -23,7 +23,7 @@
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             direction: ltr;
         }
@@ -32,15 +32,16 @@
             background: #fff;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
-            padding: 4px 9px;
+            padding: 5px 9px;
             font-size: 13px;
             font-weight: 700;
             color: #334155;
             cursor: pointer;
-            min-width: 30px;
+            min-width: 32px;
             text-align: center;
             transition: all 0.15s;
-            line-height: 1.4;
+            line-height: 1.3;
+            font-family: inherit;
         }
 
         .tb-btn:hover {
@@ -56,7 +57,7 @@
         .tb-select {
             border: 1px solid #cbd5e1;
             border-radius: 4px;
-            padding: 4px 6px;
+            padding: 5px 6px;
             font-family: inherit;
             font-size: 12px;
             color: #334155;
@@ -73,46 +74,46 @@
             flex-shrink: 0;
         }
 
-        /* ─── Letter Area ─── */
+        /* ─── Letter Layout ─── */
         .letter-page {
-            padding: 10px 30px 25px;
-            min-height: 680px;
+            padding: 4mm 10.5mm 6mm;
             display: flex;
             flex-direction: column;
+            min-height: 220mm;
+            box-sizing: border-box;
         }
 
-        /* Left-aligned meta (physical left in RTL) */
-        .letter-meta {
-            text-align: left;
-            margin-bottom: 18px;
+        /* ─── Meta Block (date/day/ref) — physical LEFT side ─── */
+        .letter-meta-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 12px;
             font-size: 13px;
             color: #1e293b;
-            line-height: 2;
+            line-height: 2.2;
         }
 
-        .letter-meta .meta-row {
+        .letter-meta-block .meta-line {
             display: flex;
             align-items: center;
             gap: 6px;
-            justify-content: flex-end;
-            /* end = physical left in RTL */
         }
 
-        /* Force to physical left */
-        .letter-meta-block {
-            float: left;
-            text-align: left;
-            clear: both;
+        .meta-label {
+            font-weight: 800;
+            color: #334155;
+            white-space: nowrap;
         }
 
         .date-display {
             display: inline-block;
-            border-bottom: 1px dashed #94a3b8;
-            min-width: 140px;
-            padding: 0 4px;
+            border-bottom: 1.5px dashed #94a3b8;
+            min-width: 130px;
+            padding: 0 5px;
             cursor: pointer;
-            font-weight: 600;
             color: #1e293b;
+            font-weight: 600;
         }
 
         .date-display:hover {
@@ -120,54 +121,66 @@
             border-radius: 3px;
         }
 
-        .day-name {
+        .day-name-el {
             font-weight: 700;
-            color: #475569;
+            color: #64748b;
+            font-size: 12px;
+            margin-right: 2px;
+            margin-bottom: 0;
         }
 
         .ref-input {
             border: none;
-            border-bottom: 1px dashed #94a3b8;
+            border-bottom: 1.5px dashed #94a3b8;
             font-family: inherit;
             font-size: 13px;
             color: #1e293b;
             background: transparent;
             outline: none;
-            min-width: 80px;
-            padding: 0 4px;
+            min-width: 90px;
+            padding: 0 5px;
         }
 
-        /* Title */
+        #letterDateHidden {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 1px;
+            height: 1px;
+        }
+
+        /* ─── Title ─── */
         .letter-title-wrap {
             text-align: center;
-            margin: 10px 0 16px;
+            margin: 8px 0 14px;
         }
 
         .letter-title-input {
             border: none;
             border-bottom: 2px solid #1e293b;
             font-family: inherit;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 800;
             color: #1e293b;
             background: transparent;
             outline: none;
             text-align: center;
-            width: 75%;
+            width: 80%;
             padding-bottom: 4px;
         }
 
         .letter-title-input::placeholder {
             color: #94a3b8;
+            font-weight: 500;
         }
 
-        /* Body */
+        /* ─── Body ─── */
         .letter-body {
             flex: 1;
-            min-height: 340px;
+            min-height: 140mm;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 14px 18px;
+            padding: 12px 16px;
             font-family: 'Tajawal', sans-serif;
             font-size: 14px;
             line-height: 2;
@@ -181,50 +194,56 @@
 
         .letter-body:focus {
             border-color: #94a3b8;
-            box-shadow: 0 0 0 3px rgba(148, 163, 184, .15);
         }
 
         .letter-body p {
-            margin: 0 0 4px;
+            margin: 0 0 2px;
         }
 
-        /* Footer */
-        .letter-footer-sig {
-            margin-top: 20px;
-            float: left;
-            text-align: left;
-            clear: both;
+        .letter-body:empty::before {
+            content: 'اكتب محتوى الخطاب هنا...';
+            color: #94a3b8;
+            pointer-events: none;
         }
 
-        .letter-footer-sig .manager-label {
+        /* ─── Manager Sig — always physical LEFT ─── */
+        .letter-sig-area {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+            /* In RTL flex-end = physical left */
+        }
+
+        .letter-sig-box {
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .letter-sig-label {
             font-size: 12px;
             font-weight: 800;
             color: #475569;
-            margin-bottom: 6px;
+            margin-bottom: 28px;
+        }
+
+        .letter-sig-line {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 6px;
         }
 
         .letter-manager-input {
             border: none;
-            border-bottom: 1px solid #cbd5e1;
             font-family: inherit;
             font-size: 13px;
             font-weight: 700;
             color: #1e293b;
             background: transparent;
             outline: none;
-            min-width: 200px;
-            padding-bottom: 3px;
+            text-align: center;
+            width: 100%;
         }
 
-        /* Hidden date input */
-        #letterDateHidden {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-            width: 1px;
-            height: 1px;
-        }
-
+        /* ─── Print ─── */
         @media print {
 
             .noprint,
@@ -235,20 +254,11 @@
 
             .letter-body {
                 border: none;
-                box-shadow: none;
-                min-height: auto;
+                min-height: 0;
             }
 
-            body {
-                background: white;
-            }
-
-            .sheet {
-                box-shadow: none;
-            }
-
-            @page {
-                margin: 12mm;
+            .sheet-content {
+                padding-bottom: 0 !important;
             }
         }
     </style>
@@ -258,8 +268,8 @@
     <div class="sheet">
         <div id="appHeader"></div>
 
-        <!-- Formatting Toolbar (no-print) -->
-        <div class="letter-toolbar noprint" id="letterToolbar">
+        <!-- Toolbar (no-print) -->
+        <div class="letter-toolbar noprint">
             <select class="tb-select" id="tbFont" onchange="applyFont(this.value)" title="نوع الخط">
                 <option value="Tajawal">Tajawal</option>
                 <option value="Arial">Arial</option>
@@ -277,76 +287,79 @@
                 <option value="28px">28</option>
             </select>
             <div class="tb-divider"></div>
-            <button class="tb-btn" id="btnBold" onclick="fmt('bold')" title="عريض (Ctrl+B)"><b>B</b></button>
-            <button class="tb-btn" id="btnItalic" onclick="fmt('italic')" title="مائل (Ctrl+I)"><i>I</i></button>
-            <button class="tb-btn" id="btnUnderline" onclick="fmt('underline')" title="تسطير (Ctrl+U)"><u>U</u></button>
+            <button class="tb-btn" id="btnBold" onclick="fmt('bold')" title="عريض"><b>B</b></button>
+            <button class="tb-btn" id="btnItalic" onclick="fmt('italic')" title="مائل"><i
+                    style="font-style:italic">I</i></button>
+            <button class="tb-btn" id="btnUnderline" onclick="fmt('underline')" title="تسطير"><u>U</u></button>
             <div class="tb-divider"></div>
-            <button class="tb-btn" onclick="fmt('justifyRight')" title="يمين"> <i
+            <button class="tb-btn" onclick="fmt('justifyRight')" title="يمين"><i
                     class="fa-solid fa-align-right"></i></button>
-            <button class="tb-btn" onclick="fmt('justifyCenter')" title="توسيط"> <i
+            <button class="tb-btn" onclick="fmt('justifyCenter')" title="توسيط"><i
                     class="fa-solid fa-align-center"></i></button>
-            <button class="tb-btn" onclick="fmt('justifyLeft')" title="يسار"> <i
+            <button class="tb-btn" onclick="fmt('justifyLeft')" title="يسار"><i
                     class="fa-solid fa-align-left"></i></button>
-            <button class="tb-btn" onclick="fmt('justifyFull')" title="ضبط"> <i
+            <button class="tb-btn" onclick="fmt('justifyFull')" title="ضبط"><i
                     class="fa-solid fa-align-justify"></i></button>
             <div class="tb-divider"></div>
-            <button class="tb-btn" onclick="fmt('insertOrderedList')" title="قائمة مرقمة"><i
+            <button class="tb-btn" onclick="fmt('insertOrderedList')" title="مرقمة"><i
                     class="fa-solid fa-list-ol"></i></button>
-            <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="قائمة نقطية"><i
+            <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="نقطية"><i
                     class="fa-solid fa-list-ul"></i></button>
             <div class="tb-divider"></div>
-            <button class="tb-btn" onclick="fmt('removeFormat')" title="مسح التنسيق" style="font-size:11px;">✕
-                تنسيق</button>
+            <button class="tb-btn" onclick="fmt('removeFormat')" title="مسح التنسيق"
+                style="font-size:11px;padding:5px 7px;">✕ تنسيق</button>
         </div>
 
-        <div class="letter-page">
+        <div class="sheet-content">
+            <div class="letter-page">
 
-            <!-- Date / Day / Ref — physical left -->
-            <div class="letter-meta-block">
-                <div style="font-size:13px;color:#1e293b;line-height:2.2;">
-                    <div>
-                        <strong>التاريخ: </strong>
+                <!-- Meta: physical left side -->
+                <input type="date" id="letterDateHidden">
+                <div class="letter-meta-block">
+                    <div class="meta-line">
+                        <span class="meta-label">التاريخ:</span>
                         <span id="dateDisplay" class="date-display" title="انقر لتغيير التاريخ"></span>
-                        <input type="date" id="letterDateHidden">
                     </div>
-                    <div class="day-name" id="dayNameEl"></div>
-                    <div>
-                        <strong>الرقم: </strong>
+                    <div class="day-name-el" id="dayNameEl"></div>
+                    <div class="meta-line" style="margin-top:2px;">
+                        <span class="meta-label">الرقم:</span>
                         <input type="text" id="letterRef" class="ref-input" data-save="1" placeholder="........">
                     </div>
                 </div>
-            </div>
-            <div style="clear:both; margin-top:10px;"></div>
 
-            <!-- Title -->
-            <div class="letter-title-wrap">
-                <input type="text" id="letterTitle" class="letter-title-input" data-save="1"
-                    placeholder="الموضوع: اكتب عنوان الخطاب هنا">
-            </div>
+                <!-- Title -->
+                <div class="letter-title-wrap">
+                    <input type="text" id="letterTitle" class="letter-title-input" data-save="1"
+                        placeholder="الموضوع: ...">
+                </div>
 
-            <!-- Editable Body -->
-            <div class="letter-body" id="letterBody" contenteditable="true" dir="rtl">
-                <p>بسم الله الرحمن الرحيم</p>
-                <p><br></p>
-                <p>سعادة / ...</p>
-                <p><br></p>
-                <p style="text-align:right;">السلام عليكم ورحمة الله وبركاته،</p>
-                <p><br></p>
-                <p>اكتب محتوى الخطاب هنا...</p>
-                <p><br></p>
-                <p><br></p>
-                <p>وتقبلوا فائق الاحترام والتقدير،،،</p>
-            </div>
+                <!-- Body -->
+                <div class="letter-body" id="letterBody" contenteditable="true" dir="rtl">
+                    <p>بسم الله الرحمن الرحيم</p>
+                    <p><br></p>
+                    <p>سعادة / ...</p>
+                    <p><br></p>
+                    <p>السلام عليكم ورحمة الله وبركاته،</p>
+                    <p><br></p>
+                    <p>نأمل التكرم بـ ...</p>
+                    <p><br></p>
+                    <p><br></p>
+                    <p>وتقبلوا فائق الاحترام والتقدير،،،</p>
+                </div>
 
-            <!-- Manager Signature — physical left -->
-            <div class="letter-footer-sig">
-                <div class="manager-label">مدير المدرسة</div>
-                <input type="text" id="letterManager" class="letter-manager-input" data-save="1"
-                    placeholder="عابد عبيد الجدعاني">
-            </div>
-            <div style="clear:both;"></div>
+                <!-- Manager Signature — physical left -->
+                <div class="letter-sig-area">
+                    <div class="letter-sig-box">
+                        <div class="letter-sig-label">مدير المدرسة</div>
+                        <div class="letter-sig-line">
+                            <input type="text" id="letterManager" class="letter-manager-input" data-save="1"
+                                placeholder="عابد عبيد الجدعاني">
+                        </div>
+                    </div>
+                </div>
 
-        </div><!-- /letter-page -->
+            </div><!-- /letter-page -->
+        </div><!-- /sheet-content -->
 
         <div id="appFooter"></div>
     </div>
@@ -355,81 +368,67 @@
         window.currentPageKey = 'storage_letter_v1';
 
         var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-
         function pad2(n) { return String(n).padStart(2, '0'); }
 
-        function applyDateDisplay(dateStr) {
-            var d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+        function applyDateDisplay(ds) {
+            var d = ds ? new Date(ds + 'T00:00:00') : new Date();
             var y = d.getFullYear(), m = pad2(d.getMonth() + 1), dd = pad2(d.getDate());
             document.getElementById('dateDisplay').textContent = y + '/' + m + '/' + dd;
             document.getElementById('dayNameEl').textContent = daysAr[d.getDay()];
             document.getElementById('letterDateHidden').value = y + '-' + m + '-' + dd;
         }
 
-        // ─── Formatting ───
         function fmt(cmd, val) {
             document.getElementById('letterBody').focus();
             document.execCommand(cmd, false, val || null);
-            updateToolbarState();
+            updatetoolbar();
         }
-
         function applyFont(font) {
             document.getElementById('letterBody').focus();
             document.execCommand('fontName', false, font);
         }
-
         function applySize(size) {
             var body = document.getElementById('letterBody');
             body.focus();
-            // execCommand fontSize uses 1-7. We use a workaround:
             document.execCommand('fontSize', false, '7');
             body.querySelectorAll('font[size="7"]').forEach(function (el) {
                 el.removeAttribute('size');
                 el.style.fontSize = size;
             });
         }
-
-        function updateToolbarState() {
+        function updatetoolbar() {
             ['bold', 'italic', 'underline'].forEach(function (cmd) {
                 var map = { bold: 'btnBold', italic: 'btnItalic', underline: 'btnUnderline' };
                 var el = document.getElementById(map[cmd]);
-                if (el) {
-                    if (document.queryCommandState(cmd)) el.classList.add('active');
-                    else el.classList.remove('active');
-                }
+                if (!el) return;
+                el.classList.toggle('active', !!document.queryCommandState(cmd));
             });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             window.appStorage.restorePage(window.currentPageKey);
 
-            // Restore or set date
             var savedDate = localStorage.getItem(window.currentPageKey + '_date');
             applyDateDisplay(savedDate || null);
 
-            // Restore body HTML
             var savedBody = localStorage.getItem(window.currentPageKey + '_body');
             if (savedBody) document.getElementById('letterBody').innerHTML = savedBody;
 
-            // Date click → open picker
+            // Click on date display → open native date picker
             document.getElementById('dateDisplay').addEventListener('click', function () {
                 var h = document.getElementById('letterDateHidden');
                 try { h.showPicker(); } catch (e) { h.click(); }
             });
-
             document.getElementById('letterDateHidden').addEventListener('change', function () {
                 applyDateDisplay(this.value);
                 localStorage.setItem(window.currentPageKey + '_date', this.value);
             });
 
-            // Auto-save body
             document.getElementById('letterBody').addEventListener('input', function () {
                 localStorage.setItem(window.currentPageKey + '_body', this.innerHTML);
             });
-
-            // Toolbar state on selection change
-            document.getElementById('letterBody').addEventListener('keyup', updateToolbarState);
-            document.getElementById('letterBody').addEventListener('mouseup', updateToolbarState);
+            document.getElementById('letterBody').addEventListener('keyup', updatetoolbar);
+            document.getElementById('letterBody').addEventListener('mouseup', updatetoolbar);
 
             window.appStorage.setupAutoSave(window.currentPageKey);
         });
