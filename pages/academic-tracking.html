@@ -16,11 +16,11 @@
     <style>
         .track-header {
             text-align: center;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #78350f, #d97706);
             color: #fff;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            margin-bottom: 12px;
             box-shadow: 0 4px 10px rgba(217, 119, 6, .25);
             position: relative;
             overflow: hidden;
@@ -35,15 +35,15 @@
 
         .track-header h2 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             position: relative;
             z-index: 1;
         }
 
         .track-header p {
-            margin: 5px 0 0;
-            font-size: 14px;
+            margin: 4px 0 0;
+            font-size: 13px;
             opacity: .9;
             position: relative;
             z-index: 1;
@@ -51,19 +51,26 @@
 
         .section-wrap {
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
             background: #fff;
             overflow: hidden;
         }
 
         .section-title {
             background: #fffbeb;
-            padding: 8px 15px;
-            font-size: 14px;
+            padding: 6px 12px;
+            font-size: 13px;
             font-weight: 800;
             color: #78350f;
             border-bottom: 1px solid #fde68a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .section-title-left {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -76,8 +83,8 @@
 
         .grid-label {
             background: #fdfdfd;
-            padding: 8px 12px;
-            font-size: 13px;
+            padding: 6px 10px;
+            font-size: 12px;
             font-weight: 700;
             color: #475569;
             border-bottom: 1px solid #e2e8f0;
@@ -88,7 +95,7 @@
         }
 
         .grid-input {
-            padding: 4px 8px;
+            padding: 3px 7px;
             border-bottom: 1px solid #e2e8f0;
             border-left: 1px solid #e2e8f0;
             display: flex;
@@ -110,21 +117,22 @@
             border: none;
             outline: none;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 12px;
             color: #1e293b;
             background: transparent;
             text-align: right;
         }
 
+        /* Grades Table */
         .grades-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .grades-table th {
             background: #fef3c7;
-            padding: 8px 10px;
+            padding: 6px 8px;
             font-weight: 800;
             color: #78350f;
             border: 1px solid #fde68a;
@@ -132,25 +140,30 @@
         }
 
         .grades-table td {
-            padding: 6px 8px;
+            padding: 0;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
-            text-align: center;
         }
 
-        .grades-table input {
+        .grades-table td input {
             width: 100%;
             border: none;
             outline: none;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 12px;
             color: #1e293b;
             background: transparent;
             text-align: center;
+            padding: 5px 4px;
+        }
+
+        .grades-table td input.subject-input {
+            text-align: right;
+            padding-right: 8px;
         }
 
         .grades-table tr:nth-child(even) td {
-            background: #fafafa;
+            background: #fffdf5;
         }
 
         .grade-low {
@@ -163,22 +176,51 @@
             font-weight: 800;
         }
 
+        .grade-mid {
+            color: #d97706 !important;
+            font-weight: 800;
+        }
+
+        .grade-result {
+            text-align: center;
+            padding: 5px 4px;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        .del-row-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 3px 6px;
+            line-height: 1;
+        }
+
+        .del-row-btn:hover {
+            background: #fef2f2;
+            border-radius: 4px;
+        }
+
+        /* Absence Table */
         .abs-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .abs-table th {
             background: #fef3c7;
-            padding: 7px 10px;
+            padding: 6px 8px;
             font-weight: 800;
             color: #78350f;
             border: 1px solid #fde68a;
+            text-align: center;
         }
 
         .abs-table td {
-            padding: 6px 10px;
+            padding: 0;
             border: 1px solid #e2e8f0;
             text-align: center;
         }
@@ -188,33 +230,69 @@
             border: none;
             outline: none;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 12px;
             color: #1e293b;
             background: transparent;
             text-align: center;
+            padding: 5px 4px;
         }
 
-        .full-textarea {
-            padding: 10px;
+        .abs-total {
+            font-weight: 800;
+            color: #1e293b;
+            padding: 5px 4px;
         }
 
-        .full-textarea textarea {
+        /* Add row button */
+        .add-row-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #d97706;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 6px;
+        }
+
+        .add-row-btn:hover {
+            background: #b45309;
+        }
+
+        /* Notes */
+        .note-area {
+            padding: 8px 12px;
+        }
+
+        .note-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #78350f;
+            margin-bottom: 4px;
+        }
+
+        .note-area textarea {
             width: 100%;
             border: none;
             outline: none;
             resize: none;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 12px;
             color: #1e293b;
-            min-height: 50px;
-            line-height: 1.6;
+            min-height: 40px;
+            line-height: 1.5;
         }
 
+        /* Signatures */
         .sig-container {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding: 15px 20px;
+            padding: 12px 20px;
             border-top: 2px dashed #e2e8f0;
         }
 
@@ -224,10 +302,10 @@
         }
 
         .sig-item-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             color: #475569;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .sig-item input {
@@ -235,12 +313,28 @@
             border-bottom: 1px solid #cbd5e1;
             text-align: center;
             width: 80%;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #1e293b;
             background: transparent;
             outline: none;
-            padding-bottom: 4px;
+            padding-bottom: 3px;
+        }
+
+        @media print {
+
+            .noprint,
+            .header-actions-bar {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .sheet {
+                box-shadow: none;
+            }
         }
     </style>
 </head>
@@ -256,22 +350,24 @@
 
             <!-- بيانات الطالب -->
             <div class="section-wrap">
-                <div class="section-title"><i class="fa-solid fa-user-graduate"></i> بيانات الطالب</div>
+                <div class="section-title">
+                    <div class="section-title-left"><i class="fa-solid fa-user-graduate"></i> بيانات الطالب</div>
+                </div>
                 <div class="grid-layout">
                     <div class="grid-label">اسم الطالب</div>
                     <div class="grid-input"><input type="text" id="atName" data-save="1" placeholder="رباعي"></div>
-                    <div class="grid-label">الفصل / الصف</div>
+                    <div class="grid-label">الصف / الفصل</div>
                     <div class="grid-input">
                         <select id="atGrade" data-save="1"
-                            style="flex:2;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            style="flex:2;padding:3px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;font-size:12px;">
                             <option value="" disabled selected>الصف</option>
                             <option>الأول متوسط</option>
                             <option>الثاني متوسط</option>
                             <option>الثالث متوسط</option>
                         </select>
-                        <span style="margin:0 4px;font-weight:bold;">/</span>
+                        <span style="margin:0 3px;font-weight:bold;">/</span>
                         <select id="atSection" data-save="1"
-                            style="flex:1;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            style="flex:1;padding:3px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;font-size:12px;">
                             <option value="" disabled selected>الفصل</option>
                             <option>1</option>
                             <option>2</option>
@@ -288,7 +384,7 @@
                     <div class="grid-label">الفترة الزمنية</div>
                     <div class="grid-input">
                         <select id="atPeriod" data-save="1"
-                            style="width:100%;padding:4px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;">
+                            style="width:100%;padding:3px;border:1px solid #e2e8f0;border-radius:4px;font-weight:bold;color:#1e293b;font-size:12px;">
                             <option value="" disabled selected>اختر</option>
                             <option>الشهر الأول</option>
                             <option>الشهر الثاني</option>
@@ -303,86 +399,38 @@
                 </div>
             </div>
 
-            <!-- الدرجات -->
+            <!-- رصد الدرجات -->
             <div class="section-wrap">
-                <div class="section-title"><i class="fa-solid fa-chart-simple"></i> رصد الدرجات</div>
-                <div style="padding:10px;overflow-x:auto;">
+                <div class="section-title">
+                    <div class="section-title-left"><i class="fa-solid fa-chart-simple"></i> رصد الدرجات</div>
+                    <button class="add-row-btn noprint" onclick="addSubjectRow()"><i class="fa-solid fa-plus"></i> إضافة
+                        مادة</button>
+                </div>
+                <div style="overflow-x:auto;">
                     <table class="grades-table">
                         <thead>
                             <tr>
-                                <th>المادة</th>
-                                <th>الدرجة الكاملة</th>
-                                <th>درجة الطالب</th>
-                                <th>النسبة %</th>
-                                <th>الحالة</th>
+                                <th style="width:30%;">المادة</th>
+                                <th style="width:12%;">الدرجة الكاملة</th>
+                                <th style="width:12%;">درجة الطالب</th>
+                                <th style="width:10%;">النسبة %</th>
+                                <th style="width:10%;">الحالة</th>
+                                <th class="noprint" style="width:6%;"></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>القرآن الكريم</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g1" data-save="1" placeholder="-"></td>
-                                <td id="gp1">-</td>
-                                <td id="gs1">-</td>
-                            </tr>
-                            <tr>
-                                <td>التوحيد</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g2" data-save="1" placeholder="-"></td>
-                                <td id="gp2">-</td>
-                                <td id="gs2">-</td>
-                            </tr>
-                            <tr>
-                                <td>اللغة العربية</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g3" data-save="1" placeholder="-"></td>
-                                <td id="gp3">-</td>
-                                <td id="gs3">-</td>
-                            </tr>
-                            <tr>
-                                <td>اللغة الإنجليزية</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g4" data-save="1" placeholder="-"></td>
-                                <td id="gp4">-</td>
-                                <td id="gs4">-</td>
-                            </tr>
-                            <tr>
-                                <td>الرياضيات</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g5" data-save="1" placeholder="-"></td>
-                                <td id="gp5">-</td>
-                                <td id="gs5">-</td>
-                            </tr>
-                            <tr>
-                                <td>العلوم</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g6" data-save="1" placeholder="-"></td>
-                                <td id="gp6">-</td>
-                                <td id="gs6">-</td>
-                            </tr>
-                            <tr>
-                                <td>الاجتماعيات</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g7" data-save="1" placeholder="-"></td>
-                                <td id="gp7">-</td>
-                                <td id="gs7">-</td>
-                            </tr>
-                            <tr>
-                                <td>الحاسب والتقنية</td>
-                                <td style="color:#64748b;">100</td>
-                                <td><input type="text" id="g8" data-save="1" placeholder="-"></td>
-                                <td id="gp8">-</td>
-                                <td id="gs8">-</td>
-                            </tr>
+                        <tbody id="gradesBody">
+                            <!-- rows injected by JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- الغيابات -->
+            <!-- سجل الغيابات -->
             <div class="section-wrap">
-                <div class="section-title"><i class="fa-solid fa-calendar-xmark"></i> سجل الغيابات</div>
-                <div style="padding:10px;overflow-x:auto;">
+                <div class="section-title">
+                    <div class="section-title-left"><i class="fa-solid fa-calendar-xmark"></i> سجل الغيابات</div>
+                </div>
+                <div style="overflow-x:auto;padding:6px;">
                     <table class="abs-table">
                         <thead>
                             <tr>
@@ -395,31 +443,34 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" id="abTotal" data-save="1" placeholder="0"></td>
-                                <td><input type="text" id="abExcused" data-save="1" placeholder="0"></td>
-                                <td><input type="text" id="abUnexcused" data-save="1" placeholder="0"></td>
-                                <td id="abSum">-</td>
-                                <td id="abRate">-</td>
+                                <td><input type="number" id="abTotal" data-save="1" placeholder="0" oninput="calcAbs()">
+                                </td>
+                                <td><input type="number" id="abExcused" data-save="1" placeholder="0"
+                                        oninput="calcAbs()"></td>
+                                <td><input type="number" id="abUnexcused" data-save="1" placeholder="0"
+                                        oninput="calcAbs()"></td>
+                                <td class="abs-total" id="abSum">-</td>
+                                <td class="abs-total" id="abRate">-</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- الملاحظات والتوصيات -->
+            <!-- الملاحظات -->
             <div class="section-wrap">
-                <div class="section-title"><i class="fa-solid fa-pen-to-square"></i> الملاحظات والتوصيات</div>
-                <div class="full-textarea">
-                    <div style="font-size:12px;font-weight:bold;color:#78350f;margin-bottom:5px;">ملاحظات المعلم على
-                        أداء الطالب:</div>
+                <div class="section-title">
+                    <div class="section-title-left"><i class="fa-solid fa-pen-to-square"></i> الملاحظات والتوصيات</div>
+                </div>
+                <div class="note-area">
+                    <div class="note-label">ملاحظات المعلم:</div>
                     <textarea id="atTeacherNote" data-save="1"
                         placeholder="نقاط القوة، نقاط الضعف، السلوك العام..."></textarea>
                 </div>
-                <div class="full-textarea" style="border-top:1px solid #e2e8f0;">
-                    <div style="font-size:12px;font-weight:bold;color:#78350f;margin-bottom:5px;">التوصيات والإجراءات
-                        المقترحة:</div>
+                <div class="note-area" style="border-top:1px solid #e2e8f0;">
+                    <div class="note-label">التوصيات والإجراءات المقترحة:</div>
                     <textarea id="atRecommend" data-save="1"
-                        placeholder="الخطة العلاجية، التواصل مع ولي الأمر، التحويل للإرشاد..."></textarea>
+                        placeholder="الخطة العلاجية، تواصل ولي الأمر، التحويل للإرشاد..."></textarea>
                 </div>
             </div>
 
@@ -441,49 +492,130 @@
         </div>
         <div id="appFooter"></div>
     </div>
+
     <script>
-        window.currentPageKey = 'storage_academic_track_v1';
-        document.addEventListener('DOMContentLoaded', () => {
+        window.currentPageKey = 'storage_academic_track_v2';
+
+        var defaultSubjects = [
+            'القرآن الكريم', 'التوحيد', 'اللغة العربية', 'اللغة الإنجليزية',
+            'الرياضيات', 'العلوم', 'الاجتماعيات', 'الحاسب والتقنية'
+        ];
+
+        var subjectsData = []; // [{name, max, score}]
+
+        function loadSubjectsFromStorage() {
+            try {
+                var s = localStorage.getItem(window.currentPageKey + '_subjects');
+                if (s) return JSON.parse(s);
+            } catch (e) { }
+            return null;
+        }
+
+        function saveSubjectsToStorage() {
+            // collect current table values
+            var rows = document.querySelectorAll('#gradesBody tr');
+            var data = [];
+            rows.forEach(function (tr) {
+                var nameEl = tr.querySelector('.subject-input');
+                var maxEl = tr.querySelector('.max-input');
+                var scoreEl = tr.querySelector('.score-input');
+                data.push({
+                    name: nameEl ? nameEl.value : '',
+                    max: maxEl ? maxEl.value : '100',
+                    score: scoreEl ? scoreEl.value : ''
+                });
+            });
+            subjectsData = data;
+            localStorage.setItem(window.currentPageKey + '_subjects', JSON.stringify(data));
+        }
+
+        function calcGradeStatus(score, max) {
+            var s = parseFloat(score), m = parseFloat(max) || 100;
+            if (isNaN(s)) return { pct: '-', label: '-', cls: '' };
+            var pct = Math.round((s / m) * 100);
+            var label, cls;
+            if (pct >= 90) { label = 'ممتاز'; cls = 'grade-ok'; }
+            else if (pct >= 75) { label = 'جيد جداً'; cls = 'grade-ok'; }
+            else if (pct >= 60) { label = 'جيد'; cls = 'grade-mid'; }
+            else { label = 'راسب'; cls = 'grade-low'; }
+            return { pct: pct + '%', label: label, cls: cls };
+        }
+
+        function updateRowCalc(tr) {
+            var maxEl = tr.querySelector('.max-input');
+            var scoreEl = tr.querySelector('.score-input');
+            var pctTd = tr.querySelector('.pct-cell');
+            var statuTd = tr.querySelector('.status-cell');
+            if (!maxEl || !scoreEl || !pctTd || !statuTd) return;
+            var r = calcGradeStatus(scoreEl.value, maxEl.value);
+            pctTd.textContent = r.pct;
+            statuTd.textContent = r.label;
+            statuTd.className = 'grade-result status-cell ' + r.cls;
+        }
+
+        function buildRow(idx, name, max, score) {
+            var tr = document.createElement('tr');
+            tr.dataset.idx = idx;
+            tr.innerHTML =
+                '<td><input class="subject-input" type="text" placeholder="اسم المادة..." value="' + escHtml(name || '') + '" oninput="saveSubjectsToStorage()"></td>' +
+                '<td><input class="max-input" type="number" value="' + escHtml(max || '100') + '" min="1" oninput="updateRowCalc(this.closest(\'tr\'));saveSubjectsToStorage()"></td>' +
+                '<td><input class="score-input" type="number" placeholder="-" value="' + escHtml(score || '') + '" oninput="updateRowCalc(this.closest(\'tr\'));saveSubjectsToStorage()"></td>' +
+                '<td class="grade-result pct-cell">-</td>' +
+                '<td class="grade-result status-cell">-</td>' +
+                '<td class="noprint" style="text-align:center;"><button class="del-row-btn" onclick="deleteRow(this)" title="حذف">✕</button></td>';
+            return tr;
+        }
+
+        function escHtml(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function renderGradesTable(data) {
+            var tbody = document.getElementById('gradesBody');
+            tbody.innerHTML = '';
+            data.forEach(function (d, i) {
+                var tr = buildRow(i, d.name, d.max, d.score);
+                tbody.appendChild(tr);
+                updateRowCalc(tr);
+            });
+        }
+
+        function addSubjectRow() {
+            var tbody = document.getElementById('gradesBody');
+            var idx = tbody.querySelectorAll('tr').length;
+            var tr = buildRow(idx, '', '100', '');
+            tbody.appendChild(tr);
+            saveSubjectsToStorage();
+            tr.querySelector('.subject-input').focus();
+        }
+
+        function deleteRow(btn) {
+            var tbody = document.getElementById('gradesBody');
+            if (tbody.querySelectorAll('tr').length <= 1) return;
+            btn.closest('tr').remove();
+            saveSubjectsToStorage();
+        }
+
+        function calcAbs() {
+            var total = parseFloat(document.getElementById('abTotal').value) || 0;
+            var exc = parseFloat(document.getElementById('abExcused').value) || 0;
+            var unexc = parseFloat(document.getElementById('abUnexcused').value) || 0;
+            var sum = exc + unexc;
+            document.getElementById('abSum').textContent = sum || '-';
+            document.getElementById('abRate').textContent = total > 0 ? Math.round(((total - sum) / total) * 100) + '%' : '-';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
             window.appStorage.restorePage(window.currentPageKey);
 
-            // Auto-calculate grade percentages
-            for (var i = 1; i <= 8; i++) {
-                (function (idx) {
-                    var el = document.getElementById('g' + idx);
-                    if (!el) return;
-                    el.addEventListener('input', function () { calcGrade(idx); });
-                    calcGrade(idx);
-                })(i);
-            }
-            function calcGrade(idx) {
-                var el = document.getElementById('g' + idx);
-                var pEl = document.getElementById('gp' + idx);
-                var sEl = document.getElementById('gs' + idx);
-                if (!el || !pEl || !sEl) return;
-                var v = parseFloat(el.value);
-                if (isNaN(v)) { pEl.textContent = '-'; sEl.textContent = '-'; sEl.className = ''; return; }
-                var pct = Math.round(v);
-                pEl.textContent = pct + '%';
-                if (pct >= 90) { sEl.textContent = 'ممتاز'; sEl.className = 'grade-ok'; }
-                else if (pct >= 75) { sEl.textContent = 'جيد جداً'; sEl.className = 'grade-ok'; }
-                else if (pct >= 60) { sEl.textContent = 'جيد'; sEl.className = ''; }
-                else { sEl.textContent = 'راسب'; sEl.className = 'grade-low'; }
+            var saved = loadSubjectsFromStorage();
+            if (saved && saved.length) {
+                renderGradesTable(saved);
+            } else {
+                renderGradesTable(defaultSubjects.map(function (n) { return { name: n, max: '100', score: '' }; }));
             }
 
-            // Absence calc
-            ['abExcused', 'abUnexcused', 'abTotal'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) el.addEventListener('input', calcAbs);
-            });
-            function calcAbs() {
-                var total = parseFloat(document.getElementById('abTotal').value) || 0;
-                var exc = parseFloat(document.getElementById('abExcused').value) || 0;
-                var unexc = parseFloat(document.getElementById('abUnexcused').value) || 0;
-                var sum = exc + unexc;
-                document.getElementById('abSum').textContent = sum;
-                document.getElementById('abRate').textContent = total > 0 ? Math.round(((total - sum) / total) * 100) + '%' : '-';
-            }
-
+            calcAbs();
             window.appStorage.setupAutoSave(window.currentPageKey);
         });
     </script>

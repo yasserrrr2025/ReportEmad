@@ -587,8 +587,8 @@
                 var hidden = document.getElementById(hiddenId);
                 var visual = document.getElementById(visibleId);
                 if (!hidden || !visual) return;
-                // Restore visual from saved value
                 if (hidden.value) visual.value = formatDateAr(hidden.value);
+                visual.addEventListener('click', function () { try { hidden.showPicker(); } catch (e) { hidden.click(); } });
                 hidden.addEventListener('change', function () {
                     visual.value = formatDateAr(hidden.value);
                     if (window.appStorage && window.appStorage.savePage)

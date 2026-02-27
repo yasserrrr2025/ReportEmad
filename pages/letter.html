@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج خطاب رسمي</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=4">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="../shared/layout.js?v=3"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=6"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        /* ─── Toolbar ─── */
+        .letter-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 7px 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            direction: ltr;
+        }
+
+        .tb-btn {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 9px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            min-width: 30px;
+            text-align: center;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+
+        .tb-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .tb-btn.active {
+            background: #1e40af;
+            color: #fff;
+            border-color: #1e40af;
+        }
+
+        .tb-select {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-family: inherit;
+            font-size: 12px;
+            color: #334155;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .tb-divider {
+            width: 1px;
+            height: 22px;
+            background: #cbd5e1;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        /* ─── Letter Area ─── */
+        .letter-page {
+            padding: 10px 30px 25px;
+            min-height: 680px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Left-aligned meta (physical left in RTL) */
+        .letter-meta {
+            text-align: left;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #1e293b;
+            line-height: 2;
+        }
+
+        .letter-meta .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: flex-end;
+            /* end = physical left in RTL */
+        }
+
+        /* Force to physical left */
+        .letter-meta-block {
+            float: left;
+            text-align: left;
+            clear: both;
+        }
+
+        .date-display {
+            display: inline-block;
+            border-bottom: 1px dashed #94a3b8;
+            min-width: 140px;
+            padding: 0 4px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .date-display:hover {
+            background: #f0f9ff;
+            border-radius: 3px;
+        }
+
+        .day-name {
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .ref-input {
+            border: none;
+            border-bottom: 1px dashed #94a3b8;
+            font-family: inherit;
+            font-size: 13px;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+            min-width: 80px;
+            padding: 0 4px;
+        }
+
+        /* Title */
+        .letter-title-wrap {
+            text-align: center;
+            margin: 10px 0 16px;
+        }
+
+        .letter-title-input {
+            border: none;
+            border-bottom: 2px solid #1e293b;
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 800;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+            text-align: center;
+            width: 75%;
+            padding-bottom: 4px;
+        }
+
+        .letter-title-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Body */
+        .letter-body {
+            flex: 1;
+            min-height: 340px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            line-height: 2;
+            color: #1e293b;
+            outline: none;
+            background: #fff;
+            direction: rtl;
+            text-align: right;
+            cursor: text;
+        }
+
+        .letter-body:focus {
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(148, 163, 184, .15);
+        }
+
+        .letter-body p {
+            margin: 0 0 4px;
+        }
+
+        /* Footer */
+        .letter-footer-sig {
+            margin-top: 20px;
+            float: left;
+            text-align: left;
+            clear: both;
+        }
+
+        .letter-footer-sig .manager-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .letter-manager-input {
+            border: none;
+            border-bottom: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            background: transparent;
+            outline: none;
+            min-width: 200px;
+            padding-bottom: 3px;
+        }
+
+        /* Hidden date input */
+        #letterDateHidden {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 1px;
+            height: 1px;
+        }
+
+        @media print {
+
+            .noprint,
+            .header-actions-bar,
+            .letter-toolbar {
+                display: none !important;
+            }
+
+            .letter-body {
+                border: none;
+                box-shadow: none;
+                min-height: auto;
+            }
+
+            body {
+                background: white;
+            }
+
+            .sheet {
+                box-shadow: none;
+            }
+
+            @page {
+                margin: 12mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sheet">
+        <div id="appHeader"></div>
+
+        <!-- Formatting Toolbar (no-print) -->
+        <div class="letter-toolbar noprint" id="letterToolbar">
+            <select class="tb-select" id="tbFont" onchange="applyFont(this.value)" title="نوع الخط">
+                <option value="Tajawal">Tajawal</option>
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+            </select>
+            <select class="tb-select" id="tbSize" onchange="applySize(this.value)" title="حجم الخط">
+                <option value="12px">12</option>
+                <option value="13px">13</option>
+                <option value="14px" selected>14</option>
+                <option value="16px">16</option>
+                <option value="18px">18</option>
+                <option value="20px">20</option>
+                <option value="24px">24</option>
+                <option value="28px">28</option>
+            </select>
+            <div class="tb-divider"></div>
+            <button class="tb-btn" id="btnBold" onclick="fmt('bold')" title="عريض (Ctrl+B)"><b>B</b></button>
+            <button class="tb-btn" id="btnItalic" onclick="fmt('italic')" title="مائل (Ctrl+I)"><i>I</i></button>
+            <button class="tb-btn" id="btnUnderline" onclick="fmt('underline')" title="تسطير (Ctrl+U)"><u>U</u></button>
+            <div class="tb-divider"></div>
+            <button class="tb-btn" onclick="fmt('justifyRight')" title="يمين"> <i
+                    class="fa-solid fa-align-right"></i></button>
+            <button class="tb-btn" onclick="fmt('justifyCenter')" title="توسيط"> <i
+                    class="fa-solid fa-align-center"></i></button>
+            <button class="tb-btn" onclick="fmt('justifyLeft')" title="يسار"> <i
+                    class="fa-solid fa-align-left"></i></button>
+            <button class="tb-btn" onclick="fmt('justifyFull')" title="ضبط"> <i
+                    class="fa-solid fa-align-justify"></i></button>
+            <div class="tb-divider"></div>
+            <button class="tb-btn" onclick="fmt('insertOrderedList')" title="قائمة مرقمة"><i
+                    class="fa-solid fa-list-ol"></i></button>
+            <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="قائمة نقطية"><i
+                    class="fa-solid fa-list-ul"></i></button>
+            <div class="tb-divider"></div>
+            <button class="tb-btn" onclick="fmt('removeFormat')" title="مسح التنسيق" style="font-size:11px;">✕
+                تنسيق</button>
+        </div>
+
+        <div class="letter-page">
+
+            <!-- Date / Day / Ref — physical left -->
+            <div class="letter-meta-block">
+                <div style="font-size:13px;color:#1e293b;line-height:2.2;">
+                    <div>
+                        <strong>التاريخ: </strong>
+                        <span id="dateDisplay" class="date-display" title="انقر لتغيير التاريخ"></span>
+                        <input type="date" id="letterDateHidden">
+                    </div>
+                    <div class="day-name" id="dayNameEl"></div>
+                    <div>
+                        <strong>الرقم: </strong>
+                        <input type="text" id="letterRef" class="ref-input" data-save="1" placeholder="........">
+                    </div>
+                </div>
+            </div>
+            <div style="clear:both; margin-top:10px;"></div>
+
+            <!-- Title -->
+            <div class="letter-title-wrap">
+                <input type="text" id="letterTitle" class="letter-title-input" data-save="1"
+                    placeholder="الموضوع: اكتب عنوان الخطاب هنا">
+            </div>
+
+            <!-- Editable Body -->
+            <div class="letter-body" id="letterBody" contenteditable="true" dir="rtl">
+                <p>بسم الله الرحمن الرحيم</p>
+                <p><br></p>
+                <p>سعادة / ...</p>
+                <p><br></p>
+                <p style="text-align:right;">السلام عليكم ورحمة الله وبركاته،</p>
+                <p><br></p>
+                <p>اكتب محتوى الخطاب هنا...</p>
+                <p><br></p>
+                <p><br></p>
+                <p>وتقبلوا فائق الاحترام والتقدير،،،</p>
+            </div>
+
+            <!-- Manager Signature — physical left -->
+            <div class="letter-footer-sig">
+                <div class="manager-label">مدير المدرسة</div>
+                <input type="text" id="letterManager" class="letter-manager-input" data-save="1"
+                    placeholder="عابد عبيد الجدعاني">
+            </div>
+            <div style="clear:both;"></div>
+
+        </div><!-- /letter-page -->
+
+        <div id="appFooter"></div>
+    </div>
+
+    <script>
+        window.currentPageKey = 'storage_letter_v1';
+
+        var daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+        function pad2(n) { return String(n).padStart(2, '0'); }
+
+        function applyDateDisplay(dateStr) {
+            var d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+            var y = d.getFullYear(), m = pad2(d.getMonth() + 1), dd = pad2(d.getDate());
+            document.getElementById('dateDisplay').textContent = y + '/' + m + '/' + dd;
+            document.getElementById('dayNameEl').textContent = daysAr[d.getDay()];
+            document.getElementById('letterDateHidden').value = y + '-' + m + '-' + dd;
+        }
+
+        // ─── Formatting ───
+        function fmt(cmd, val) {
+            document.getElementById('letterBody').focus();
+            document.execCommand(cmd, false, val || null);
+            updateToolbarState();
+        }
+
+        function applyFont(font) {
+            document.getElementById('letterBody').focus();
+            document.execCommand('fontName', false, font);
+        }
+
+        function applySize(size) {
+            var body = document.getElementById('letterBody');
+            body.focus();
+            // execCommand fontSize uses 1-7. We use a workaround:
+            document.execCommand('fontSize', false, '7');
+            body.querySelectorAll('font[size="7"]').forEach(function (el) {
+                el.removeAttribute('size');
+                el.style.fontSize = size;
+            });
+        }
+
+        function updateToolbarState() {
+            ['bold', 'italic', 'underline'].forEach(function (cmd) {
+                var map = { bold: 'btnBold', italic: 'btnItalic', underline: 'btnUnderline' };
+                var el = document.getElementById(map[cmd]);
+                if (el) {
+                    if (document.queryCommandState(cmd)) el.classList.add('active');
+                    else el.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            window.appStorage.restorePage(window.currentPageKey);
+
+            // Restore or set date
+            var savedDate = localStorage.getItem(window.currentPageKey + '_date');
+            applyDateDisplay(savedDate || null);
+
+            // Restore body HTML
+            var savedBody = localStorage.getItem(window.currentPageKey + '_body');
+            if (savedBody) document.getElementById('letterBody').innerHTML = savedBody;
+
+            // Date click → open picker
+            document.getElementById('dateDisplay').addEventListener('click', function () {
+                var h = document.getElementById('letterDateHidden');
+                try { h.showPicker(); } catch (e) { h.click(); }
+            });
+
+            document.getElementById('letterDateHidden').addEventListener('change', function () {
+                applyDateDisplay(this.value);
+                localStorage.setItem(window.currentPageKey + '_date', this.value);
+            });
+
+            // Auto-save body
+            document.getElementById('letterBody').addEventListener('input', function () {
+                localStorage.setItem(window.currentPageKey + '_body', this.innerHTML);
+            });
+
+            // Toolbar state on selection change
+            document.getElementById('letterBody').addEventListener('keyup', updateToolbarState);
+            document.getElementById('letterBody').addEventListener('mouseup', updateToolbarState);
+
+            window.appStorage.setupAutoSave(window.currentPageKey);
+        });
+    </script>
+</body>
+
+</html>

@@ -508,6 +508,7 @@
                 var h = document.getElementById(hId), v = document.getElementById(vId);
                 if (!h || !v) return;
                 if (h.value) v.value = formatDateAr(h.value);
+                v.addEventListener('click', function () { try { h.showPicker(); } catch (e) { h.click(); } });
                 h.addEventListener('change', function () {
                     v.value = formatDateAr(h.value);
                     if (window.appStorage && window.appStorage.savePage) window.appStorage.savePage(window.currentPageKey);
