@@ -81,12 +81,7 @@ window.appPdf = {
       // Ensure the clone itself has the exact dimensions and no margins
       clone.style.width = '210mm';
       clone.style.maxWidth = '210mm';
-      clone.style.margin = '0';
-      clone.style.transform = 'none';
-
-      // Ensure the clone itself has the exact dimensions and no margins
-      clone.style.width = '210mm';
-      clone.style.maxWidth = '210mm';
+      clone.style.height = 'auto';
       clone.style.margin = '0';
       clone.style.transform = 'none';
 
@@ -139,16 +134,31 @@ window.appPdf = {
       let x = 0;
       let y = 0;
 
-      // Shrink-to-fit logic if the form is extremely long (like peer-visit.html)
-      // This guarantees the PDF is ALWAYS exactly 1 page
-      if (targetHeight > pdfHeight) {
-        targetHeight = pdfHeight;
-        targetWidth = targetHeight * ratio;
-        // Center horizontally if shrunk
-        x = (pdfWidth - targetWidth) / 2;
-      }
+      // Smart pagination:
+      // If the form is just slightly taller than A4 (up to 12% overflow), shrink it into 1 page to avoid a mostly empty 2nd page.
+      // If it's much taller, paginate it properly across multiple A4 pages without microscopic text.
+      if (targetHeight <= pdfHeight * 1.12) {
+        if (targetHeight > pdfHeight) {
+          targetHeight = pdfHeight;
+          targetWidth = targetHeight * ratio;
+          x = (pdfWidth - targetWidth) / 2;
+        }
+        pdf.addImage(imgData, 'JPEG', x, y, targetWidth, targetHeight);
+      } else {
+        // Multi-page logic
+        let currentHeight = 0;
+        let pageNumber = 1;
 
-      pdf.addImage(imgData, 'JPEG', x, y, targetWidth, targetHeight);
+        while (currentHeight < targetHeight) {
+          if (pageNumber > 1) {
+            pdf.addPage();
+          }
+          // Draw the same image shifted up by the amount of pages we've already rendered
+          pdf.addImage(imgData, 'JPEG', 0, -currentHeight, targetWidth, targetHeight);
+          currentHeight += pdfHeight;
+          pageNumber++;
+        }
+      }
       pdf.save(`${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`);
 
       // Cleanup

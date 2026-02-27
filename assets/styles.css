@@ -291,12 +291,13 @@ body {
 .sheet {
   background: #fff;
   width: 210mm;
-  height: 297mm;
+  min-height: 297mm;
+  height: auto;
   margin: 20px auto;
   padding: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   padding-bottom: 15mm;
@@ -864,21 +865,16 @@ body {
 
 /* Footer styling */
 .official-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--footer-h);
   width: 100%;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  padding-bottom: 5mm;
+  margin-top: auto;
+  padding-top: 5mm;
 }
 
 .official-footer img {
   width: 18.89cm;
-  height: 100%;
   object-fit: contain;
   display: block;
 }
