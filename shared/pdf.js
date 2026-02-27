@@ -23,7 +23,7 @@ window.appPdf = {
     }
 
     if (specificName) {
-      baseName = `${baseName} - ${specificName}`;
+      baseName = baseName + ' - ' + specificName;
     }
 
     // Clean invalid filename characters
@@ -39,46 +39,30 @@ window.appPdf = {
     // Detect mobile devices
     const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent.toLowerCase());
 
-    // Wait for header image to be fully loaded
-    const headerImg = document.getElementById('officialHeaderImg');
-    if (headerImg && !headerImg.complete) {
-      await new Promise((resolve) => {
-        headerImg.onload = resolve;
-        headerImg.onerror = resolve;
-      });
-    }
+    // Wait for all images inside the sheet to load
+    const allImgs = sheet.querySelectorAll('img');
+    await Promise.all(Array.from(allImgs).map(function (img) {
+      return img.complete ? Promise.resolve() : new Promise(function (r) { img.onload = r; img.onerror = r; });
+    }));
 
-    // Wait for footer image to be fully loaded
-    const footerImg = document.getElementById('footerPic');
-    if (footerImg && !footerImg.complete) {
-      await new Promise((resolve) => {
-        footerImg.onload = resolve;
-        footerImg.onerror = resolve;
-      });
-    }
-
-    // Wait for all fonts (like Tajawal) to be fully loaded before capturing
+    // Wait for all fonts to be ready
     if (document.fonts && document.fonts.ready) {
       await document.fonts.ready;
     }
 
     try {
-      // Create a temporary wrapper to enforce desktop dimensions for the canvas capture
-      const originalContainer = sheet.parentElement;
+      // Clone the sheet for off-screen rendering
       const clone = sheet.cloneNode(true);
       const wrapper = document.createElement('div');
 
-      // Place wrapper in the DOM but hidden underneath the current view
-      // html2canvas often calculates wrong offsets if the element is too far off-screen (-9999px)
       wrapper.style.position = 'absolute';
       wrapper.style.top = '0';
       wrapper.style.left = '0';
-      wrapper.style.width = '210mm'; // Exactly A4 width
-      wrapper.style.zIndex = '-9999'; // Hide it behind the actual content
+      wrapper.style.width = '210mm';
+      wrapper.style.zIndex = '-9999';
       wrapper.style.background = 'white';
-      wrapper.style.direction = 'rtl'; // Ensure RTL is preserved in clone
+      wrapper.style.direction = 'rtl';
 
-      // Ensure the clone itself has the exact dimensions and no margins
       clone.style.width = '210mm';
       clone.style.maxWidth = '210mm';
       clone.style.height = 'auto';
@@ -88,80 +72,68 @@ window.appPdf = {
       wrapper.appendChild(clone);
       document.body.appendChild(wrapper);
 
-      // Hide elements that shouldn't be printed in the clone
-      const noprints = clone.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf], input[type="file"]');
-      noprints.forEach(el => el.style.display = 'none');
-
-      // Copy input/textarea values to the clone since cloneNode doesn't copy current values
-      // Copy input/textarea/select values to the clone since cloneNode doesn't copy current values
-      const originalInputs = sheet.querySelectorAll('input, textarea, select');
-      const cloneInputs = clone.querySelectorAll('input, textarea, select');
-      for (let i = 0; i < originalInputs.length; i++) {
-        cloneInputs[i].value = originalInputs[i].value;
-        if (originalInputs[i].tagName === 'TEXTAREA') {
-          cloneInputs[i].innerHTML = originalInputs[i].value;
-        } else if (originalInputs[i].tagName === 'SELECT') {
-          cloneInputs[i].selectedIndex = originalInputs[i].selectedIndex;
-        }
-      }
-
-      // Very important: Use scale: 1 for mobile to prevent memory crash (canvas gets too large on iOS)
-      const scaleCanvas = isMobile ? 1 : 2;
-      const imgQuality = isMobile ? 0.8 : 0.98;
-
-      // Use html2canvas directly to get the full image, then fit it on ONE single jsPDF page
-      const canvas = await html2canvas(clone, {
-        scale: scaleCanvas,
-        useCORS: true,
-        logging: false
+      // Hide non-printable elements in the clone
+      clone.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf], input[type="file"], .flatpickr-calendar').forEach(function (el) {
+        el.style.display = 'none';
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', imgQuality);
-
-      // Access jsPDF from the global window object
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
-      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const ratio = imgProps.width / imgProps.height;
-
-      let targetWidth = pdfWidth;
-      let targetHeight = targetWidth / ratio;
-
-      let x = 0;
-      let y = 0;
-
-      // Smart pagination:
-      // If the form is just slightly taller than A4 (up to 12% overflow), shrink it into 1 page to avoid a mostly empty 2nd page.
-      // If it's much taller, paginate it properly across multiple A4 pages without microscopic text.
-      if (targetHeight <= pdfHeight * 1.12) {
-        if (targetHeight > pdfHeight) {
-          targetHeight = pdfHeight;
-          targetWidth = targetHeight * ratio;
-          x = (pdfWidth - targetWidth) / 2;
+      // SAFE value copy: match by ID to avoid Flatpickr altInput index mismatch.
+      // Flatpickr's altInput:true creates an extra hidden input element which shifts
+      // the old index-based loop — this approach is immune to that.
+      sheet.querySelectorAll('input[id], textarea[id], select[id]').forEach(function (orig) {
+        var cloneEl = clone.querySelector('#' + CSS.escape(orig.id));
+        if (!cloneEl) return;
+        if (orig.tagName === 'SELECT') {
+          cloneEl.selectedIndex = orig.selectedIndex;
+        } else if (orig.tagName === 'TEXTAREA') {
+          cloneEl.value = orig.value;
+          cloneEl.innerHTML = orig.value;
+        } else {
+          cloneEl.value = orig.value;
         }
-        pdf.addImage(imgData, 'JPEG', x, y, targetWidth, targetHeight);
-      } else {
-        // Multi-page logic
-        let currentHeight = 0;
-        let pageNumber = 1;
+      });
 
-        while (currentHeight < targetHeight) {
-          if (pageNumber > 1) {
-            pdf.addPage();
-          }
-          // Draw the same image shifted up by the amount of pages we've already rendered
-          pdf.addImage(imgData, 'JPEG', 0, -currentHeight, targetWidth, targetHeight);
-          currentHeight += pdfHeight;
-          pageNumber++;
-        }
+      // Also copy radio/checkbox checked state by ID
+      sheet.querySelectorAll('input[type="radio"][id], input[type="checkbox"][id]').forEach(function (orig) {
+        var cloneEl = clone.querySelector('#' + CSS.escape(orig.id));
+        if (cloneEl) cloneEl.checked = orig.checked;
+      });
+
+      // Use scale: 1 on mobile to avoid memory crash on iOS
+      var scaleCanvas = isMobile ? 1 : 2;
+      var imgQuality = isMobile ? 0.8 : 0.98;
+
+      var canvas = await html2canvas(clone, {
+        scale: scaleCanvas,
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      });
+
+      var imgData = canvas.toDataURL('image/jpeg', imgQuality);
+
+      var jsPDFLib = window.jspdf.jsPDF;
+      var pdf = new jsPDFLib({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      var pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
+      var pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+
+      var imgProps = pdf.getImageProperties(imgData);
+      var imgRatio = imgProps.width / imgProps.height;
+
+      // Always shrink-to-fit on exactly ONE A4 page
+      var drawWidth = pdfWidth;
+      var drawHeight = drawWidth / imgRatio;
+
+      if (drawHeight > pdfHeight) {
+        drawHeight = pdfHeight;
+        drawWidth = drawHeight * imgRatio;
       }
-      pdf.save(`${filenameBase}-${new Date().toISOString().split('T')[0]}.pdf`);
 
-      // Cleanup
+      var x = (pdfWidth - drawWidth) / 2;
+      pdf.addImage(imgData, 'JPEG', x, 0, drawWidth, drawHeight);
+      pdf.save(filenameBase + '-' + new Date().toISOString().split('T')[0] + '.pdf');
+
       document.body.removeChild(wrapper);
 
     } catch (e) {
