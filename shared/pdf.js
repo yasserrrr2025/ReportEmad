@@ -1,14 +1,14 @@
 window.appPdf = {
   exportToPDF: function () {
-    let baseName = document.title || 'تقرير';
+    var baseName = document.title || 'تقرير';
 
-    const titleInput = document.getElementById('reportTitle');
-    const plcName = document.getElementById('plcName');
-    const studentName = document.getElementById('incStudentName');
-    const visitingTeacher = document.getElementById('visitingTeacher');
-    const meetSubject = document.getElementById('meetSubject');
+    var titleInput = document.getElementById('reportTitle');
+    var plcName = document.getElementById('plcName');
+    var studentName = document.getElementById('incStudentName');
+    var visitingTeacher = document.getElementById('visitingTeacher');
+    var meetSubject = document.getElementById('meetSubject');
 
-    let specificName = '';
+    var specificName = '';
 
     if (titleInput && titleInput.value && titleInput.value !== 'اسم التقرير') {
       specificName = titleInput.value.trim();
@@ -26,63 +26,46 @@ window.appPdf = {
       baseName = baseName + ' - ' + specificName;
     }
 
-    // Clean invalid filename characters
     baseName = baseName.replace(/[\/\?<>\\:\*\|":\n\r]/g, '').trim();
-
     this.makePdf('.sheet', baseName);
   },
 
   makePdf: async function (sheetSelector, filenameBase) {
-    const sheet = document.querySelector(sheetSelector);
+    var sheet = document.querySelector(sheetSelector);
     if (!sheet) return;
 
-    // Detect mobile devices
-    const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent.toLowerCase());
+    var isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent.toLowerCase());
 
-    // Wait for all images inside the sheet to load
-    const allImgs = sheet.querySelectorAll('img');
-    await Promise.all(Array.from(allImgs).map(function (img) {
-      return img.complete ? Promise.resolve() : new Promise(function (r) { img.onload = r; img.onerror = r; });
-    }));
-
-    // Wait for all fonts to be ready
-    if (document.fonts && document.fonts.ready) {
-      await document.fonts.ready;
-    }
+    // Wait for fonts
+    try { await document.fonts.ready; } catch (e) { }
 
     try {
-      // Clone the sheet for off-screen rendering
-      const clone = sheet.cloneNode(true);
-      const wrapper = document.createElement('div');
+      var clone = sheet.cloneNode(true);
+      var wrapper = document.createElement('div');
 
-      wrapper.style.position = 'absolute';
-      wrapper.style.top = '0';
-      wrapper.style.left = '0';
-      wrapper.style.width = '210mm';
-      wrapper.style.zIndex = '-9999';
-      wrapper.style.background = 'white';
-      wrapper.style.direction = 'rtl';
-
-      clone.style.width = '210mm';
-      clone.style.maxWidth = '210mm';
-      clone.style.height = 'auto';
-      clone.style.margin = '0';
-      clone.style.transform = 'none';
+      wrapper.style.cssText = 'position:absolute;top:0;left:0;width:210mm;z-index:-9999;background:white;direction:rtl;';
+      clone.style.cssText = 'width:210mm;max-width:210mm;height:auto;margin:0;transform:none;';
 
       wrapper.appendChild(clone);
       document.body.appendChild(wrapper);
 
-      // Hide non-printable elements in the clone
-      clone.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf], input[type="file"], .flatpickr-calendar').forEach(function (el) {
-        el.style.display = 'none';
+      // Remove non-printable elements
+      Array.from(clone.querySelectorAll('.noprint, .header-actions-bar, [data-nopdf], input[type="file"]')).forEach(function (el) {
+        el.parentNode && el.parentNode.removeChild(el);
       });
 
-      // SAFE value copy: match by ID to avoid Flatpickr altInput index mismatch.
-      // Flatpickr's altInput:true creates an extra hidden input element which shifts
-      // the old index-based loop — this approach is immune to that.
-      sheet.querySelectorAll('input[id], textarea[id], select[id]').forEach(function (orig) {
-        var cloneEl = clone.querySelector('#' + CSS.escape(orig.id));
+      // Remove Flatpickr popups if any ended up in the clone
+      Array.from(clone.querySelectorAll('.flatpickr-calendar')).forEach(function (el) {
+        el.parentNode && el.parentNode.removeChild(el);
+      });
+
+      // Copy values: iterate the ORIGINAL sheet to get current values,
+      // then find matching element in clone by ID using attribute selector (no CSS.escape needed)
+      Array.from(sheet.querySelectorAll('input[id], textarea[id], select[id]')).forEach(function (orig) {
+        // Use attribute selector - safe for any ID character
+        var cloneEl = clone.querySelector('[id="' + orig.id + '"]');
         if (!cloneEl) return;
+
         if (orig.tagName === 'SELECT') {
           cloneEl.selectedIndex = orig.selectedIndex;
         } else if (orig.tagName === 'TEXTAREA') {
@@ -90,55 +73,71 @@ window.appPdf = {
           cloneEl.innerHTML = orig.value;
         } else {
           cloneEl.value = orig.value;
+          // Flatpickr: if original input is hidden by Flatpickr (display:none),
+          // make the altInput (next sibling) visible and set its value too
+          if (orig.style.display === 'none' || orig.style.visibility === 'hidden') {
+            cloneEl.style.display = 'none';
+            // Find altInput sibling in original
+            var altOrig = orig.nextElementSibling;
+            if (altOrig && altOrig.classList.contains('flatpickr-input')) {
+              // Find corresponding sibling in clone
+              var altClone = cloneEl.nextElementSibling;
+              if (altClone) {
+                altClone.value = altOrig.value;
+                altClone.style.display = '';
+              }
+            }
+          }
         }
       });
 
-      // Also copy radio/checkbox checked state by ID
-      sheet.querySelectorAll('input[type="radio"][id], input[type="checkbox"][id]').forEach(function (orig) {
-        var cloneEl = clone.querySelector('#' + CSS.escape(orig.id));
+      // Copy radio/checkbox checked state
+      Array.from(sheet.querySelectorAll('input[type="radio"][id], input[type="checkbox"][id]')).forEach(function (orig) {
+        var cloneEl = clone.querySelector('[id="' + orig.id + '"]');
         if (cloneEl) cloneEl.checked = orig.checked;
       });
 
-      // Use scale: 1 on mobile to avoid memory crash on iOS
       var scaleCanvas = isMobile ? 1 : 2;
       var imgQuality = isMobile ? 0.8 : 0.98;
+
+      // Wait for images in the clone before capturing
+      var imgs = Array.from(clone.querySelectorAll('img'));
+      await Promise.all(imgs.map(function (img) {
+        return img.complete ? Promise.resolve() : new Promise(function (r) { img.onload = r; img.onerror = r; });
+      }));
 
       var canvas = await html2canvas(clone, {
         scale: scaleCanvas,
         useCORS: true,
-        logging: false,
-        allowTaint: true
+        logging: false
       });
-
-      var imgData = canvas.toDataURL('image/jpeg', imgQuality);
-
-      var jsPDFLib = window.jspdf.jsPDF;
-      var pdf = new jsPDFLib({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-
-      var pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
-      var pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-
-      var imgProps = pdf.getImageProperties(imgData);
-      var imgRatio = imgProps.width / imgProps.height;
-
-      // Always shrink-to-fit on exactly ONE A4 page
-      var drawWidth = pdfWidth;
-      var drawHeight = drawWidth / imgRatio;
-
-      if (drawHeight > pdfHeight) {
-        drawHeight = pdfHeight;
-        drawWidth = drawHeight * imgRatio;
-      }
-
-      var x = (pdfWidth - drawWidth) / 2;
-      pdf.addImage(imgData, 'JPEG', x, 0, drawWidth, drawHeight);
-      pdf.save(filenameBase + '-' + new Date().toISOString().split('T')[0] + '.pdf');
 
       document.body.removeChild(wrapper);
 
+      var imgData = canvas.toDataURL('image/jpeg', imgQuality);
+
+      var jsPDFCls = window.jspdf && window.jspdf.jsPDF;
+      if (!jsPDFCls) { alert('مكتبة PDF غير محملة. يرجى تحديث الصفحة والمحاولة مجدداً.'); return; }
+
+      var pdf = new jsPDFCls({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+      var pdfW = pdf.internal.pageSize.getWidth();
+      var pdfH = pdf.internal.pageSize.getHeight();
+
+      var props = pdf.getImageProperties(imgData);
+      var ratio = props.width / props.height;
+
+      var dW = pdfW;
+      var dH = dW / ratio;
+      if (dH > pdfH) { dH = pdfH; dW = dH * ratio; }
+
+      var x = (pdfW - dW) / 2;
+      pdf.addImage(imgData, 'JPEG', x, 0, dW, dH);
+      pdf.save(filenameBase + '-' + new Date().toISOString().split('T')[0] + '.pdf');
+
     } catch (e) {
-      console.error('PDF generation failed', e);
-      alert('حدث خطأ أثناء إنشاء ملف PDF.');
+      console.error('PDF generation failed:', e);
+      if (wrapper && wrapper.parentNode) document.body.removeChild(wrapper);
+      alert('حدث خطأ أثناء إنشاء ملف PDF: ' + e.message);
     }
   }
 };
