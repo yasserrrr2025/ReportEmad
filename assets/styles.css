@@ -288,24 +288,47 @@ body {
 }
 
 /* Form Pages Styles */
+/*
+  Screen: normal flex column so the page looks like A4 with min-height
+  Print : switch to display:table so the browser repeats #appHeader on
+          every page top and #appFooter on every page bottom automatically.
+*/
 .sheet {
   background: #fff;
   width: 210mm;
   min-height: 297mm;
-  height: auto;
   margin: 20px auto;
   padding: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: visible;
+  /* Normal flex for screen */
   display: flex;
   flex-direction: column;
-  padding-bottom: 15mm;
-  /* Safe area for footer */
+}
+
+#appHeader {
+  display: block;
+  flex-shrink: 0;
+}
+
+#appFooter {
+  display: block;
+  flex-shrink: 0;
+  margin-top: auto;
+  /* stick to bottom on screen */
 }
 
 .sheet-content {
+  flex: 1;
   padding: 2mm 10.5mm;
+  display: flex;
+  flex-direction: column;
+}
+
+/* .sheet-content-inner is added by layout.js and acts as the
+   table-cell in print mode. On screen it is just a plain div. */
+.sheet-content-inner {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -869,8 +892,7 @@ body {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  margin-top: auto;
-  padding-top: 5mm;
+  padding-top: 3mm;
 }
 
 .official-footer img {
@@ -898,16 +920,41 @@ body {
     margin: 0;
   }
 
+  /*
+    Switch to display:table so:
+    - #appHeader (table-header-group) repeats at top of every page
+    - #appFooter (table-footer-group) repeats at bottom of every page
+    - .sheet-content (table-row-group) fills the middle
+  */
   .sheet {
-    margin: 0 auto;
-    box-shadow: none;
+    display: table;
+    border-collapse: collapse;
     width: 210mm;
-    height: auto;
-    min-height: 297mm;
-    page-break-after: always;
+    min-height: 0;
+    margin: 0;
+    box-shadow: none;
     transform: none !important;
-    padding-bottom: 0;
-    overflow: visible;
+  }
+
+  #appHeader {
+    display: table-header-group;
+    margin-top: 0;
+  }
+
+  #appFooter {
+    display: table-footer-group;
+    margin-top: 0;
+  }
+
+  .sheet-content {
+    display: table-row-group;
+    padding: 0;
+  }
+
+  .sheet-content-inner {
+    display: table-cell;
+    padding: 2mm 10.5mm 4mm;
+    vertical-align: top;
   }
 
   .noprint {
@@ -921,7 +968,6 @@ body {
 
   .official-footer {
     width: 100%;
-    margin-top: auto;
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
   }

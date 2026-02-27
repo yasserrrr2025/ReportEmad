@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headerEl = document.getElementById('appHeader');
   const footerEl = document.getElementById('appFooter');
 
-  // Determine depth of current path to correctly load shared assets
   const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
   const inPagesFolder = pathParts.includes('pages');
   const assetsPath = inPagesFolder ? '../assets/' : './assets/';
@@ -48,4 +47,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (footerEl) {
     footerEl.innerHTML = footerContent;
   }
+
+  // Wrap sheet-content children in .sheet-content-inner if not already done
+  // This is needed for the display:table layout to work correctly
+  const sheetContents = document.querySelectorAll('.sheet-content');
+  sheetContents.forEach(sc => {
+    if (!sc.querySelector('.sheet-content-inner')) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'sheet-content-inner';
+      while (sc.firstChild) {
+        wrapper.appendChild(sc.firstChild);
+      }
+      sc.appendChild(wrapper);
+    }
+  });
 });
