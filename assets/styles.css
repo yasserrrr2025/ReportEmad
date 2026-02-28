@@ -976,13 +976,20 @@ body {
     min-height: 0 !important;
     max-height: none !important;
     margin-bottom: 5mm;
+    overflow: visible !important;
+  }
+
+  .header-bg {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
   }
 
   .official-header img,
   .header-bg img {
     width: 100% !important;
     height: auto !important;
-    position: relative !important;
+    display: block !important;
   }
 
   .sheet-content {
