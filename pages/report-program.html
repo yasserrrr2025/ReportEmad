@@ -1,31 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تقرير تنفيذ برنامج</title>
-  <link rel="stylesheet" href="../assets/styles.css?v=4">
-
+  <link rel="stylesheet" href="../assets/styles.css">
+  
   <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  
   <!-- Shared Scripts -->
-  <script src="../shared/layout.js?v=4"></script>
-  <script src="../shared/storage.js?v=3"></script>
-  <script src="../shared/pdf.js?v=6"></script>
-  <script src="../shared/ui.js?v=3"></script>
-
-
-  <!-- DatePicker Library (Flatpickr) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+  <script src="../shared/layout.js"></script>
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/pdf.js"></script>
+  <script src="../shared/ui.js"></script>
 </head>
-
 <body>
   <div class="sheet">
     <div id="appHeader"></div>
@@ -33,22 +23,19 @@
       <!-- Section 1: Report Details -->
       <div class="report-section">
         <div class="report-section-header">
-          <textarea id="reportTitle" data-save="1" rows="1"
-            style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none; resize:none; overflow:hidden;"
-            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">اسم التقرير</textarea>
+          <input type="text" id="reportTitle" value="اسم التقرير" data-save="1" style="background:transparent; border:none; color:white; text-align:center; font-size:18px; font-weight:bold; width:100%; outline:none;">
         </div>
         <div class="report-grid">
           <div class="report-grid-item label">مقدم البرنامج</div>
-          <div class="report-grid-item"><textarea id="progPresenter" data-save="1" class="fit-text"
-              style="height:40px; text-align:right" placeholder="مقدم البرنامج"></textarea></div>
+          <div class="report-grid-item"><input type="text" id="progPresenter" data-save="1"></div>
           <div class="report-grid-item label">المكان</div>
           <div class="report-grid-item"><input type="text" id="progLocation" data-save="1"></div>
-
-          <div class="report-grid-item label">التاريخ</div>
-          <div class="report-grid-item"><input type="text" id="progDate" data-save="1" placeholder="اختر التاريخ"></div>
+          
+          <div class="report-grid-item label">التاريخ (هجري أم القرى)</div>
+          <div class="report-grid-item"><input type="text" id="progDate" data-save="1" placeholder="مثال: ٤ رمضان ١٤٤٧ هـ"></div>
           <div class="report-grid-item label">المستفيدون</div>
           <div class="report-grid-item"><input type="text" id="progTarget" data-save="1"></div>
-
+          
           <div class="report-grid-item label">عدد الحضور</div>
           <div class="report-grid-item"><input type="text" id="progAttendance" data-save="1"></div>
           <div class="report-grid-item label">مدة البرنامج</div>
@@ -57,17 +44,17 @@
       </div>
 
       <!-- Section 2: Goals & Summary -->
-      <div style="display: flex; gap: 20px; margin-bottom: 10px;">
-        <div class="report-section" style="margin-bottom: 0; flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px;">
+        <div class="report-section" style="margin-bottom: 0;">
           <div class="report-section-header light">الأهداف</div>
-          <div style="padding: 10px;">
-            <textarea id="progGoals" data-save="1" class="fit-text" placeholder="اكتب الأهداف هنا..."></textarea>
+          <div style="padding: 15px;">
+            <textarea id="progGoals" data-save="1" placeholder="اكتب الأهداف هنا..." style="width:100%; border:none; outline:none; min-height:100px; resize:vertical; font-family:inherit;"></textarea>
           </div>
         </div>
-        <div class="report-section" style="margin-bottom: 0; flex: 1;">
+        <div class="report-section" style="margin-bottom: 0;">
           <div class="report-section-header light">نبذة عن البرنامج</div>
-          <div style="padding: 10px;">
-            <textarea id="progSummary" data-save="1" class="fit-text" placeholder="اكتب النبذة هنا..."></textarea>
+          <div style="padding: 15px;">
+            <textarea id="progSummary" data-save="1" placeholder="اكتب النبذة هنا..." style="width:100%; border:none; outline:none; min-height:100px; resize:vertical; font-family:inherit;"></textarea>
           </div>
         </div>
       </div>
@@ -119,10 +106,7 @@
         <div class="signature-card">
           <div class="signature-header">المعلم</div>
           <div class="signature-body">
-            <textarea id="sigTeacher" data-save="1"
-              style="width:100%; text-align:center; border:none; font-family:inherit; font-weight:bold; font-size:14px; resize:none; outline:none;"
-              rows="1"
-              oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">اسم المعلم</textarea>
+            <input type="text" id="sigTeacher" data-save="1" value="اسم المعلم">
           </div>
         </div>
         <div class="signature-card">
@@ -139,25 +123,11 @@
   <script>
     window.currentPageKey = 'storage_report_program_v1';
     window.getPageExtraData = () => ({});
-
+    
     document.addEventListener('DOMContentLoaded', () => {
       window.appStorage.restorePage(window.currentPageKey);
       window.appStorage.setupAutoSave(window.currentPageKey, window.getPageExtraData);
-
-      // Initialize DatePicker
-      const dateInput = document.getElementById('progDate');
-      if (dateInput) {
-        flatpickr(dateInput, {
-          locale: "ar",
-          dateFormat: "Y/m/d", // Standard Gregorian format
-          altInput: true,
-          altFormat: "l - Y/m/d", // Display format e.g., الأحد - 2024/05/12
-          defaultDate: !dateInput.value ? "today" : dateInput.value,
-          allowInput: true, // Allow manual entry
-        });
-      }
     });
   </script>
 </body>
-
 </html>

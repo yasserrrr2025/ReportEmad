@@ -1,270 +1,32 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>نظام إدارة النماذج والتقارير المدرسية</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=3">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./assets/styles.css">
 </head>
-
 <body>
-  <!-- Decorative Background Elements -->
-  <div class="bg-shape bg-shape-1"></div>
-  <div class="bg-shape bg-shape-2"></div>
-
-  <div class="container main-container">
-    <header class="dashboard-header glass-effect">
-      <div class="logo-container">
-        <img src="https://www.raed.net/img?id=1516942" alt="الشعار الرسمي" onerror="this.src='./assets/logo.png'">
-      </div>
-      <div class="header-text">
-        <h1>نظام إدارة النماذج والتقارير المدرسية</h1>
-        <p class="subtitle"><i class="fa-solid fa-building-columns"></i> وزارة التعليم</p>
-      </div>
+  <div class="container">
+    <header class="dashboard-header">
+      <img src="https://www.raed.net/img?id=1516942" alt="الشعار الرسمي" onerror="this.src='./assets/logo.png'">
+      <h1>نظام إدارة النماذج والتقارير المدرسية</h1>
+      <p>وزارة التعليم</p>
     </header>
 
-    <div class="dashboard-welcome">
-      <h2>مرحباً بك في لوحة التحكم 👋</h2>
-      <p>اختر النموذج الذي ترغب في تعبئته من القائمة أدناه</p>
-    </div>
-
     <main class="cards-grid">
-      <div class="card glass-effect hover-float">
-        <div class="card-icon gradient-1">
-          <i class="fa-solid fa-file-signature"></i>
-        </div>
+      <div class="card">
         <h3>تقرير تنفيذ برنامج</h3>
-        <p>نموذج لتوثيق البرامج المنفذة، يشمل الأهداف، النبذة، الصور، والتوقيعات الرسمية بشكل منظم وحيوي.</p>
-        <div class="card-action">
-          <a href="./pages/report-program.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
+        <p>نموذج لتوثيق البرامج المنفذة، يشمل الأهداف، النبذة، الصور، والتوقيعات.</p>
+        <a href="./pages/report-program.html" class="btn">فتح النموذج</a>
       </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon gradient-2">
-          <i class="fa-solid fa-users-viewfinder"></i>
-        </div>
+      
+      <div class="card">
         <h3>استمارة مجتمع تعلم مهني</h3>
-        <p>نموذج احترافي لتوثيق أنشطة مجتمعات التعلم المهنية مع جدول ديناميكي للأعضاء المشاركين.</p>
-        <div class="card-action">
-          <a href="./pages/plc-form.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon gradient-3">
-          <i class="fa-solid fa-handshake-angle"></i>
-        </div>
-        <h3>استمارة الزيارة التبادلية</h3>
-        <p>نموذج لتوثيق الزيارات التبادلية بين المعلمين لتبادل الخبرات وتطوير الأداء المهني.</p>
-        <div class="card-action">
-          <a href="./pages/peer-visit.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- New Cards -->
-      <div class="card glass-effect hover-float">
-        <div class="card-icon gradient-1">
-          <i class="fa-solid fa-comments"></i>
-        </div>
-        <h3>استمارة محضر اجتماع</h3>
-        <p>نموذج رسمي لتوثيق الاجتماعات המدرسية المعتمدة، مع جدول حضور ديناميكي وتدوين للقرارات.</p>
-        <div class="card-action">
-          <a href="./pages/meeting-minutes.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon gradient-2">
-          <i class="fa-solid fa-clipboard-list"></i>
-        </div>
-        <h3>نموذج تكليف بمهام</h3>
-        <p>إشعار رسمي بتكليف الموظفين والمعلمين بمهام ومسؤوليات محددة خلال العام الدراسي.</p>
-        <div class="card-action">
-          <a href="./pages/task-assignment.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #ef4444, #991b1b);">
-          <i class="fa-solid fa-user-shield"></i>
-        </div>
-        <h3>استمارة رصد سلوك</h3>
-        <p>سجل دقيق لتوثيق المخالفات السلوكية والدراسية مع الإجراءات التربوية والإدارية المتخذة.</p>
-        <div class="card-action">
-          <a href="./pages/behavior-incident.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- النماذج الجديدة -->
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #1e3a5f, #2563eb);">
-          <i class="fa-solid fa-chalkboard-user"></i>
-        </div>
-        <h3>استمارة الزيارة الصفية الإشرافية</h3>
-        <p>نموذج لتقييم أداء المعلم داخل الفصل وفق معايير محددة مع الملاحظات والتوصيات الرسمية.</p>
-        <div class="card-action">
-          <a href="./pages/classroom-visit.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #064e3b, #059669);">
-          <i class="fa-solid fa-book-open"></i>
-        </div>
-        <h3>نموذج خطة الدرس اليومية</h3>
-        <p>تحضير احترافي للحصة الدراسية يشمل الأهداف والخطوات والوسائل وأساليب التقييم.</p>
-        <div class="card-action">
-          <a href="./pages/lesson-plan.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #4c1d95, #7c3aed);">
-          <i class="fa-solid fa-award"></i>
-        </div>
-        <h3>سجل التطوير المهني للمعلم</h3>
-        <p>توثيق الدورات التدريبية والبرامج التطويرية التي يشارك فيها المعلم مع الأثر التطبيقي.</p>
-        <div class="card-action">
-          <a href="./pages/prof-dev.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #0c4a6e, #0284c7);">
-          <i class="fa-solid fa-user-plus"></i>
-        </div>
-        <h3>نموذج قبول طالب</h3>
-        <p>استمارة شاملة لتسجيل وقبول الطلاب المستجدين والمنتقلين مع الوثائق المطلوبة وقرار القبول.</p>
-        <div class="card-action">
-          <a href="./pages/student-admission.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #78350f, #d97706);">
-          <i class="fa-solid fa-chart-line"></i>
-        </div>
-        <h3>نموذج متابعة الطالب الأكاديمية</h3>
-        <p>تقرير دوري لرصد درجات الطالب وحضوره مع حساب تلقائي للنسب وخانة التوصيات.</p>
-        <div class="card-action">
-          <a href="./pages/academic-tracking.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #1e1b4b, #4338ca);">
-          <i class="fa-solid fa-person-circle-question"></i>
-        </div>
-        <h3>نموذج تحويل للإرشاد الطلابي</h3>
-        <p>استمارة إحالة رسمية للطالب إلى الموجه الطلابي مع تحديد سبب التحويل وخطة التدخل.</p>
-        <div class="card-action">
-          <a href="./pages/student-referral.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card glass-effect hover-float">
-        <div class="card-icon" style="background: linear-gradient(135deg, #134e4a, #14b8a6);">
-          <i class="fa-solid fa-envelope-open-text"></i>
-        </div>
-        <h3>نموذج خطاب رسمي</h3>
-        <p>محرر خطابات رسمي بالقالب المدرسي مع تاريخ وإسناد ومحتوى قابل للتنسيق كامل.</p>
-        <div class="card-action">
-          <a href="./pages/letter.html" class="modern-btn btn-primary">
-            <span>فتح النموذج</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </a>
-        </div>
+        <p>نموذج لتوثيق أنشطة مجتمعات التعلم المهنية مع جدول ديناميكي للأعضاء.</p>
+        <a href="./pages/plc-form.html" class="btn">فتح النموذج</a>
       </div>
     </main>
-
-    <footer class="dashboard-footer text-center">
-      <p>جميع الحقوق محفوظة &copy; 2026 - نظام إدارة النماذج والتقارير المدرسية</p>
-    </footer>
-  </div>
-
-  <!-- PWA Install Banners -->
-  <div id="pwa-install-banner" class="pwa-banner hidden" dir="rtl">
-    <div class="pwa-banner-content">
-      <div class="pwa-app-icon">
-        <i class="fa-solid fa-file-signature"></i>
-      </div>
-      <div class="pwa-text">
-        <h4>تثبيت التطبيق</h4>
-        <p>قم بتثبيت تطبيق النماذج المدرسية للوصول السريع والعمل بدون إنترنت.</p>
-      </div>
-    </div>
-    <div class="pwa-actions">
-      <button id="pwa-dismiss-btn" class="btn-dismiss">ليس الآن</button>
-      <button id="pwa-install-btn" class="btn-install">تثبيت <i class="fa-solid fa-download"></i></button>
-    </div>
-  </div>
-
-  <div id="pwa-ios-prompt" class="pwa-banner hidden" dir="rtl">
-    <div class="pwa-banner-content">
-      <div class="pwa-app-icon">
-        <i class="fa-brands fa-apple"></i>
-      </div>
-      <div class="pwa-text">
-        <h4>إضافة للشاشة الرئيسية</h4>
-        <div class="ios-instructions">
-          <p>للوصول السريع للتطبيق:</p>
-          <div class="ios-instructions-row">
-            <span>1. اضغط على زر المشاركة</span>
-            <i class="fa-solid fa-arrow-up-from-bracket ios-share-icon"></i>
-            <span>في الأسفل</span>
-          </div>
-          <div class="ios-instructions-row">
-            <span>2. اختر "إضافة إلى الصفحة الرئيسية"</span>
-            <i class="fa-regular fa-square-plus ios-share-icon"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pwa-actions">
-      <button id="pwa-ios-dismiss-btn" class="btn-dismiss">فهمت</button>
-    </div>
   </div>
 </body>
-
 </html>
