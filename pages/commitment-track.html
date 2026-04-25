@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج الانتظام والالتزام</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="../shared/layout.js?v=4"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=7"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        .pg-header {
+            text-align:center; padding:14px;
+            background:linear-gradient(135deg,#1e1b4b,#4338ca);
+            color:#fff; border-radius:12px; margin-bottom:14px;
+            box-shadow:0 4px 14px rgba(67,56,202,.28);
+        }
+        .pg-header h2 { font-size:20px; font-weight:900; }
+        .pg-header p  { font-size:13px; opacity:.9; margin-top:4px; }
+
+        .info-grid {
+            display:grid; grid-template-columns:auto 1fr auto 1fr;
+            border:1px solid #e0e7ff; border-radius:10px;
+            overflow:hidden; margin-bottom:14px;
+        }
+        .info-label {
+            background:#eef2ff; color:#3730a3; font-weight:800;
+            font-size:12px; padding:8px 12px;
+            border-bottom:1px solid #e0e7ff; border-left:1px solid #e0e7ff;
+            display:flex; align-items:center; white-space:nowrap;
+        }
+        .info-val {
+            padding:4px 10px; border-bottom:1px solid #e0e7ff;
+            border-left:1px solid #e0e7ff; display:flex; align-items:center;
+        }
+        .info-val:nth-child(4n) { border-left:none; }
+        .info-label:nth-last-child(-n+4),
+        .info-val:nth-last-child(-n+4) { border-bottom:none; }
+        .info-val input, .info-val select {
+            width:100%; border:none; outline:none;
+            font-family:inherit; font-size:13px; color:#1e293b; background:transparent;
+        }
+
+        /* Weekly tracking table */
+        .week-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
+        .week-table th {
+            background:linear-gradient(135deg,#1e1b4b,#4338ca);
+            color:#fff; padding:7px 5px; font-weight:800;
+            border:1px solid #3730a3; text-align:center;
+        }
+        .week-table td { border:1px solid #e0e7ff; padding:0; vertical-align:middle; }
+        .week-table tr:nth-child(even) td { background:#f5f3ff; }
+        .week-table td input, .week-table td select, .week-table td textarea {
+            width:100%; border:none; outline:none; font-family:inherit;
+            font-size:11.5px; color:#1e293b; background:transparent;
+            text-align:center; padding:5px 4px;
+        }
+        .week-table td textarea { resize:none; min-height:30px; }
+
+        /* Status badges */
+        .status-منتظم  { color:#059669; font-weight:800; }
+        .status-غائب   { color:#dc2626; font-weight:800; }
+        .status-متأخر  { color:#d97706; font-weight:800; }
+
+        /* Summary stats */
+        .stats-grid {
+            display:grid; grid-template-columns:repeat(5,1fr);
+            gap:10px; margin-bottom:14px;
+        }
+        .stat-card {
+            background:#eef2ff; border:1px solid #c7d2fe;
+            border-radius:10px; padding:10px;
+            text-align:center;
+        }
+        .stat-num { font-size:22px; font-weight:900; color:#4338ca; }
+        .stat-lbl { font-size:10px; color:#3730a3; font-weight:700; }
+
+        .add-btn {
+            display:inline-flex; align-items:center; gap:6px;
+            background:linear-gradient(135deg,#1e1b4b,#4338ca);
+            color:#fff; border:none; border-radius:8px;
+            padding:8px 18px; font-family:inherit; font-size:13px;
+            font-weight:700; cursor:pointer; margin-bottom:12px;
+        }
+        .add-btn:hover { opacity:.9; }
+
+        .del-btn { background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; padding:4px 8px; }
+        .del-btn:hover { background:#fef2f2; border-radius:4px; }
+
+        /* Commitment section */
+        .commit-section {
+            border:1px solid #e0e7ff; border-radius:10px;
+            overflow:hidden; margin-bottom:14px;
+        }
+        .commit-title {
+            background:linear-gradient(135deg,#1e1b4b,#4338ca);
+            color:#fff; padding:7px 14px;
+            font-weight:800; font-size:13px;
+        }
+        .commit-grid {
+            display:grid; grid-template-columns:repeat(3,1fr);
+            gap:0;
+        }
+        .commit-item {
+            padding:8px 12px; border-bottom:1px solid #e0e7ff;
+            border-left:1px solid #e0e7ff; display:flex;
+            align-items:center; gap:8px;
+        }
+        .commit-item:nth-child(3n) { border-left:none; }
+        .commit-item input[type="checkbox"] { width:16px; height:16px; accent-color:#4338ca; flex-shrink:0; }
+        .commit-item label { font-size:12px; color:#1e293b; font-weight:600; cursor:pointer; }
+
+        .sig-area {
+            display:flex; justify-content:space-between;
+            gap:20px; padding:14px 24px;
+            border-top:2px dashed #e0e7ff; margin-top:auto;
+        }
+        .sig-box { flex:1; text-align:center; }
+        .sig-box-title { font-size:12px; font-weight:800; color:#3730a3; margin-bottom:24px; }
+        .sig-box-line { border-top:1px solid #c7d2fe; padding-top:6px; }
+        .sig-box input { border:none; font-family:inherit; font-size:13px; font-weight:700; color:#1e293b; background:transparent; outline:none; text-align:center; width:100%; }
+
+        @media print {
+            .noprint,.header-actions-bar,.add-btn,.del-btn { display:none!important; }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+    <div id="appHeader"></div>
+    <div class="sheet-content">
+
+        <div class="pg-header">
+            <h2>نموذج الانتظام والالتزام</h2>
+            <p>متابعة انتظام الطالب وسلوكه الأسبوعي خلال الفصل الدراسي</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-label">اسم الطالب</div>
+            <div class="info-val"><input type="text" id="cmName" data-save="1" placeholder="الاسم الرباعي"></div>
+            <div class="info-label">الصف / الفصل</div>
+            <div class="info-val">
+                <select id="cmGrade" data-save="1" style="flex:2;border:1px solid #e0e7ff;border-radius:4px;padding:3px;font-size:12px">
+                    <option value="" disabled selected>الصف</option>
+                    <option>الأول متوسط</option><option>الثاني متوسط</option><option>الثالث متوسط</option>
+                </select>
+                <span style="margin:0 4px;font-weight:700">/</span>
+                <select id="cmSection" data-save="1" style="flex:1;border:1px solid #e0e7ff;border-radius:4px;padding:3px;font-size:12px">
+                    <option value="" disabled selected>فصل</option>
+                    <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+                </select>
+            </div>
+            <div class="info-label">الفصل الدراسي</div>
+            <div class="info-val">
+                <select id="cmSemester" data-save="1" style="width:100%;border:1px solid #e0e7ff;border-radius:4px;padding:3px;font-size:12px">
+                    <option value="" disabled selected>اختر</option>
+                    <option>الفصل الدراسي الأول</option><option>الفصل الدراسي الثاني</option>
+                </select>
+            </div>
+            <div class="info-label">العام الدراسي</div>
+            <div class="info-val"><input type="text" id="cmYear" data-save="1" placeholder="1446 - 1447 هـ"></div>
+            <div class="info-label">المعلم المسؤول</div>
+            <div class="info-val"><input type="text" id="cmTeacher" data-save="1" placeholder="اسم المعلم"></div>
+            <div class="info-label">رقم الهاتف</div>
+            <div class="info-val"><input type="tel" id="cmPhone" data-save="1" placeholder="رقم ولي الأمر"></div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-num" id="statWeeks">0</div><div class="stat-lbl">أسابيع المتابعة</div></div>
+            <div class="stat-card"><div class="stat-num" id="statPresent" style="color:#059669">0</div><div class="stat-lbl">أيام الحضور</div></div>
+            <div class="stat-card"><div class="stat-num" id="statAbsent" style="color:#dc2626">0</div><div class="stat-lbl">أيام الغياب</div></div>
+            <div class="stat-card"><div class="stat-num" id="statLate" style="color:#d97706">0</div><div class="stat-lbl">حالات التأخر</div></div>
+            <div class="stat-card"><div class="stat-num" id="statRate" style="color:#4338ca">0%</div><div class="stat-lbl">نسبة الانتظام</div></div>
+        </div>
+
+        <button class="add-btn noprint" onclick="addWeek()">
+            <i class="fa-solid fa-plus"></i> إضافة أسبوع
+        </button>
+
+        <!-- Weekly table -->
+        <table class="week-table">
+            <thead>
+                <tr>
+                    <th style="width:4%">#</th>
+                    <th style="width:20%">الأسبوع / الفترة</th>
+                    <th style="width:9%">الأحد</th>
+                    <th style="width:9%">الإثنين</th>
+                    <th style="width:9%">الثلاثاء</th>
+                    <th style="width:9%">الأربعاء</th>
+                    <th style="width:9%">الخميس</th>
+                    <th style="width:24%">الملاحظات</th>
+                    <th class="noprint" style="width:7%">حذف</th>
+                </tr>
+            </thead>
+            <tbody id="weekBody"></tbody>
+        </table>
+
+        <!-- Commitment checklist -->
+        <div class="commit-section">
+            <div class="commit-title"><i class="fa-solid fa-list-check" style="margin-left:6px"></i> تقييم الالتزام العام</div>
+            <div class="commit-grid" id="commitGrid">
+                <div class="commit-item"><input type="checkbox" id="c1" data-save="1"><label for="c1">الالتزام بمواعيد الحصص</label></div>
+                <div class="commit-item"><input type="checkbox" id="c2" data-save="1"><label for="c2">ارتداء الزي المدرسي</label></div>
+                <div class="commit-item"><input type="checkbox" id="c3" data-save="1"><label for="c3">إحضار الكتب والأدوات</label></div>
+                <div class="commit-item"><input type="checkbox" id="c4" data-save="1"><label for="c4">إنجاز الواجبات المنزلية</label></div>
+                <div class="commit-item"><input type="checkbox" id="c5" data-save="1"><label for="c5">الالتزام بلوائح المدرسة</label></div>
+                <div class="commit-item"><input type="checkbox" id="c6" data-save="1"><label for="c6">التفاعل الإيجابي مع المعلمين</label></div>
+                <div class="commit-item"><input type="checkbox" id="c7" data-save="1"><label for="c7">التعامل الجيد مع الزملاء</label></div>
+                <div class="commit-item"><input type="checkbox" id="c8" data-save="1"><label for="c8">عدم استخدام الهاتف</label></div>
+                <div class="commit-item"><input type="checkbox" id="c9" data-save="1"><label for="c9">المحافظة على نظافة الفصل</label></div>
+            </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="sig-area">
+            <div class="sig-box">
+                <div class="sig-box-title">المعلم المسؤول</div>
+                <div class="sig-box-line"><input type="text" id="cmSig1" data-save="1" placeholder="الاسم والتوقيع"></div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-box-title">ولي الأمر</div>
+                <div class="sig-box-line"><input type="text" id="cmSig2" data-save="1" placeholder="الاسم والتوقيع"></div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-box-title">مدير المدرسة</div>
+                <div class="sig-box-line"><input type="text" id="cmSig3" data-save="1" placeholder="عابد عبيد الجدعاني"></div>
+            </div>
+        </div>
+
+    </div>
+    <div id="appFooter"></div>
+</div>
+<script>
+window.currentPageKey = 'storage_commitment_v1';
+var weekIdx = 0;
+var days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
+var statuses = ['حاضر','غائب','متأخر','إجازة'];
+
+function addWeek(data){
+    weekIdx++;
+    var d = data||{};
+    var tbody = document.getElementById('weekBody');
+    var tr = document.createElement('tr');
+    var daySelects = days.map(function(day,i){
+        var saved = d['day'+i]||'حاضر';
+        return '<select onchange="updateStats();saveWeeks()" style="width:100%;border:none;outline:none;font-family:inherit;font-size:11px;background:transparent;padding:4px;text-align:center">'+
+            statuses.map(function(s){return '<option'+(s===saved?' selected':'')+'>'+s+'</option>';}).join('')+
+            '</select>';
+    });
+    tr.innerHTML =
+        '<td style="text-align:center;font-weight:800;color:#4338ca;padding:5px">'+weekIdx+'</td>'+
+        '<td><input type="text" value="'+(d.period||'')+'" placeholder="مثال: 1 - 5 محرم" oninput="saveWeeks()"></td>'+
+        daySelects.join('')+
+        '<td><textarea placeholder="ملاحظات الأسبوع..." oninput="saveWeeks()">'+(d.note||'')+'</textarea></td>'+
+        '<td class="noprint" style="text-align:center"><button class="del-btn" onclick="delWeek(this)">✕</button></td>';
+    tbody.appendChild(tr);
+    updateStats();
+}
+
+function delWeek(btn){ btn.closest('tr').remove(); renumber(); updateStats(); saveWeeks(); }
+function renumber(){ document.querySelectorAll('#weekBody tr').forEach(function(tr,i){ tr.cells[0].textContent=i+1; }); weekIdx=document.querySelectorAll('#weekBody tr').length; }
+
+function updateStats(){
+    var rows=document.querySelectorAll('#weekBody tr');
+    var weeks=rows.length, present=0, absent=0, late=0, total=0;
+    rows.forEach(function(tr){
+        tr.querySelectorAll('select').forEach(function(sel){
+            total++;
+            var v=sel.value;
+            if(v==='حاضر') present++;
+            else if(v==='غائب') absent++;
+            else if(v==='متأخر') late++;
+        });
+    });
+    document.getElementById('statWeeks').textContent=weeks;
+    document.getElementById('statPresent').textContent=present;
+    document.getElementById('statAbsent').textContent=absent;
+    document.getElementById('statLate').textContent=late;
+    var rate=total>0?Math.round((present/total)*100):0;
+    document.getElementById('statRate').textContent=rate+'%';
+    document.getElementById('statRate').style.color=rate>=90?'#059669':rate>=75?'#d97706':'#dc2626';
+}
+
+function saveWeeks(){
+    var data=[];
+    document.querySelectorAll('#weekBody tr').forEach(function(tr){
+        var els=tr.querySelectorAll('input,select,textarea');
+        var row={period:els[0]?els[0].value:''};
+        for(var i=0;i<5;i++) row['day'+i]=els[i+1]?els[i+1].value:'حاضر';
+        row.note=els[6]?els[6].value:'';
+        data.push(row);
+    });
+    localStorage.setItem(currentPageKey+'_weeks',JSON.stringify(data));
+}
+
+function loadWeeks(){
+    try{
+        var d=JSON.parse(localStorage.getItem(currentPageKey+'_weeks')||'[]');
+        if(d.length){ d.forEach(function(r){addWeek(r);}); return; }
+    }catch(e){}
+    for(var i=0;i<4;i++) addWeek();
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+    window.appStorage.restorePage(window.currentPageKey);
+    loadWeeks();
+    window.appStorage.setupAutoSave(window.currentPageKey);
+});
+</script>
+</body>
+</html>

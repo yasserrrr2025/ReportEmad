@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقة خروج مبكر للطالب</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="../shared/layout.js?v=4"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=7"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        .cards-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 16px;
+        }
+
+        .exit-card {
+            border: 2.5px solid #0d9488;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 14px rgba(13,148,136,.14);
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .exit-card-header {
+            background: linear-gradient(135deg, #0f766e, #0d9488);
+            color: #fff;
+            text-align: center;
+            padding: 10px 8px;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+        .exit-card-header span { font-size: 11px; display: block; opacity: .85; margin-top: 2px; font-weight: 500; }
+
+        .exit-card-serial {
+            background: #ccfbf1;
+            color: #0f766e;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px;
+            border-bottom: 1px dashed #99f6e4;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            font-size: 12px;
+        }
+        .card-lbl {
+            background: #f0fdfa;
+            color: #0f766e;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 7px 10px;
+            border-bottom: 1px solid #ccfbf1;
+            border-left: 1px solid #ccfbf1;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        .card-val {
+            padding: 4px 8px;
+            border-bottom: 1px solid #ccfbf1;
+            display: flex;
+            align-items: center;
+        }
+        .card-lbl:last-child, .card-val:last-child,
+        .card-lbl:nth-last-child(-n+2), .card-val:nth-last-child(-n+2) { border-bottom: none; }
+        .card-val input, .card-val select {
+            width:100%; border:none; outline:none;
+            font-family:inherit; font-size:12px;
+            color:#1e293b; background:transparent;
+        }
+
+        .card-reason {
+            padding: 8px 12px;
+            border-top: 1px dashed #99f6e4;
+            font-size: 11px;
+        }
+        .card-reason-lbl { font-weight: 800; color: #0f766e; margin-bottom: 4px; }
+        .card-reason textarea {
+            width:100%; border:none; outline:none; resize:none;
+            font-family:inherit; font-size:11.5px; color:#1e293b;
+            min-height:32px; background:transparent;
+        }
+
+        .card-sigs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-top: 1px dashed #99f6e4;
+            font-size: 11px;
+        }
+        .card-sig-box { text-align:center; padding: 8px; }
+        .card-sig-box:first-child { border-left: 1px dashed #99f6e4; }
+        .card-sig-title { font-weight:800; color:#0f766e; margin-bottom:16px; font-size:10px; }
+        .card-sig-line { border-top:1px solid #99f6e4; padding-top:4px; }
+        .card-sig-line input { border:none; outline:none; font-family:inherit; font-size:11px; font-weight:700; background:transparent; text-align:center; width:100%; }
+
+        .card-stamp {
+            text-align:center; padding:5px;
+            background:#f0fdfa;
+            border-top: 1px dashed #99f6e4;
+            font-size:10px; color:#64748b; font-weight:700;
+        }
+
+        .section-actions {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:12px;
+        }
+        .pg-title { font-size:18px; font-weight:900; color:#0f766e; }
+        .pg-sub   { font-size:12px; color:#64748b; margin-top:2px; }
+        .add-btn {
+            display:inline-flex; align-items:center; gap:6px;
+            background:linear-gradient(135deg,#0f766e,#0d9488);
+            color:#fff; border:none; border-radius:8px;
+            padding:8px 18px; font-family:inherit; font-size:13px;
+            font-weight:700; cursor:pointer;
+        }
+        .add-btn:hover { opacity:.9; }
+
+        @media print {
+            .noprint, .header-actions-bar, .add-btn { display:none!important; }
+            .cards-wrap { grid-template-columns: 1fr 1fr; gap:12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+    <div id="appHeader"></div>
+    <div class="sheet-content">
+
+        <div class="section-actions">
+            <div>
+                <div class="pg-title"><i class="fa-solid fa-door-open" style="color:#0d9488"></i> بطاقات خروج مبكر للطالب</div>
+                <div class="pg-sub">تُطبع وتُقص — بطاقتان في كل صف</div>
+            </div>
+            <button class="add-btn noprint" onclick="addCard()">
+                <i class="fa-solid fa-plus"></i> إضافة بطاقة
+            </button>
+        </div>
+
+        <div class="cards-wrap" id="cardsWrap"></div>
+
+    </div>
+    <div id="appFooter"></div>
+</div>
+<script>
+window.currentPageKey = 'storage_early_exit_v1';
+var cardIdx = 0;
+
+function today(){ return new Date().toISOString().split('T')[0]; }
+function todayHijri(){ /* simple display */ return ''; }
+function now(){ return new Date().toTimeString().slice(0,5); }
+
+function addCard(data){
+    cardIdx++;
+    var d = data || {};
+    var idx = cardIdx;
+    var div = document.createElement('div');
+    div.className = 'exit-card';
+    div.id = 'card-'+idx;
+    div.innerHTML =
+        '<div class="exit-card-header">بطاقة خروج مبكر<span>مدرسة عماد الدين زنكي المتوسطة</span></div>'+
+        '<div class="exit-card-serial">رقم البطاقة: <input type="text" value="'+(d.serial||idx)+'" style="border:none;outline:none;font-family:inherit;font-size:12px;font-weight:800;color:#0f766e;background:transparent;text-align:center;width:60px" oninput="saveCards()"></div>'+
+        '<div class="card-grid">'+
+            '<div class="card-lbl">اسم الطالب</div>'+
+            '<div class="card-val"><input type="text" value="'+(d.name||'')+'" placeholder="الاسم الرباعي" oninput="saveCards()"></div>'+
+            '<div class="card-lbl">الصف / الفصل</div>'+
+            '<div class="card-val"><input type="text" value="'+(d.grade||'')+'" placeholder="مثال: الثاني / 4" oninput="saveCards()"></div>'+
+            '<div class="card-lbl">تاريخ الخروج</div>'+
+            '<div class="card-val"><input type="date" value="'+(d.date||today())+'" oninput="saveCards()"></div>'+
+            '<div class="card-lbl">وقت الخروج</div>'+
+            '<div class="card-val"><input type="time" value="'+(d.time||now())+'" oninput="saveCards()"></div>'+
+            '<div class="card-lbl">المستقبِل</div>'+
+            '<div class="card-val"><input type="text" value="'+(d.receiver||'')+'" placeholder="اسم المستقبل وصلته بالطالب" oninput="saveCards()"></div>'+
+        '</div>'+
+        '<div class="card-reason">'+
+            '<div class="card-reason-lbl">سبب الخروج:</div>'+
+            '<textarea placeholder="اكتب سبب الخروج المبكر..." oninput="saveCards()">'+(d.reason||'')+'</textarea>'+
+        '</div>'+
+        '<div class="card-sigs">'+
+            '<div class="card-sig-box">'+
+                '<div class="card-sig-title">توقيع ولي الأمر / المستقبِل</div>'+
+                '<div class="card-sig-line"><input type="text" value="'+(d.sig1||'')+'" placeholder="التوقيع" oninput="saveCards()"></div>'+
+            '</div>'+
+            '<div class="card-sig-box">'+
+                '<div class="card-sig-title">توقيع مدير المدرسة</div>'+
+                '<div class="card-sig-line"><input type="text" value="'+(d.sig2||'عابد عبيد الجدعاني')+'" oninput="saveCards()"></div>'+
+            '</div>'+
+        '</div>'+
+        '<div class="card-stamp">ختم المدرسة الرسمي</div>';
+    document.getElementById('cardsWrap').appendChild(div);
+    saveCards();
+}
+
+function saveCards(){
+    var data=[];
+    document.querySelectorAll('.exit-card').forEach(function(card){
+        var inputs=card.querySelectorAll('input,textarea');
+        data.push({
+            serial: inputs[0]?inputs[0].value:'',
+            name:   inputs[1]?inputs[1].value:'',
+            grade:  inputs[2]?inputs[2].value:'',
+            date:   inputs[3]?inputs[3].value:'',
+            time:   inputs[4]?inputs[4].value:'',
+            receiver:inputs[5]?inputs[5].value:'',
+            reason: inputs[6]?inputs[6].value:'',
+            sig1:   inputs[7]?inputs[7].value:'',
+            sig2:   inputs[8]?inputs[8].value:''
+        });
+    });
+    localStorage.setItem(currentPageKey+'_cards',JSON.stringify(data));
+}
+
+function loadCards(){
+    try{
+        var d=JSON.parse(localStorage.getItem(currentPageKey+'_cards')||'[]');
+        if(d.length){ d.forEach(function(c){ addCard(c); }); return; }
+    }catch(e){}
+    addCard(); addCard();
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+    window.appStorage.restorePage(window.currentPageKey);
+    loadCards();
+    window.appStorage.setupAutoSave(window.currentPageKey);
+});
+</script>
+</body>
+</html>
