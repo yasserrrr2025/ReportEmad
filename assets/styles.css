@@ -367,37 +367,53 @@ body {
    PRINT STYLES
    ═══════════════════════════════════════════════════════════ */
 @media print {
-  body { background:none; margin:0; padding:0; }
+  body { background: none; margin: 0; padding: 0; }
 
-  @page { size: A4 portrait; margin: 5mm; }
+  /* Zero page margins — header/footer handle their own spacing */
+  @page { size: A4 portrait; margin: 0; }
 
-  /* Sheet becomes a CSS table so header & footer repeat every page */
+  /* Sheet: plain block, full width, no decorations */
   .sheet {
-    display: table;
+    display: block;
     width: 100%;
     min-height: 0;
     margin: 0;
+    padding: 0;
     box-shadow: none;
     border: none;
     transform: none !important;
+    position: static !important;
   }
 
-  #appHeader { display: table-header-group; }
-  /* Reset position:absolute from screen so table-footer-group works */
-  #appFooter { display: table-footer-group; position: static !important; }
+  /* ── Header: fixed at top of every printed page ── */
+  #appHeader {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #fff;
+  }
 
+  /* ── Footer: fixed at bottom of every printed page ── */
+  #appFooter {
+    position: fixed !important;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #fff;
+  }
+
+  /* Content: padded so it never hides behind header or footer */
   .sheet-content {
-    display: table-row-group;
-    padding: 2mm 3mm !important;
+    display: block !important;
+    padding: 40mm 5mm 22mm !important; /* top = header h, bottom = footer h */
   }
 
-  /* Header – full width in print */
+  /* ── Header image: full width ── */
   .official-header {
     width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
-    margin: 0 0 2mm;
+    margin: 0 !important;
     overflow: visible !important;
   }
   .header-bg { position: relative !important; width: 100% !important; height: auto !important; }
@@ -408,7 +424,7 @@ body {
     object-fit: fill !important;
   }
 
-  /* Footer – full width in print, no fixed positioning */
+  /* ── Footer image: full width ── */
   .official-footer {
     position: static !important;
     width: 100% !important;
@@ -422,7 +438,7 @@ body {
     display: block !important;
   }
 
-  /* Hide screen chrome */
+  /* Hide screen-only elements */
   .noprint,
   .header-actions-bar,
   .pwa-banner,
@@ -434,10 +450,7 @@ body {
     print-color-adjust: exact !important;
   }
 
-  .fit-text { overflow-y: hidden !important; }
-  .photo-box img { display: block !important; }
-
-  /* ── Textareas: show ALL content in print, never clip ── */
+  /* Textareas: show full content */
   textarea {
     height: auto !important;
     min-height: 0 !important;
@@ -447,7 +460,10 @@ body {
     resize: none !important;
     display: block !important;
   }
+
+  .photo-box img { display: block !important; }
 }
+
 
 /* ═══════════════════════════════════════════════════════════
    PWA INSTALL BANNERS
