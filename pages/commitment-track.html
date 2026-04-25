@@ -43,36 +43,14 @@
             font-family:inherit; font-size:13px; color:#1e293b; background:transparent;
         }
 
-        /* Weekly tracking table */
-        .week-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
-        .week-table th {
-            background:linear-gradient(135deg,#1e1b4b,#4338ca);
-            color:#fff; padding:7px 5px; font-weight:800;
-            border:1px solid #3730a3; text-align:center;
-        }
-        .week-table td { border:1px solid #e0e7ff; padding:0; vertical-align:middle; }
-        .week-table tr:nth-child(even) td { background:#f5f3ff; }
-        .week-table td input, .week-table td select, .week-table td textarea {
-            width:100%; border:none; outline:none; font-family:inherit;
-            font-size:11.5px; color:#1e293b; background:transparent;
-            text-align:center; padding:5px 4px;
-        }
-        .week-table td textarea { resize:none; min-height:30px; }
-
-        /* Status badges */
-        .status-منتظم  { color:#059669; font-weight:800; }
-        .status-غائب   { color:#dc2626; font-weight:800; }
-        .status-متأخر  { color:#d97706; font-weight:800; }
-
-        /* Summary stats */
+        /* Stats */
         .stats-grid {
             display:grid; grid-template-columns:repeat(5,1fr);
             gap:10px; margin-bottom:14px;
         }
         .stat-card {
             background:#eef2ff; border:1px solid #c7d2fe;
-            border-radius:10px; padding:10px;
-            text-align:center;
+            border-radius:10px; padding:10px; text-align:center;
         }
         .stat-num { font-size:22px; font-weight:900; color:#4338ca; }
         .stat-lbl { font-size:10px; color:#3730a3; font-weight:700; }
@@ -86,36 +64,85 @@
         }
         .add-btn:hover { opacity:.9; }
 
-        .del-btn { background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; padding:4px 8px; }
+        /* ── Weekly Attendance Table ─────────────────────────── */
+        .week-table { width:100%; border-collapse:collapse; font-size:11.5px; margin-bottom:14px; }
+
+        /* Two-row header: day name on top, غ/م labels below */
+        .week-table thead tr:first-child th {
+            background:linear-gradient(135deg,#1e1b4b,#4338ca);
+            color:#fff; padding:6px 3px; font-weight:800;
+            border:1px solid #3730a3; text-align:center;
+        }
+        .week-table thead tr:last-child th {
+            background:#312e81;
+            color:#c7d2fe; padding:3px 2px; font-size:10px;
+            border:1px solid #3730a3; text-align:center;
+            font-weight:700; letter-spacing:.5px;
+        }
+        .week-table td {
+            border:1px solid #e0e7ff; padding:4px 3px;
+            vertical-align:middle; text-align:center;
+        }
+        .week-table tr:nth-child(even) td { background:#f5f3ff; }
+
+        /* Period input */
+        .week-table td input[type="text"] {
+            width:100%; border:none; outline:none; font-family:inherit;
+            font-size:11px; background:transparent; text-align:center;
+        }
+
+        /* Day checkbox cell */
+        .day-cell {
+            display:flex; flex-direction:column; align-items:center;
+            gap:3px; padding:2px;
+        }
+        .day-cb {
+            display:flex; align-items:center; gap:3px;
+            font-size:10px; font-weight:700; cursor:pointer;
+        }
+        .day-cb input[type="checkbox"] {
+            width:13px; height:13px; cursor:pointer; flex-shrink:0;
+        }
+        /* Absent = red accent, Late = orange accent */
+        .cb-absent  { accent-color:#dc2626; }
+        .cb-late    { accent-color:#d97706; }
+        .lbl-absent { color:#dc2626; }
+        .lbl-late   { color:#d97706; }
+
+        /* Totals cells */
+        .total-absent { color:#dc2626; font-weight:900; font-size:13px; }
+        .total-late   { color:#d97706; font-weight:900; font-size:13px; }
+
+        /* Notes textarea */
+        .week-table td textarea {
+            width:100%; border:none; outline:none; font-family:inherit;
+            font-size:11px; background:transparent; resize:none; min-height:28px;
+        }
+
+        .del-btn { background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; padding:2px 6px; }
         .del-btn:hover { background:#fef2f2; border-radius:4px; }
 
-        /* Commitment section */
+        /* Commitment checklist */
         .commit-section {
             border:1px solid #e0e7ff; border-radius:10px;
             overflow:hidden; margin-bottom:14px;
         }
         .commit-title {
             background:linear-gradient(135deg,#1e1b4b,#4338ca);
-            color:#fff; padding:7px 14px;
-            font-weight:800; font-size:13px;
+            color:#fff; padding:7px 14px; font-weight:800; font-size:13px;
         }
-        .commit-grid {
-            display:grid; grid-template-columns:repeat(3,1fr);
-            gap:0;
-        }
+        .commit-grid { display:grid; grid-template-columns:repeat(3,1fr); }
         .commit-item {
             padding:8px 12px; border-bottom:1px solid #e0e7ff;
-            border-left:1px solid #e0e7ff; display:flex;
-            align-items:center; gap:8px;
+            border-left:1px solid #e0e7ff; display:flex; align-items:center; gap:8px;
         }
         .commit-item:nth-child(3n) { border-left:none; }
-        .commit-item input[type="checkbox"] { width:16px; height:16px; accent-color:#4338ca; flex-shrink:0; }
+        .commit-item input[type="checkbox"] { width:15px; height:15px; accent-color:#4338ca; flex-shrink:0; }
         .commit-item label { font-size:12px; color:#1e293b; font-weight:600; cursor:pointer; }
 
         .sig-area {
-            display:flex; justify-content:space-between;
-            gap:20px; padding:14px 24px;
-            border-top:2px dashed #e0e7ff; margin-top:auto;
+            display:flex; justify-content:space-between; gap:20px;
+            padding:14px 24px; border-top:2px dashed #e0e7ff;
         }
         .sig-box { flex:1; text-align:center; }
         .sig-box-title { font-size:12px; font-weight:800; color:#3730a3; margin-bottom:24px; }
@@ -124,6 +151,8 @@
 
         @media print {
             .noprint,.header-actions-bar,.add-btn,.del-btn { display:none!important; }
+            /* Show checkboxes clearly in print */
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
         }
     </style>
 </head>
@@ -137,6 +166,7 @@
             <p>متابعة انتظام الطالب وسلوكه الأسبوعي خلال الفصل الدراسي</p>
         </div>
 
+        <!-- Student Info -->
         <div class="info-grid">
             <div class="info-label">اسم الطالب</div>
             <div class="info-val"><input type="text" id="cmName" data-save="1" placeholder="الاسم الرباعي"></div>
@@ -167,7 +197,7 @@
             <div class="info-val"><input type="tel" id="cmPhone" data-save="1" placeholder="رقم ولي الأمر"></div>
         </div>
 
-        <!-- Statistics -->
+        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-num" id="statWeeks">0</div><div class="stat-lbl">أسابيع المتابعة</div></div>
             <div class="stat-card"><div class="stat-num" id="statPresent" style="color:#059669">0</div><div class="stat-lbl">أيام الحضور</div></div>
@@ -180,19 +210,28 @@
             <i class="fa-solid fa-plus"></i> إضافة أسبوع
         </button>
 
-        <!-- Weekly table -->
+        <!-- Weekly Table — checkboxes per day -->
         <table class="week-table">
             <thead>
                 <tr>
-                    <th style="width:4%">#</th>
-                    <th style="width:20%">الأسبوع / الفترة</th>
-                    <th style="width:9%">الأحد</th>
-                    <th style="width:9%">الإثنين</th>
-                    <th style="width:9%">الثلاثاء</th>
-                    <th style="width:9%">الأربعاء</th>
-                    <th style="width:9%">الخميس</th>
-                    <th style="width:24%">الملاحظات</th>
-                    <th class="noprint" style="width:7%">حذف</th>
+                    <th rowspan="2" style="width:4%">#</th>
+                    <th rowspan="2" style="width:17%">الأسبوع / الفترة</th>
+                    <th colspan="2" style="width:10%">الأحد</th>
+                    <th colspan="2" style="width:10%">الإثنين</th>
+                    <th colspan="2" style="width:10%">الثلاثاء</th>
+                    <th colspan="2" style="width:10%">الأربعاء</th>
+                    <th colspan="2" style="width:10%">الخميس</th>
+                    <th rowspan="2" style="width:6%">غياب</th>
+                    <th rowspan="2" style="width:6%">تأخر</th>
+                    <th rowspan="2" style="width:10%">ملاحظات</th>
+                    <th rowspan="2" class="noprint" style="width:5%">حذف</th>
+                </tr>
+                <tr>
+                    <th>غ</th><th>م</th>
+                    <th>غ</th><th>م</th>
+                    <th>غ</th><th>م</th>
+                    <th>غ</th><th>م</th>
+                    <th>غ</th><th>م</th>
                 </tr>
             </thead>
             <tbody id="weekBody"></tbody>
@@ -201,7 +240,7 @@
         <!-- Commitment checklist -->
         <div class="commit-section">
             <div class="commit-title"><i class="fa-solid fa-list-check" style="margin-left:6px"></i> تقييم الالتزام العام</div>
-            <div class="commit-grid" id="commitGrid">
+            <div class="commit-grid">
                 <div class="commit-item"><input type="checkbox" id="c1" data-save="1"><label for="c1">الالتزام بمواعيد الحصص</label></div>
                 <div class="commit-item"><input type="checkbox" id="c2" data-save="1"><label for="c2">ارتداء الزي المدرسي</label></div>
                 <div class="commit-item"><input type="checkbox" id="c3" data-save="1"><label for="c3">إحضار الكتب والأدوات</label></div>
@@ -233,78 +272,127 @@
     </div>
     <div id="appFooter"></div>
 </div>
-<script>
-window.currentPageKey = 'storage_commitment_v1';
-var weekIdx = 0;
-var days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
-var statuses = ['حاضر','غائب','متأخر','إجازة'];
 
-function addWeek(data){
+<script>
+window.currentPageKey = 'storage_commitment_v2';
+var weekIdx = 0;
+
+// day keys: d0a=الأحد غياب, d0m=الأحد تأخر, d1a=الإثنين غياب, ...
+var DAYS = 5;
+
+function addWeek(data) {
     weekIdx++;
-    var d = data||{};
+    var d = data || {};
     var tbody = document.getElementById('weekBody');
     var tr = document.createElement('tr');
-    var daySelects = days.map(function(day,i){
-        var saved = d['day'+i]||'حاضر';
-        return '<select onchange="updateStats();saveWeeks()" style="width:100%;border:none;outline:none;font-family:inherit;font-size:11px;background:transparent;padding:4px;text-align:center">'+
-            statuses.map(function(s){return '<option'+(s===saved?' selected':'')+'>'+s+'</option>';}).join('')+
-            '</select>';
-    });
+    var idx = weekIdx;
+
+    // Build 10 checkbox cells (غائب + متأخر for each of 5 days)
+    var dayCells = '';
+    for (var i = 0; i < DAYS; i++) {
+        var abKey = 'd' + i + 'a';
+        var ltKey = 'd' + i + 'm';
+        var abChecked = d[abKey] ? 'checked' : '';
+        var ltChecked = d[ltKey] ? 'checked' : '';
+        dayCells +=
+            '<td style="text-align:center;padding:5px">' +
+            '<input type="checkbox" class="cb-absent" ' + abChecked + ' onchange="recalcRow(this);saveWeeks()">' +
+            '</td>' +
+            '<td style="text-align:center;padding:5px">' +
+            '<input type="checkbox" class="cb-late" ' + ltChecked + ' onchange="recalcRow(this);saveWeeks()">' +
+            '</td>';
+    }
+
     tr.innerHTML =
-        '<td style="text-align:center;font-weight:800;color:#4338ca;padding:5px">'+weekIdx+'</td>'+
-        '<td><input type="text" value="'+(d.period||'')+'" placeholder="مثال: 1 - 5 محرم" oninput="saveWeeks()"></td>'+
-        daySelects.join('')+
-        '<td><textarea placeholder="ملاحظات الأسبوع..." oninput="saveWeeks()">'+(d.note||'')+'</textarea></td>'+
+        '<td style="text-align:center;font-weight:800;color:#4338ca;padding:5px">' + idx + '</td>' +
+        '<td><input type="text" value="' + (d.period || '') + '" placeholder="مثال: 1 - 5 محرم" oninput="saveWeeks()" style="width:100%;border:none;outline:none;font-family:inherit;font-size:11px;background:transparent;text-align:center;padding:4px"></td>' +
+        dayCells +
+        '<td class="total-absent" id="abs-' + idx + '">0</td>' +
+        '<td class="total-late"   id="lat-' + idx + '">0</td>' +
+        '<td><textarea placeholder="ملاحظات..." oninput="saveWeeks()" style="width:100%;border:none;outline:none;font-family:inherit;font-size:10.5px;background:transparent;resize:none;min-height:26px">' + (d.note || '') + '</textarea></td>' +
         '<td class="noprint" style="text-align:center"><button class="del-btn" onclick="delWeek(this)">✕</button></td>';
+
+    tr.dataset.idx = idx;
     tbody.appendChild(tr);
+    recalcRow(tr.querySelector('input[type="checkbox"]') || tr);
     updateStats();
 }
 
-function delWeek(btn){ btn.closest('tr').remove(); renumber(); updateStats(); saveWeeks(); }
-function renumber(){ document.querySelectorAll('#weekBody tr').forEach(function(tr,i){ tr.cells[0].textContent=i+1; }); weekIdx=document.querySelectorAll('#weekBody tr').length; }
-
-function updateStats(){
-    var rows=document.querySelectorAll('#weekBody tr');
-    var weeks=rows.length, present=0, absent=0, late=0, total=0;
-    rows.forEach(function(tr){
-        tr.querySelectorAll('select').forEach(function(sel){
-            total++;
-            var v=sel.value;
-            if(v==='حاضر') present++;
-            else if(v==='غائب') absent++;
-            else if(v==='متأخر') late++;
-        });
-    });
-    document.getElementById('statWeeks').textContent=weeks;
-    document.getElementById('statPresent').textContent=present;
-    document.getElementById('statAbsent').textContent=absent;
-    document.getElementById('statLate').textContent=late;
-    var rate=total>0?Math.round((present/total)*100):0;
-    document.getElementById('statRate').textContent=rate+'%';
-    document.getElementById('statRate').style.color=rate>=90?'#059669':rate>=75?'#d97706':'#dc2626';
+function recalcRow(el) {
+    var tr = el.closest ? el.closest('tr') : el.parentNode;
+    if (!tr) return;
+    var idx = tr.dataset.idx;
+    var absCount = tr.querySelectorAll('.cb-absent:checked').length;
+    var latCount = tr.querySelectorAll('.cb-late:checked').length;
+    var absEl = document.getElementById('abs-' + idx);
+    var latEl = document.getElementById('lat-' + idx);
+    if (absEl) absEl.textContent = absCount;
+    if (latEl) latEl.textContent = latCount;
+    updateStats();
 }
 
-function saveWeeks(){
-    var data=[];
-    document.querySelectorAll('#weekBody tr').forEach(function(tr){
-        var els=tr.querySelectorAll('input,select,textarea');
-        var row={period:els[0]?els[0].value:''};
-        for(var i=0;i<5;i++) row['day'+i]=els[i+1]?els[i+1].value:'حاضر';
-        row.note=els[6]?els[6].value:'';
+function updateStats() {
+    var rows = document.querySelectorAll('#weekBody tr');
+    var weeks = rows.length, absent = 0, late = 0, totalDays = 0;
+    rows.forEach(function (tr) {
+        absent += tr.querySelectorAll('.cb-absent:checked').length;
+        late   += tr.querySelectorAll('.cb-late:checked').length;
+        totalDays += DAYS;
+    });
+    var present = totalDays - absent;
+    var rate = totalDays > 0 ? Math.round((present / totalDays) * 100) : 0;
+    document.getElementById('statWeeks').textContent   = weeks;
+    document.getElementById('statPresent').textContent = present;
+    document.getElementById('statAbsent').textContent  = absent;
+    document.getElementById('statLate').textContent    = late;
+    document.getElementById('statRate').textContent    = rate + '%';
+    document.getElementById('statRate').style.color = rate >= 90 ? '#059669' : rate >= 75 ? '#d97706' : '#dc2626';
+}
+
+function delWeek(btn) {
+    btn.closest('tr').remove();
+    renumber();
+    updateStats();
+    saveWeeks();
+}
+
+function renumber() {
+    weekIdx = 0;
+    document.querySelectorAll('#weekBody tr').forEach(function (tr) {
+        weekIdx++;
+        tr.cells[0].textContent = weekIdx;
+        tr.dataset.idx = weekIdx;
+        var absEl = tr.querySelector('[id^="abs-"]');
+        var latEl = tr.querySelector('[id^="lat-"]');
+        if (absEl) absEl.id = 'abs-' + weekIdx;
+        if (latEl) latEl.id = 'lat-' + weekIdx;
+    });
+}
+
+function saveWeeks() {
+    var data = [];
+    document.querySelectorAll('#weekBody tr').forEach(function (tr) {
+        var row = { period: (tr.querySelector('input[type=text]') || {}).value || '' };
+        var cbs = tr.querySelectorAll('input[type="checkbox"]');
+        for (var i = 0; i < DAYS; i++) {
+            row['d' + i + 'a'] = cbs[i * 2]     ? cbs[i * 2].checked     : false;
+            row['d' + i + 'm'] = cbs[i * 2 + 1] ? cbs[i * 2 + 1].checked : false;
+        }
+        row.note = (tr.querySelector('textarea') || {}).value || '';
         data.push(row);
     });
-    localStorage.setItem(currentPageKey+'_weeks',JSON.stringify(data));
+    localStorage.setItem(currentPageKey + '_weeks', JSON.stringify(data));
 }
 
-function loadWeeks(){
-    try{
-        var d=JSON.parse(localStorage.getItem(currentPageKey+'_weeks')||'[]');
-        if(d.length){ d.forEach(function(r){addWeek(r);}); return; }
-    }catch(e){}
-    for(var i=0;i<4;i++) addWeek();
+function loadWeeks() {
+    try {
+        var d = JSON.parse(localStorage.getItem(currentPageKey + '_weeks') || '[]');
+        if (d.length) { d.forEach(function (r) { addWeek(r); }); return; }
+    } catch (e) {}
+    for (var i = 0; i < 4; i++) addWeek();
 }
 
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('DOMContentLoaded', function () {
     window.appStorage.restorePage(window.currentPageKey);
     loadWeeks();
     window.appStorage.setupAutoSave(window.currentPageKey);
