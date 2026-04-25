@@ -43,32 +43,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (headerEl) headerEl.innerHTML = headerContent;
   if (footerEl)  footerEl.innerHTML = footerContent;
 
-  // ── Set sheet-content padding-bottom = footer height ─────────
-  // #appFooter is position:absolute;bottom:0 — so we only need
-  // to reserve space at the bottom of sheet-content so text
-  // never hides behind the footer.
-  function reserveFooterSpace() {
+  // ── Reserve space for fixed header & footer in print ────────────
+  // Measures actual header/footer heights and stores them as CSS
+  // custom properties so @media print padding is always accurate.
+  function reserveSpace() {
+    var header  = document.getElementById('appHeader');
     var footer  = document.getElementById('appFooter');
     var content = document.querySelector('.sheet-content');
-    if (!footer || !content) return;
-    var fh = footer.offsetHeight;
-    if (fh > 0) {
-      content.style.paddingBottom = (fh + 4) + 'px';
-    }
+    if (!content) return;
+
+    // Header: measure only the official-header img part (action bar hidden in print)
+    var officialHeader = header ? header.querySelector('.official-header') : null;
+    var hh = officialHeader ? officialHeader.offsetHeight : (header ? header.offsetHeight : 0);
+
+    // Footer height
+    var fh = footer ? footer.offsetHeight : 0;
+
+    // Set CSS custom properties on :root so @media print can use them
+    document.documentElement.style.setProperty('--print-header-h', (hh + 6) + 'px');
+    document.documentElement.style.setProperty('--print-footer-h', (fh + 4) + 'px');
+
+    // Also set screen padding-bottom to reserve footer space
+    if (fh > 0) content.style.paddingBottom = (fh + 4) + 'px';
   }
 
-  // Wait for footer image to load so we get the real height
-  var footerImg = footerEl ? footerEl.querySelector('img') : null;
-  if (footerImg) {
-    if (footerImg.complete && footerImg.naturalHeight > 0) {
-      reserveFooterSpace();
-    } else {
-      footerImg.addEventListener('load',  reserveFooterSpace);
-      footerImg.addEventListener('error', reserveFooterSpace);
-    }
+  // Run after both header & footer images load
+  var allImgs = document.querySelectorAll('#appHeader img, #appFooter img');
+  var loadedCount = 0;
+  function onImgDone() { loadedCount++; if (loadedCount >= allImgs.length) reserveSpace(); }
+  if (allImgs.length === 0) {
+    reserveSpace();
+  } else {
+    allImgs.forEach(function(img) {
+      if (img.complete) { onImgDone(); }
+      else { img.addEventListener('load', onImgDone);  window.addEventListener('resize', reserveSpace); }
+    });
   }
-  // Fallback: run after 600ms in case events don't fire
-  setTimeout(reserveFooterSpace, 600);
+  // Fallback
+  setTimeout(reserveSpace, 700);
 
   // ── Auto-grow textareas ──────────────────────────────────────
   function autoGrow(el) {

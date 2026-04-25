@@ -401,10 +401,14 @@ body {
     background: #fff;
   }
 
-  /* Content: padded so it never hides behind header or footer */
+  /* Content: padded so it never hides behind header or footer.
+     --print-header-h and --print-footer-h are set by layout.js after images load. */
   .sheet-content {
     display: block !important;
-    padding: 40mm 5mm 22mm !important; /* top = header h, bottom = footer h */
+    padding-top:    var(--print-header-h, 48mm) !important;
+    padding-bottom: var(--print-footer-h, 24mm) !important;
+    padding-left:   5mm !important;
+    padding-right:  5mm !important;
   }
 
   /* ── Header image: full width ── */
