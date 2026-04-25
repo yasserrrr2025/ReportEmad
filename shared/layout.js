@@ -43,54 +43,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (headerEl) headerEl.innerHTML = headerContent;
   if (footerEl)  footerEl.innerHTML = footerContent;
 
-  // ── Pin footer to A4 bottom ──────────────────────────────────
-  // Sets .sheet-content min-height = 297mm - headerHeight - footerHeight
-  // so the footer is always pushed to the very bottom of the A4 sheet.
-  function pinFooter() {
-    var header  = document.getElementById('appHeader');
+  // ── Set sheet-content padding-bottom = footer height ─────────
+  // #appFooter is position:absolute;bottom:0 — so we only need
+  // to reserve space at the bottom of sheet-content so text
+  // never hides behind the footer.
+  function reserveFooterSpace() {
     var footer  = document.getElementById('appFooter');
     var content = document.querySelector('.sheet-content');
-    if (!content || !footer) return;
-
-    // Reset first so measurements are natural
-    content.style.minHeight = '';
-
-    // 297mm converted to CSS pixels at 96 dpi
-    var A4px   = Math.round(297 * 96 / 25.4); // ≈ 1122 px
-    var headerH = header ? header.offsetHeight : 0;
-    var footerH = footer.offsetHeight;
-    var minH    = A4px - headerH - footerH;
-
-    if (minH > 0) {
-      content.style.minHeight = minH + 'px';
+    if (!footer || !content) return;
+    var fh = footer.offsetHeight;
+    if (fh > 0) {
+      content.style.paddingBottom = (fh + 4) + 'px';
     }
   }
 
-  // Run after header/footer images finish loading
-  var imgs = document.querySelectorAll('#appHeader img, #appFooter img');
-  var loaded = 0;
-  if (imgs.length === 0) {
-    pinFooter();
-  } else {
-    imgs.forEach(function (img) {
-      if (img.complete) {
-        loaded++;
-        if (loaded === imgs.length) pinFooter();
-      } else {
-        img.addEventListener('load',  function () { loaded++; if (loaded === imgs.length) pinFooter(); });
-        img.addEventListener('error', function () { loaded++; if (loaded === imgs.length) pinFooter(); });
-      }
-    });
+  // Wait for footer image to load so we get the real height
+  var footerImg = footerEl ? footerEl.querySelector('img') : null;
+  if (footerImg) {
+    if (footerImg.complete && footerImg.naturalHeight > 0) {
+      reserveFooterSpace();
+    } else {
+      footerImg.addEventListener('load',  reserveFooterSpace);
+      footerImg.addEventListener('error', reserveFooterSpace);
+    }
   }
+  // Fallback: run after 600ms in case events don't fire
+  setTimeout(reserveFooterSpace, 600);
 
-  // Re-pin on window resize
-  window.addEventListener('resize', pinFooter);
-
-  // Re-pin whenever rows/content are added dynamically
-  var pinObserver = new MutationObserver(function () { pinFooter(); });
-  pinObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
-
-  // ── Auto-grow all textareas ──────────────────────────────────
+  // ── Auto-grow textareas ──────────────────────────────────────
   function autoGrow(el) {
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
@@ -101,15 +81,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('textarea').forEach(function (ta) {
       autoGrow(ta);
       if (!ta._agBound) {
-        ta.addEventListener('input', function () { autoGrow(ta); pinFooter(); });
+        ta.addEventListener('input', function () { autoGrow(ta); });
         ta._agBound = true;
       }
     });
   }
 
   initAutoGrow();
-  setTimeout(function () { initAutoGrow(); pinFooter(); }, 500);
+  setTimeout(initAutoGrow, 500);
 
-  var growObserver = new MutationObserver(function () { initAutoGrow(); });
-  growObserver.observe(document.body, { childList: true, subtree: true });
+  var observer = new MutationObserver(function () { initAutoGrow(); });
+  observer.observe(document.body, { childList: true, subtree: true });
 });

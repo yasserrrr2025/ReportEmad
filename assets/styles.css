@@ -45,8 +45,9 @@ body {
    ═══════════════════════════════════════════════════════════ */
 
 /* Sheet = A4 paper on screen.
-   JS (layout.js pinFooter) sets .sheet-content min-height dynamically
-   = 297mm - headerH - footerH, pinning the footer to the A4 bottom. */
+   Footer is position:absolute;bottom:0 inside the 297mm sheet.
+   sheet-content gets padding-bottom = footer height (set by JS).
+*/
 .sheet {
   background: #fff;
   width: 210mm;
@@ -54,21 +55,26 @@ body {
   margin: 20px auto;
   padding: 0;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  /* position:relative is anchor for the absolute footer */
   position: relative;
   overflow: visible;
-  display: flex;
-  flex-direction: column;
 }
 
-#appHeader { display: block; flex-shrink: 0; }
-#appFooter { display: block; flex-shrink: 0; }
+#appHeader { display: block; }
 
-/* JS sets min-height on this to push footer to A4 bottom */
+/* Footer: always pinned to the very bottom of the .sheet */
+#appFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 .sheet-content {
   padding: 3mm 10mm;
+  /* padding-bottom set by JS = footer height, so content never hides under footer */
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
 /* ── Official Header image ─────────────────────────────── */
@@ -377,7 +383,8 @@ body {
   }
 
   #appHeader { display: table-header-group; }
-  #appFooter { display: table-footer-group; }
+  /* Reset position:absolute from screen so table-footer-group works */
+  #appFooter { display: table-footer-group; position: static !important; }
 
   .sheet-content {
     display: table-row-group;
