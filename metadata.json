@@ -1,5 +1,6 @@
 {
-  "name": "School Forms Manager",
-  "description": "نظام إدارة النماذج والتقارير المدرسية لوزارة التعليم",
-  "requestFramePermissions": []
+  "name": "مسابقة عماد الدين زنكي المتوسطة",
+  "description": "منصة مسابقة مدرسة عماد الدين زنكي المتوسطة، تتميز بمزامنة لحظية للأسئلة، عداد تنازلي مشترك، وسحب عشوائي تفاعلي للفائزين.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
 }

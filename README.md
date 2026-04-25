@@ -1,35 +1,20 @@
-# نظام إدارة النماذج والتقارير المدرسية
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-موقع ثابت (Static Website) لإدارة النماذج والتقارير المدرسية لوزارة التعليم.
+# Run and deploy your AI Studio app
 
-## المميزات
-- بدون إطارات عمل (No React/Vue) - فقط HTML/CSS/JS.
-- حفظ تلقائي للمدخلات (LocalStorage).
-- تصدير PDF بجودة عالية مع دعم اللغة العربية.
-- طباعة مباشرة من المتصفح.
-- نظام قوالب مبسط (Header/Footer) باستخدام JavaScript.
+This contains everything you need to run your app locally.
 
-## هيكل المشروع
-- `index.html`: الصفحة الرئيسية (Dashboard).
-- `pages/`: تحتوي على صفحات النماذج (تقرير تنفيذ برنامج، استمارة مجتمع تعلم مهني).
-- `shared/`: تحتوي على الأكواد المشتركة (الهيدر، التذييل، منطق الحفظ، منطق الـ PDF).
-- `assets/`: تحتوي على الصور وملف التنسيق `styles.css`.
+View your app in AI Studio: https://ai.studio/apps/4460d17c-2f00-47ec-8212-b2b9620d01da
 
-## كيفية الرفع على GitHub Pages
-1. قم بإنشاء مستودع (Repository) جديد على GitHub.
-2. ارفع جميع ملفات المشروع إلى المستودع.
-3. اذهب إلى إعدادات المستودع (Settings) -> Pages.
-4. اختر الفرع (Branch) الرئيسي (مثل `main` أو `master`) واضغط Save.
-5. سيتم نشر الموقع وتوفير رابط خاص به.
+## Run Locally
 
-## إدارة الصور (الهيدر والشعار)
-- **الهيدر**: ضع صورة الهيدر الرسمي في المسار `public/assets/header.jpg`. هذه الصورة ستظهر في أعلى كل نموذج وتُستخدم عند تصدير الـ PDF.
-- **الشعار**: ضع الشعار في `public/assets/logo.png`.
-- **التذييل**: (اختياري) ضع صورة التذييل في `public/assets/footer.png`.
+**Prerequisites:**  Node.js
 
-## كيفية إضافة نموذج جديد
-1. قم بإنشاء ملف HTML جديد داخل مجلد `public/pages/` (مثال: `public/pages/new-form.html`).
-2. انسخ الهيكل الأساسي من أحد النماذج الموجودة (مثل `report-program.html`).
-3. قم بتغيير `window.currentPageKey` إلى مفتاح فريد (مثال: `storage_new_form_v1`).
-4. أضف الحقول المطلوبة وتأكد من إضافة خاصية `data-save="1"` لكل حقل ترغب في حفظه تلقائياً.
-5. افتح `index.html` وأضف بطاقة جديدة في قسم `<main class="cards-grid">` تربط إلى النموذج الجديد.
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
