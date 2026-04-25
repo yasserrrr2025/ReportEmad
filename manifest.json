@@ -1,0 +1,17 @@
+{
+    "name": "إدارة النماذج والتقارير المدرسية",
+    "short_name": "النماذج المدرسية",
+    "description": "تطبيق لإدارة نماذج وتقارير المدرسة بكفاءة",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#1e3a8a",
+    "icons": [
+        {
+            "src": "./assets/app-icon.svg",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
