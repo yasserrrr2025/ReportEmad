@@ -40,17 +40,57 @@ document.addEventListener('DOMContentLoaded', async () => {
       <img src="${assetsPath}footer.jpg" alt="Footer Background" onerror="this.onerror=null; this.src='../assets/footer.jpg';">
     </div>`;
 
-  if (headerEl) {
-    headerEl.innerHTML = headerContent;
+  if (headerEl) headerEl.innerHTML = headerContent;
+  if (footerEl)  footerEl.innerHTML = footerContent;
+
+  // ── Pin footer to A4 bottom ──────────────────────────────────
+  // Sets .sheet-content min-height = 297mm - headerHeight - footerHeight
+  // so the footer is always pushed to the very bottom of the A4 sheet.
+  function pinFooter() {
+    var header  = document.getElementById('appHeader');
+    var footer  = document.getElementById('appFooter');
+    var content = document.querySelector('.sheet-content');
+    if (!content || !footer) return;
+
+    // Reset first so measurements are natural
+    content.style.minHeight = '';
+
+    // 297mm converted to CSS pixels at 96 dpi
+    var A4px   = Math.round(297 * 96 / 25.4); // ≈ 1122 px
+    var headerH = header ? header.offsetHeight : 0;
+    var footerH = footer.offsetHeight;
+    var minH    = A4px - headerH - footerH;
+
+    if (minH > 0) {
+      content.style.minHeight = minH + 'px';
+    }
   }
 
-  if (footerEl) {
-    footerEl.innerHTML = footerContent;
+  // Run after header/footer images finish loading
+  var imgs = document.querySelectorAll('#appHeader img, #appFooter img');
+  var loaded = 0;
+  if (imgs.length === 0) {
+    pinFooter();
+  } else {
+    imgs.forEach(function (img) {
+      if (img.complete) {
+        loaded++;
+        if (loaded === imgs.length) pinFooter();
+      } else {
+        img.addEventListener('load',  function () { loaded++; if (loaded === imgs.length) pinFooter(); });
+        img.addEventListener('error', function () { loaded++; if (loaded === imgs.length) pinFooter(); });
+      }
+    });
   }
+
+  // Re-pin on window resize
+  window.addEventListener('resize', pinFooter);
+
+  // Re-pin whenever rows/content are added dynamically
+  var pinObserver = new MutationObserver(function () { pinFooter(); });
+  pinObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
 
   // ── Auto-grow all textareas ──────────────────────────────────
-  // Makes every textarea expand vertically as the user types,
-  // so no content is ever hidden or clipped — on screen or in print.
   function autoGrow(el) {
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
@@ -59,18 +99,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function initAutoGrow() {
     document.querySelectorAll('textarea').forEach(function (ta) {
-      // Set initial height based on current content
       autoGrow(ta);
-      // Grow on every keystroke
-      ta.addEventListener('input', function () { autoGrow(ta); });
+      if (!ta._agBound) {
+        ta.addEventListener('input', function () { autoGrow(ta); pinFooter(); });
+        ta._agBound = true;
+      }
     });
   }
 
-  // Run immediately + after a short delay (for dynamically added rows)
   initAutoGrow();
-  setTimeout(initAutoGrow, 400);
+  setTimeout(function () { initAutoGrow(); pinFooter(); }, 500);
 
-  // Observe DOM mutations so dynamically added textareas also auto-grow
-  var observer = new MutationObserver(function () { initAutoGrow(); });
-  observer.observe(document.body, { childList: true, subtree: true });
+  var growObserver = new MutationObserver(function () { initAutoGrow(); });
+  growObserver.observe(document.body, { childList: true, subtree: true });
 });

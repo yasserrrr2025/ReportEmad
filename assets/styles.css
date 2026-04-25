@@ -44,12 +44,9 @@ body {
    FORM PAGE LAYOUT (.sheet)
    ═══════════════════════════════════════════════════════════ */
 
-/* Sheet = A4 paper on screen
-   Grid with 3 rows guarantees footer is ALWAYS pinned to the bottom:
-   Row 1 = header (auto height)
-   Row 2 = content (1fr = expands to fill all remaining space)
-   Row 3 = footer (auto height)
-*/
+/* Sheet = A4 paper on screen.
+   JS (layout.js pinFooter) sets .sheet-content min-height dynamically
+   = 297mm - headerH - footerH, pinning the footer to the A4 bottom. */
 .sheet {
   background: #fff;
   width: 210mm;
@@ -59,22 +56,19 @@ body {
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   position: relative;
   overflow: visible;
-  /* Grid: header | content-fill | footer */
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Header & footer sit in their grid rows */
-#appHeader { display: block; }
-#appFooter { display: block; }  /* pushed to bottom by 1fr row above */
+#appHeader { display: block; flex-shrink: 0; }
+#appFooter { display: block; flex-shrink: 0; }
 
-/* Content area fills the middle grid row */
+/* JS sets min-height on this to push footer to A4 bottom */
 .sheet-content {
   padding: 3mm 10mm;
   display: flex;
   flex-direction: column;
-  /* min-height:0 prevents grid blowout with flex children */
-  min-height: 0;
+  flex: 1;
 }
 
 /* ── Official Header image ─────────────────────────────── */
