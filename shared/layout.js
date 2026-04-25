@@ -48,7 +48,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     footerEl.innerHTML = footerContent;
   }
 
-  // NOTE: We do NOT wrap .sheet-content children anymore.
-  // The display:table approach for print works without a wrapper div —
-  // .sheet-content itself is the table-row-group and its content flows naturally.
+  // ── Auto-grow all textareas ──────────────────────────────────
+  // Makes every textarea expand vertically as the user types,
+  // so no content is ever hidden or clipped — on screen or in print.
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+    el.style.overflowY = 'hidden';
+  }
+
+  function initAutoGrow() {
+    document.querySelectorAll('textarea').forEach(function (ta) {
+      // Set initial height based on current content
+      autoGrow(ta);
+      // Grow on every keystroke
+      ta.addEventListener('input', function () { autoGrow(ta); });
+    });
+  }
+
+  // Run immediately + after a short delay (for dynamically added rows)
+  initAutoGrow();
+  setTimeout(initAutoGrow, 400);
+
+  // Observe DOM mutations so dynamically added textareas also auto-grow
+  var observer = new MutationObserver(function () { initAutoGrow(); });
+  observer.observe(document.body, { childList: true, subtree: true });
 });

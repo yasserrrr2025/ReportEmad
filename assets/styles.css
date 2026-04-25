@@ -44,7 +44,12 @@ body {
    FORM PAGE LAYOUT (.sheet)
    ═══════════════════════════════════════════════════════════ */
 
-/* Sheet = A4 paper on screen */
+/* Sheet = A4 paper on screen
+   Grid with 3 rows guarantees footer is ALWAYS pinned to the bottom:
+   Row 1 = header (auto height)
+   Row 2 = content (1fr = expands to fill all remaining space)
+   Row 3 = footer (auto height)
+*/
 .sheet {
   background: #fff;
   width: 210mm;
@@ -53,21 +58,23 @@ body {
   padding: 0;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   position: relative;
-  display: flex;
-  flex-direction: column;
   overflow: visible;
+  /* Grid: header | content-fill | footer */
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
-/* Header & footer bookends */
-#appHeader { display: block; flex-shrink: 0; }
-#appFooter { display: block; flex-shrink: 0; margin-top: auto; }
+/* Header & footer sit in their grid rows */
+#appHeader { display: block; }
+#appFooter { display: block; }  /* pushed to bottom by 1fr row above */
 
-/* Content area */
+/* Content area fills the middle grid row */
 .sheet-content {
-  flex: 1;
   padding: 3mm 10mm;
   display: flex;
   flex-direction: column;
+  /* min-height:0 prevents grid blowout with flex children */
+  min-height: 0;
 }
 
 /* ── Official Header image ─────────────────────────────── */
@@ -428,6 +435,17 @@ body {
 
   .fit-text { overflow-y: hidden !important; }
   .photo-box img { display: block !important; }
+
+  /* ── Textareas: show ALL content in print, never clip ── */
+  textarea {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    resize: none !important;
+    display: block !important;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
