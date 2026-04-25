@@ -466,6 +466,12 @@ body {
   }
 
   .photo-box img { display: block !important; }
+
+  /* Hide placeholder text so fields appear blank for handwriting */
+  input::placeholder,
+  textarea::placeholder,
+  select option[disabled] { color: transparent !important; opacity: 0 !important; }
+  [placeholder] { color: inherit; }
 }
 
 
