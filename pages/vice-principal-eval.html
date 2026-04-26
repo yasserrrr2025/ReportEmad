@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عناصر تقييم المعلم</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="../shared/layout.js?v=4"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=7"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        /* ── Page title ─────────────────────────────────────── */
+        .eval-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #b91c1c;
+            margin: 5px 0 10px;
+            padding-top: 10px; /* لضمان ظهوره في الطباعة المفردة */
+            font-family: 'Tajawal', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+        }
+
+        /* ── Teacher info row ───────────────────────────────── */
+        .teacher-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+        .teacher-info th:nth-child(1) { width: 33%; } /* الاسم */
+        .teacher-info th:nth-child(2) { width: 18%; } /* السجل */
+        .teacher-info th:nth-child(3) { width: 17%; } /* التخصص */
+        .teacher-info th:nth-child(4) { width: 18%; } /* المؤهل */
+        .teacher-info th:nth-child(5) { width: 14%; } /* التاريخ */
+
+        .teacher-info th {
+            background: #0d9488;
+            color: #fff;
+            padding: 6px 8px;
+            border: 1px solid #0f766e;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .teacher-info td {
+            border: 1px solid #b2dfdb;
+            padding: 0;
+        }
+        .teacher-info td input {
+            width: 100%; border: none; outline: none;
+            font-family: inherit; font-size: 12px;
+            background: transparent; padding: 5px 6px;
+            color: #1e293b;
+        }
+
+        /* ── Evaluation table ───────────────────────────────── */
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+        .eval-table th {
+            background: #0d9488;
+            color: #fff;
+            padding: 5px 4px;
+            border: 1px solid #0f766e;
+            text-align: center;
+            font-weight: 800;
+        }
+        .eval-table .scale-header {
+            background: #b2dfdb;
+            color: #0f766e;
+            padding: 4px 3px;
+            border: 1px solid #0f766e;
+            text-align: center;
+            font-weight: 900;
+            font-size: 12px;
+        }
+        .eval-table td {
+            border: 1px solid #b2dfdb;
+            padding: 3px 5px;
+            vertical-align: middle;
+        }
+        .eval-table tr:nth-child(even) td { background: #f0fdfa; }
+        .eval-table td.num  { text-align: center; font-weight: 800; color: #0f766e; width: 4%; }
+        .eval-table td.item { text-align: right; font-weight: 600; }
+        .eval-table td.wt   { text-align: center; color: #0f766e; font-weight: 700; width: 8%; }
+        .eval-table td.cb   { text-align: center; width: 7%; }
+
+        /* Rating checkboxes — styled as boxes like the original form */
+        .eval-table td.cb input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: #0d9488;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* Total row */
+        .eval-table .total-row td {
+            background: #e0f2f1;
+            font-weight: 900;
+            color: #0f766e;
+            text-align: center;
+            border-top: 2px solid #0d9488;
+        }
+
+        /* ── Four analysis boxes ─────────────────────────────── */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .analysis-box {
+            border: 1.5px solid #b2dfdb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .analysis-box-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0d9488;
+            color: #fff;
+            padding: 4px 8px;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        /* Pre-defined checkable points */
+        .analysis-points {
+            padding: 4px 8px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            padding: 2px 0;
+            cursor: pointer;
+            border-bottom: 1px solid #e0f2f1;
+            font-size: 11px;
+            color: #1e293b;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .point-item:last-of-type { border-bottom: none; }
+        .point-item input[type="checkbox"] {
+            width: 14px; height: 14px;
+            accent-color: #0d9488;
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        /* Checked = bold highlight */
+        .point-item input[type="checkbox"]:checked + span {
+            font-weight: 900;
+            color: #0f766e;
+        }
+        .point-extra { margin-top: 4px; }
+
+        .analysis-box-header input[type="checkbox"] {
+            width: 15px; height: 15px;
+            accent-color: #fff;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        /* Lined paper area for handwriting */
+        .lined-area {
+            background-color: #fff;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent calc(20px - 1px),
+                #b2dfdb calc(20px - 1px),
+                #b2dfdb 20px
+            );
+            background-size: 100% 20px;
+            min-height: 60px; /* 3 lines */
+            padding: 2px 6px;
+            line-height: 20px;
+            position: relative;
+        }
+
+        /* Optional: typed notes on top of lines */
+        .lined-area textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 11px;
+            line-height: 20px;
+            color: #1e40af;
+            resize: none;
+            min-height: 60px;
+            display: block;
+        }
+
+        /* ── Signatures ─────────────────────────────────────── */
+        .sig-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+        .sig-table th {
+            background: #f0fdfa;
+            color: #0f766e;
+            border: 1px solid #b2dfdb;
+            padding: 4px 10px;
+            font-weight: 800;
+            text-align: right;
+        }
+        .sig-table th:nth-child(1) { width: 15%; }
+        .sig-table td:nth-child(2) { width: 40%; }
+        .sig-table th:nth-child(3) { width: 15%; }
+        .sig-table td:nth-child(4) { width: 30%; }
+        .sig-table td {
+            border: 1px solid #b2dfdb;
+            padding: 0;
+        }
+        .sig-table td input {
+            width: 100%; border: none; outline: none;
+            font-family: inherit; font-size: 11px;
+            background: transparent; padding: 4px 6px;
+        }
+
+        /* Teacher management panel */
+        .mgmt-bar {
+            width: 210mm; margin: 0 auto 10px;
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(13,148,136,.15);
+            overflow: hidden;
+        }
+        .mgmt-toolbar {
+            display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg,#0f766e,#0d9488);
+            padding: 8px 14px; flex-wrap: wrap;
+        }
+        .mgmt-toolbar h4 { color:#fff; font-size:13px; font-weight:800; flex:1; }
+        .mgmt-btn {
+            display:inline-flex; align-items:center; gap:5px;
+            background:rgba(255,255,255,.18); color:#fff;
+            border:1px solid rgba(255,255,255,.35); border-radius:7px;
+            padding:5px 12px; font-family:inherit; font-size:12px;
+            font-weight:700; cursor:pointer; transition:.2s;
+        }
+        .mgmt-btn:hover { background:rgba(255,255,255,.3); }
+        .mgmt-btn.danger { background:rgba(239,68,68,.3); border-color:rgba(239,68,68,.5); }
+        .teacher-list-wrap { max-height:180px; overflow-y:auto; padding:8px; display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:6px; }
+        .t-card {
+            border:1.5px solid #b2dfdb; border-radius:8px; padding:8px 10px;
+            cursor:pointer; transition:.18s; position:relative;
+            background:#f0fdfa;
+        }
+        .t-card:hover { border-color:#0d9488; box-shadow:0 2px 8px rgba(13,148,136,.2); }
+        .t-card.active { border-color:#0d9488; background:#ccfbf1; }
+        .t-card.evaluated { background:#d1fae5; }
+        .t-card.evaluated::after { content:'✓'; position:absolute; top:4px; left:6px; color:#059669; font-weight:900; font-size:14px; }
+        .t-name { font-size:12px; font-weight:800; color:#0f766e; }
+        .t-spec { font-size:10px; color:#64748b; margin-top:2px; }
+        .add-teacher-form { padding:10px 14px; border-top:1px solid #e0f2f1; display:none; gap:8px; flex-wrap:wrap; align-items:flex-end; }
+        .add-teacher-form input { border:1px solid #b2dfdb; border-radius:6px; padding:5px 8px; font-family:inherit; font-size:12px; flex:1; min-width:120px; }
+        .add-teacher-form input:focus { outline:none; border-color:#0d9488; }
+
+        @media print {
+            .noprint, .header-actions-bar, .mgmt-bar { display: none !important; }
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .lined-area {
+                background-image: repeating-linear-gradient(to bottom,transparent,transparent calc(22px - 1px),#b2dfdb calc(22px - 1px),#b2dfdb 22px) !important;
+                -webkit-print-color-adjust:exact; print-color-adjust:exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Teacher Management Panel (screen only) -->
+<div class="mgmt-bar noprint">
+  <div class="mgmt-toolbar">
+    <h4><i class="fa-solid fa-users"></i> إدارة المعلمين</h4>
+    <button class="mgmt-btn" onclick="document.getElementById('xlFile').click()"><i class="fa-solid fa-file-excel"></i> استيراد Excel</button>
+    <input type="file" id="xlFile" hidden accept=".xlsx,.xls,.csv" onchange="importExcel(event)">
+    <button class="mgmt-btn" onclick="toggleAddForm()"><i class="fa-solid fa-user-plus"></i> إضافة يدوي</button>
+    <button class="mgmt-btn" onclick="saveCurrentEval()" style="background:rgba(16,185,129,.35)"><i class="fa-solid fa-floppy-disk"></i> حفظ للمعلم</button>
+    <button class="mgmt-btn" onclick="saveToAll()" style="background:rgba(217,119,6,.35)"><i class="fa-solid fa-layer-group"></i> حفظ للكل</button>
+    <button class="mgmt-btn" onclick="printAll()" style="background:rgba(99,102,241,.35)"><i class="fa-solid fa-print"></i> طباعة الكل</button>
+    <button class="mgmt-btn danger" onclick="clearAll()"><i class="fa-solid fa-trash"></i> مسح الكل</button>
+  </div>
+  <div class="teacher-list-wrap" id="teacherListWrap"><em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون. استورد Excel أو أضف يدوياً.</em></div>
+  <div class="add-teacher-form" id="addForm">
+    <input type="text" id="newName" placeholder="اسم المعلم *">
+    <input type="text" id="newId" placeholder="السجل المدني">
+    <input type="text" id="newSpec" placeholder="التخصص">
+    <input type="text" id="newQual" placeholder="المؤهل">
+    <button class="mgmt-btn" onclick="addTeacher()" style="background:#059669;border-color:#059669"><i class="fa-solid fa-check"></i> إضافة</button>
+    <button class="mgmt-btn danger" onclick="toggleAddForm()">إلغاء</button>
+  </div>
+</div>
+<div class="sheet">
+    <div id="appHeader"></div>
+    <div class="sheet-content">
+
+        <!-- Title -->
+        <div class="eval-title">عناصر تقييم المعلم</div>
+
+        <!-- Teacher Info -->
+        <table class="teacher-info">
+            <thead><tr>
+                <th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th><th>تاريخ المراجعة</th>
+            </tr></thead>
+            <tbody><tr>
+                <td><input type="text" id="teName" placeholder="الاسم الكامل"></td>
+                <td><input type="text" id="teId"   placeholder="رقم السجل"></td>
+                <td><input type="text" id="teSpec" placeholder="التخصص"></td>
+                <td><input type="text" id="teQual" placeholder="المؤهل"></td>
+                <td><input type="date" id="teDate"></td>
+            </tr></tbody>
+        </table>
+
+        <!-- Evaluation Table -->
+        <table class="eval-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width:4%">م</th>
+                    <th rowspan="2">عناصر الأداء الوظيفي</th>
+                    <th rowspan="2" style="width:8%">الوزن النسبي</th>
+                    <th colspan="5">سلم التقدير</th>
+                </tr>
+                <tr>
+                    <th class="scale-header">١</th>
+                    <th class="scale-header">٢</th>
+                    <th class="scale-header">٣</th>
+                    <th class="scale-header">٤</th>
+                    <th class="scale-header">٥</th>
+                </tr>
+            </thead>
+            <tbody id="evalBody">
+                <!-- Rows injected by JS -->
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="2">الدرجة الكلية</td>
+                    <td>100%</td>
+                    <td colspan="4"></td>
+                    <td id="totalScore" style="font-size:15px">—</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Analysis — 4 boxes with pre-defined checkable points -->
+        <div class="analysis-grid">
+
+            <!-- نقاط القوة -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-circle-check" style="color:#bbf7d0"></i>
+                    نقاط القوة
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>القدرة على إدارة الموارد بكفاءة.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>تحقيق الانضباط المدرسي بفعالية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>دعم المبادرات النوعية والبرامج.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtStrength" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نقاط الضعف -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-circle-xmark" style="color:#fecaca"></i>
+                    نقاط الضعف
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>القصور في إدارة الموارد المدرسية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>ضعف التفاعل مع المجتمع المهني.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>القصور في متابعة الانضباط المدرسي.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>عدم توظيف المنصات الرقمية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>ضعف التفاعل مع أولياء الأمور.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtWeakness" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- فرص التحسين -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-arrow-trend-up" style="color:#bfdbfe"></i>
+                    فرص التحسين
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>الاستفادة من التطبيقات الرقمية في الإدارة.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>تطوير برامج مبتكرة للانضباط الطلابي.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtOpportunity" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الملاحظات ومجالات التطوير -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-lightbulb" style="color:#fde68a"></i>
+                    الملاحظات ومجالات التطوير المهني المقترحة
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الالتحاق ببرامج تدريبية في القيادة المدرسية.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtNotes" data-save="1" placeholder="إضافة ملاحظات أخرى..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Signatures -->
+        <table class="sig-table">
+            <tr>
+                <th>اسم المعلم</th>
+                <td><input type="text" id="teSig1" data-save="1" readonly style="color:#0f766e; font-weight:700;"></td>
+                <th>التوقيع</th>
+                <td><input type="text" id="teSig2" data-save="1" placeholder="التوقيع"></td>
+            </tr>
+            <tr>
+                <th>مدير المدرسة</th>
+                <td><input type="text" id="teSig3" data-save="1" value="عابد عبيد الجدعاني" readonly style="color:#0f766e; font-weight:700;"></td>
+                <th>التوقيع</th>
+                <td style="text-align:center; padding: 2px;"><img src="https://f.top4top.io/p_3768sbxl41.png" style="max-height: 25px; vertical-align: middle;"></td>
+            </tr>
+        </table>
+
+    </div>
+    <div id="appFooter"></div>
+</div>
+
+<script>
+// ── Teacher DB ──────────────────────────────────────────────
+var DB_KEY   = 'vp_teachers';
+var EVAL_KEY = 'vp_eval_';
+var currentTeacherId = null;
+
+var dDate = new Date();
+window.todayDate = dDate.getFullYear() + '-' + String(dDate.getMonth() + 1).padStart(2, '0') + '-' + String(dDate.getDate()).padStart(2, '0');
+
+function getTeachers(){ try{ return JSON.parse(localStorage.getItem(DB_KEY)||'[]'); }catch(e){ return []; } }
+function saveTeachers(arr){ localStorage.setItem(DB_KEY, JSON.stringify(arr)); }
+function getEval(id){ try{ return JSON.parse(localStorage.getItem(EVAL_KEY+id)||'null'); }catch(e){ return null; } }
+function setEval(id, data){ localStorage.setItem(EVAL_KEY+id, JSON.stringify(data)); }
+
+function renderTeacherList(){
+    var wrap = document.getElementById('teacherListWrap');
+    var ts = getTeachers();
+    if(!ts.length){ wrap.innerHTML='<em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون بعد.</em>'; return; }
+    wrap.innerHTML = ts.map(function(t){
+        var ev = getEval(t.id);
+        var cls = 't-card' + (t.id===currentTeacherId?' active':'') + (ev?' evaluated':'');
+        return '<div class="'+cls+'" onclick="selectTeacher('+t.id+')" title="'+t.name+'">' +
+               '<div class="t-name">'+t.name+'</div>' +
+               '<div class="t-spec">'+( t.spec||'—')+'</div></div>';
+    }).join('');
+}
+
+function selectTeacher(id){
+    currentTeacherId = id;
+    var ts = getTeachers();
+    var t = ts.find(function(x){ return x.id===id; });
+    if(!t) return;
+    document.getElementById('teName').value  = t.name||'';
+    document.getElementById('teId').value    = t.civil||'';
+    document.getElementById('teSpec').value  = t.spec||'';
+    document.getElementById('teQual').value  = t.qual||'';
+    document.getElementById('teDate').value  = t.date||window.todayDate;
+    document.getElementById('teSig1').value  = t.name||'';
+    // load eval
+    clearFormEval();
+    var ev = getEval(id);
+    if(ev){
+        Object.keys(ev.ratings||{}).forEach(function(idx){
+            var cb = document.getElementById('cb_'+idx+'_'+ev.ratings[idx]);
+            if(cb) cb.checked = true;
+        });
+        calcTotal();
+        ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(cid){
+            var el = document.getElementById(cid);
+            if(el && ev.checks) el.checked = !!ev.checks[cid];
+        });
+        ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(tid){
+            var el = document.getElementById(tid);
+            if(el && ev.texts) el.value = ev.texts[tid]||'';
+        });
+    }
+    renderTeacherList();
+}
+
+function clearFormEval(){
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb) cb.checked=false; } });
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('totalScore').textContent='—';
+}
+
+function saveCurrentEval(){
+    if(!currentTeacherId){ alert('اختر معلماً أولاً من القائمة'); return; }
+    
+    var ts = getTeachers();
+    var t = ts.find(function(x){ return x.id === currentTeacherId; });
+    if(t) {
+        t.date = document.getElementById('teDate').value;
+        saveTeachers(ts);
+    }
+    
+    var ratings={};
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb&&cb.checked){ ratings[idx]=s; break; } } });
+    var checks={};
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) checks[id]=el.checked; });
+    var texts={};
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) texts[id]=el.value; });
+    setEval(currentTeacherId,{ ratings:ratings, checks:checks, texts:texts });
+    renderTeacherList();
+    alert('تم حفظ التقييم للمعلم ✓');
+}
+
+function saveToAll(){
+    var ts = getTeachers();
+    if(!ts.length) { alert('لا يوجد معلمون'); return; }
+    if(!confirm('هل تريد تطبيق التقييم الحالي (والتاريخ) على جميع المعلمين؟\nستتم الكتابة فوق أي تقييمات سابقة لهم.')) return;
+    
+    var ratings={};
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb&&cb.checked){ ratings[idx]=s; break; } } });
+    var checks={};
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) checks[id]=el.checked; });
+    var texts={};
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) texts[id]=el.value; });
+    
+    var currentDate = document.getElementById('teDate').value || window.todayDate;
+
+    ts.forEach(function(t) {
+        t.date = currentDate;
+        setEval(t.id, { ratings:ratings, checks:checks, texts:texts });
+    });
+    saveTeachers(ts);
+    renderTeacherList();
+    alert('تم حفظ التقييم والتاريخ لجميع المعلمين ✓');
+}
+
+function addTeacher(){
+    var name = document.getElementById('newName').value.trim();
+    if(!name){ alert('الاسم مطلوب'); return; }
+    var ts = getTeachers();
+    var id = Date.now();
+    ts.push({ id:id, name:name, civil:document.getElementById('newId').value.trim(), spec:document.getElementById('newSpec').value.trim(), qual:document.getElementById('newQual').value.trim() });
+    saveTeachers(ts);
+    ['newName','newId','newSpec','newQual'].forEach(function(i){ document.getElementById(i).value=''; });
+    toggleAddForm();
+    renderTeacherList();
+}
+
+function toggleAddForm(){
+    var f = document.getElementById('addForm');
+    f.style.display = f.style.display==='flex' ? 'none' : 'flex';
+}
+
+function importExcel(evt){
+    var file = evt.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+        var wb = XLSX.read(e.target.result, {type:'binary'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(ws, {header:1});
+        var ts = getTeachers();
+        var added=0;
+        
+        var header = rows[0] || [];
+        var nameIdx=-1, idIdx=-1, specIdx=-1, qualIdx=-1;
+        header.forEach(function(h, i){
+            var val = (h||'').toString().trim();
+            if(val.match(/هوية|سجل|مدني/)) idIdx = i;
+            else if(val.match(/اسم|موظف|معلم|الاسم/)) nameIdx = i;
+            else if(val.match(/تخصص/)) specIdx = i;
+            else if(val.match(/مؤهل/)) qualIdx = i;
+        });
+        
+        if(nameIdx===-1) nameIdx = 0;
+        if(idIdx===-1) idIdx = 1;
+        if(specIdx===-1) specIdx = 2;
+        if(qualIdx===-1) qualIdx = 3;
+
+        rows.forEach(function(row,i){
+            if(i===0) return; // skip header
+            var name = (row[nameIdx]||'').toString().trim();
+            if(!name) return;
+            var civil = idIdx!==-1 ? (row[idIdx]||'').toString() : '';
+            var spec = specIdx!==-1 ? (row[specIdx]||'').toString() : '';
+            var qual = qualIdx!==-1 ? (row[qualIdx]||'').toString() : '';
+            
+            ts.push({ id:Date.now()+i, name:name, civil:civil, spec:spec, qual:qual });
+            added++;
+        });
+        saveTeachers(ts);
+        renderTeacherList();
+        alert('تم استيراد '+added+' معلم ✓');
+    };
+    reader.readAsBinaryString(file);
+    evt.target.value='';
+}
+
+function clearAll(){
+    if(!confirm('هل تريد حذف جميع المعلمين وتقييماتهم؟')) return;
+    var ts=getTeachers();
+    ts.forEach(function(t){ localStorage.removeItem(EVAL_KEY+t.id); });
+    localStorage.removeItem(DB_KEY);
+    localStorage.removeItem(window.currentPageKey);
+    currentTeacherId=null;
+    
+    document.getElementById('teName').value = '';
+    document.getElementById('teId').value = '';
+    document.getElementById('teSpec').value = '';
+    document.getElementById('teQual').value = '';
+    document.getElementById('teSig1').value = '';
+    document.getElementById('teSig2').value = '';
+    clearFormEval();
+    
+    renderTeacherList();
+}
+
+function printAll(){
+    var ts=getTeachers();
+    if(!ts.length){ alert('لا يوجد معلمون'); return; }
+    var evaluated=ts.filter(function(t){ return getEval(t.id); });
+    if(!evaluated.length){ alert('لم يتم تقييم أي معلم بعد'); return; }
+    
+    var win=window.open('','_blank');
+    var styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).map(function(s){ return s.outerHTML; }).join('\n');
+    var rootStyles = getComputedStyle(document.documentElement);
+    var hH = rootStyles.getPropertyValue('--print-header-h') || '48mm';
+    var fH = rootStyles.getPropertyValue('--print-footer-h') || '24mm';
+    
+    var baseTag = '<base href="' + window.location.href + '">';
+    var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>طباعة الكل</title>' + baseTag + styles + '</head><body>';
+    html += '<div class="sheet">';
+    html += document.getElementById('appHeader').outerHTML;
+    
+    var container = document.querySelector('.sheet-content');
+    var oldTeacherId = currentTeacherId;
+    
+    evaluated.forEach(function(t, i){
+        selectTeacher(t.id);
+        var clone = container.cloneNode(true);
+        var inputs = container.querySelectorAll('input, textarea, select');
+        var cloneInputs = clone.querySelectorAll('input, textarea, select');
+        
+        inputs.forEach(function(input, idx){
+            if(input.type === 'checkbox' || input.type === 'radio'){
+                if(input.checked) cloneInputs[idx].setAttribute('checked', 'checked');
+            } else if (input.tagName === 'TEXTAREA') {
+                cloneInputs[idx].innerHTML = input.value;
+            } else {
+                // استبدال حقل الإدخال بنص عادي لتفادي القص عند الطباعة
+                var span = document.createElement('span');
+                span.textContent = input.value;
+                span.style.cssText = 'display:inline-block; width:100%; padding:4px 6px; font-family:inherit; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+                cloneInputs[idx].parentNode.replaceChild(span, cloneInputs[idx]);
+            }
+        });
+        
+        if(i > 0) clone.style.pageBreakBefore = 'always';
+        html += clone.outerHTML;
+    });
+    
+    html += document.getElementById('appFooter').outerHTML;
+    html += '</div>';
+    
+    html += '<script>document.documentElement.style.setProperty("--print-header-h", "'+hH+'"); document.documentElement.style.setProperty("--print-footer-h", "'+fH+'"); setTimeout(function(){window.print();}, 500);<\/script>';
+    html += '</body></html>';
+    
+    win.document.write(html);
+    win.document.close();
+    
+    // Restore current view
+    if(oldTeacherId) selectTeacher(oldTeacherId);
+    else clearFormEval();
+}
+
+// ── Evaluation logic ────────────────────────────────────────
+window.currentPageKey = 'storage_vp_eval_v1';
+
+var items = [
+    { text: 'أداء الواجبات الوظيفية', w: 5 },
+    { text: 'التفاعل مع المجتمع المهني', w: 5 },
+    { text: 'التفاعل مع أولياء الأمور', w: 5 },
+    { text: 'مرن وقادر على تنفيذ أعماله في ظل ظروف العمل المختلفة', w: 5 },
+    { text: 'يدعم ويشارك في المبادرات النوعية', w: 10 },
+    { text: 'يتخذ إجراءات تربوية تحقق الانضباط المدرسي', w: 5 },
+    { text: 'يدير الموارد في المدرسة بكفاءة', w: 5 },
+    { text: 'يشارك في إعداد خطة للتطوير المهني', w: 5 },
+    { text: 'يقدم التغذية الراجعة ويتابع تحقق مؤشرات الأداء الوظيفي', w: 5 },
+    { text: 'يدعم تنفيذ برامج التطوير المهني', w: 5 },
+    { text: 'يقيم أداء منسوبي المدرسة', w: 5 },
+    { text: 'ينفذ إجراءات علمية لتحسين نتائج التعلم', w: 5 },
+    { text: 'يسهم في تحسين مستوى أداء المدرسة', w: 5 },
+    { text: 'يشارك في إعداد الخطط المدرسية اللازمة', w: 5 },
+    { text: 'يتابع تنفيذ الخطط المدرسية بمختلف أنواعها', w: 5 },
+    { text: 'يهيئ الفرص والإمكانات الداعمة لمشاركة الطلاب في الأنشطة الصفية وغير الصفية', w: 5 },
+    { text: 'يوظف المنصات الرقمية وتطبيقاتها المعتمدة في دعم عمليات التعليم والتعلم', w: 5 },
+    { text: 'يتابع تعزيز السلوك الإيجابي للطلاب', w: 5 },
+    { text: 'يهيئ بيئة مدرسية آمنة ومحفزة على التعلم', w: 5 }
+];
+
+function buildTable() {
+    var tbody = document.getElementById('evalBody');
+    items.forEach(function(item, idx) {
+        var row = document.createElement('tr');
+        var cbs = '';
+        for (var s = 1; s <= 5; s++) {
+            var id = 'cb_' + idx + '_' + s;
+            cbs += '<td class="cb">' +
+                   '<input type="checkbox" id="' + id + '" data-save="1" ' +
+                   'onchange="onRatingChange(' + idx + ',' + s + ',this)">' +
+                   '</td>';
+        }
+        row.innerHTML =
+            '<td class="num">' + (idx + 1) + '</td>' +
+            '<td class="item">' + item.text + '</td>' +
+            '<td class="wt">%' + item.w + '</td>' +
+            cbs;
+        tbody.appendChild(row);
+    });
+}
+
+// Allow only one checkbox per row (radio behaviour)
+function onRatingChange(rowIdx, score, el) {
+    if (el.checked) {
+        for (var s = 1; s <= 5; s++) {
+            if (s !== score) {
+                var other = document.getElementById('cb_' + rowIdx + '_' + s);
+                if (other) other.checked = false;
+            }
+        }
+    }
+    calcTotal();
+    saveEval();
+}
+
+function calcTotal() {
+    var total = 0;
+    items.forEach(function(item, idx) {
+        for (var s = 1; s <= 5; s++) {
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb && cb.checked) {
+                // Score = (rating / 5) * weight
+                total += (s / 5) * item.w;
+                break;
+            }
+        }
+    });
+    var el = document.getElementById('totalScore');
+    if (el) {
+        var rounded = Math.round(total * 10) / 10;
+        el.textContent = rounded + ' / 100';
+        el.style.color = rounded >= 90 ? '#059669' : rounded >= 75 ? '#d97706' : '#dc2626';
+    }
+}
+
+function saveEval() {
+    var ratings = {};
+    items.forEach(function(item, idx) {
+        for (var s = 1; s <= 5; s++) {
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb && cb.checked) { ratings[idx] = s; break; }
+        }
+    });
+    localStorage.setItem(currentPageKey + '_ratings', JSON.stringify(ratings));
+}
+
+function loadEval() {
+    try {
+        var ratings = JSON.parse(localStorage.getItem(currentPageKey + '_ratings') || '{}');
+        Object.keys(ratings).forEach(function(idx) {
+            var s = ratings[idx];
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb) cb.checked = true;
+        });
+        calcTotal();
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    buildTable();
+    window.appStorage.restorePage(window.currentPageKey);
+    loadEval();
+    window.appStorage.setupAutoSave(window.currentPageKey);
+    renderTeacherList();
+    
+    // Set initial date if not populated yet
+    if(!document.getElementById('teDate').value) {
+        document.getElementById('teDate').value = window.todayDate;
+    }
+    
+    // اعتراض زر تفريغ الاستمارة لمنع مسح التاريخ واسم المدير
+    setTimeout(function() {
+        var btnClear = document.querySelector('.btn-clear');
+        if(btnClear) {
+            btnClear.onclick = function() {
+                if(!confirm('هل تريد تفريغ الاستمارة الحالية (مع الاحتفاظ باسم المدير والتاريخ)؟')) return;
+                
+                document.getElementById('teName').value = '';
+                document.getElementById('teId').value = '';
+                document.getElementById('teSpec').value = '';
+                document.getElementById('teQual').value = '';
+                document.getElementById('teSig1').value = '';
+                document.getElementById('teSig2').value = '';
+                
+                clearFormEval();
+                
+                currentTeacherId = null;
+                renderTeacherList();
+                
+                // حفظ الحالة الجديدة الفارغة
+                if(window.appStorage) {
+                    window.appStorage.savePage(window.currentPageKey);
+                }
+            };
+        }
+    }, 200);
+});
+</script>
+</body>
+</html>
+
+
