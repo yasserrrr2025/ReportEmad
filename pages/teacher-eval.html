@@ -15,12 +15,13 @@
         /* ── Page title ─────────────────────────────────────── */
         .eval-title {
             text-align: center;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 900;
-            color: #e63946;
-            margin: 10px 0 14px;
+            color: #b91c1c;
+            margin: 24px 0 24px;
             font-family: 'Tajawal', sans-serif;
             letter-spacing: 1px;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
         }
 
         /* ── Teacher info row ───────────────────────────────── */
@@ -280,7 +281,8 @@
     <button class="mgmt-btn" onclick="document.getElementById('xlFile').click()"><i class="fa-solid fa-file-excel"></i> استيراد Excel</button>
     <input type="file" id="xlFile" hidden accept=".xlsx,.xls,.csv" onchange="importExcel(event)">
     <button class="mgmt-btn" onclick="toggleAddForm()"><i class="fa-solid fa-user-plus"></i> إضافة يدوي</button>
-    <button class="mgmt-btn" onclick="saveCurrentEval()" style="background:rgba(16,185,129,.35)"><i class="fa-solid fa-floppy-disk"></i> حفظ التقييم</button>
+    <button class="mgmt-btn" onclick="saveCurrentEval()" style="background:rgba(16,185,129,.35)"><i class="fa-solid fa-floppy-disk"></i> حفظ للمعلم</button>
+    <button class="mgmt-btn" onclick="saveToAll()" style="background:rgba(217,119,6,.35)"><i class="fa-solid fa-layer-group"></i> حفظ للكل</button>
     <button class="mgmt-btn" onclick="printAll()" style="background:rgba(99,102,241,.35)"><i class="fa-solid fa-print"></i> طباعة الكل</button>
     <button class="mgmt-btn danger" onclick="clearAll()"><i class="fa-solid fa-trash"></i> مسح الكل</button>
   </div>
@@ -439,6 +441,9 @@ var DB_KEY   = 'te_teachers';
 var EVAL_KEY = 'te_eval_';
 var currentTeacherId = null;
 
+var dDate = new Date();
+window.todayDate = dDate.getFullYear() + '-' + String(dDate.getMonth() + 1).padStart(2, '0') + '-' + String(dDate.getDate()).padStart(2, '0');
+
 function getTeachers(){ try{ return JSON.parse(localStorage.getItem(DB_KEY)||'[]'); }catch(e){ return []; } }
 function saveTeachers(arr){ localStorage.setItem(DB_KEY, JSON.stringify(arr)); }
 function getEval(id){ try{ return JSON.parse(localStorage.getItem(EVAL_KEY+id)||'null'); }catch(e){ return null; } }
@@ -466,7 +471,7 @@ function selectTeacher(id){
     document.getElementById('teId').value    = t.civil||'';
     document.getElementById('teSpec').value  = t.spec||'';
     document.getElementById('teQual').value  = t.qual||'';
-    document.getElementById('teDate').value  = t.date||'';
+    document.getElementById('teDate').value  = t.date||window.todayDate;
     // load eval
     clearFormEval();
     var ev = getEval(id);
@@ -497,6 +502,14 @@ function clearFormEval(){
 
 function saveCurrentEval(){
     if(!currentTeacherId){ alert('اختر معلماً أولاً من القائمة'); return; }
+    
+    var ts = getTeachers();
+    var t = ts.find(function(x){ return x.id === currentTeacherId; });
+    if(t) {
+        t.date = document.getElementById('teDate').value;
+        saveTeachers(ts);
+    }
+    
     var ratings={};
     items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb&&cb.checked){ ratings[idx]=s; break; } } });
     var checks={};
@@ -505,7 +518,30 @@ function saveCurrentEval(){
     ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) texts[id]=el.value; });
     setEval(currentTeacherId,{ ratings:ratings, checks:checks, texts:texts });
     renderTeacherList();
-    alert('تم حفظ تقييم المعلم ✓');
+    alert('تم حفظ التقييم للمعلم ✓');
+}
+
+function saveToAll(){
+    var ts = getTeachers();
+    if(!ts.length) { alert('لا يوجد معلمون'); return; }
+    if(!confirm('هل تريد تطبيق التقييم الحالي (والتاريخ) على جميع المعلمين؟\nستتم الكتابة فوق أي تقييمات سابقة لهم.')) return;
+    
+    var ratings={};
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb&&cb.checked){ ratings[idx]=s; break; } } });
+    var checks={};
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) checks[id]=el.checked; });
+    var texts={};
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) texts[id]=el.value; });
+    
+    var currentDate = document.getElementById('teDate').value || window.todayDate;
+
+    ts.forEach(function(t) {
+        t.date = currentDate;
+        setEval(t.id, { ratings:ratings, checks:checks, texts:texts });
+    });
+    saveTeachers(ts);
+    renderTeacherList();
+    alert('تم حفظ التقييم والتاريخ لجميع المعلمين ✓');
 }
 
 function addTeacher(){
@@ -584,16 +620,26 @@ function printAll(){
     var evaluated=ts.filter(function(t){ return getEval(t.id); });
     if(!evaluated.length){ alert('لم يتم تقييم أي معلم بعد'); return; }
     
-    var oldTeacherId = currentTeacherId;
+    var win=window.open('','_blank');
+    var styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).map(function(s){ return s.outerHTML; }).join('\n');
+    var rootStyles = getComputedStyle(document.documentElement);
+    var hH = rootStyles.getPropertyValue('--print-header-h') || '48mm';
+    var fH = rootStyles.getPropertyValue('--print-footer-h') || '24mm';
+    
+    var baseTag = '<base href="' + window.location.href + '">';
+    var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>طباعة الكل</title>' + baseTag + styles + '</head><body>';
+    html += '<div class="sheet">';
+    html += document.getElementById('appHeader').outerHTML;
+    
     var container = document.querySelector('.sheet-content');
-    var originalHTML = container.innerHTML;
-    var allPages = document.createElement('div');
+    var oldTeacherId = currentTeacherId;
     
     evaluated.forEach(function(t, i){
         selectTeacher(t.id);
         var clone = container.cloneNode(true);
         var inputs = container.querySelectorAll('input, textarea, select');
         var cloneInputs = clone.querySelectorAll('input, textarea, select');
+        
         inputs.forEach(function(input, idx){
             if(input.type === 'checkbox' || input.type === 'radio'){
                 if(input.checked) cloneInputs[idx].setAttribute('checked', 'checked');
@@ -604,21 +650,22 @@ function printAll(){
             }
         });
         
-        var pageWrap = document.createElement('div');
-        if(i > 0) pageWrap.style.pageBreakBefore = 'always';
-        pageWrap.innerHTML = clone.innerHTML;
-        allPages.appendChild(pageWrap);
+        if(i > 0) clone.style.pageBreakBefore = 'always';
+        html += clone.outerHTML;
     });
     
-    container.innerHTML = '';
-    container.appendChild(allPages);
+    html += document.getElementById('appFooter').outerHTML;
+    html += '</div>';
     
-    setTimeout(function(){
-        window.print();
-        container.innerHTML = originalHTML;
-        if(oldTeacherId) selectTeacher(oldTeacherId);
-        else clearFormEval();
-    }, 500);
+    html += '<script>document.documentElement.style.setProperty("--print-header-h", "'+hH+'"); document.documentElement.style.setProperty("--print-footer-h", "'+fH+'"); setTimeout(function(){window.print();}, 500);<\/script>';
+    html += '</body></html>';
+    
+    win.document.write(html);
+    win.document.close();
+    
+    // Restore current view
+    if(oldTeacherId) selectTeacher(oldTeacherId);
+    else clearFormEval();
 }
 
 // ── Evaluation logic ────────────────────────────────────────
@@ -722,6 +769,11 @@ document.addEventListener('DOMContentLoaded', function() {
     loadEval();
     window.appStorage.setupAutoSave(window.currentPageKey);
     renderTeacherList();
+    
+    // Set initial date if not populated yet
+    if(!document.getElementById('teDate').value) {
+        document.getElementById('teDate').value = window.todayDate;
+    }
 });
 </script>
 </body>
