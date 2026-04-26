@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${form.title}</title>
+    <title>استمارة حصر ومتابعة الطلاب المتأخرين دراسياً</title>
     <link rel="stylesheet" href="../assets/styles.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
@@ -34,8 +34,8 @@
         }
         .teacher-info th:nth-child(1) { width: 33%; } /* الاسم */
         .teacher-info th:nth-child(2) { width: 18%; } /* السجل */
-        .teacher-info th:nth-child(3) { width: 17%; } /* التخصص */
-        .teacher-info th:nth-child(4) { width: 18%; } /* المؤهل */
+        .teacher-info th:nth-child(3) { width: 17%; } /* الصف الدراسي */
+        .teacher-info th:nth-child(4) { width: 18%; } /* المادة / مجال التفوق */
         .teacher-info th:nth-child(5) { width: 14%; } /* التاريخ */
 
         .teacher-info th {
@@ -287,7 +287,7 @@
 <!-- Teacher Management Panel (screen only) -->
 <div class="mgmt-bar noprint">
   <div class="mgmt-toolbar">
-    <h4><i class="fa-solid fa-users"></i> إدارة المعلمين</h4>
+    <h4><i class="fa-solid fa-user-graduate"></i> إدارة الطلاب</h4>
     <button class="mgmt-btn" onclick="document.getElementById('xlFile').click()"><i class="fa-solid fa-file-excel"></i> استيراد Excel</button>
     <input type="file" id="xlFile" hidden accept=".xlsx,.xls,.csv" onchange="importExcel(event)">
     <button class="mgmt-btn" onclick="toggleAddForm()"><i class="fa-solid fa-user-plus"></i> إضافة يدوي</button>
@@ -298,9 +298,9 @@
   </div>
   <div class="teacher-list-wrap" id="teacherListWrap"><em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون. استورد Excel أو أضف يدوياً.</em></div>
   <div class="add-teacher-form" id="addForm">
-    <input type="text" id="newName" placeholder="اسم المعلم *">
+    <input type="text" id="newName" placeholder="اسم الطالب *">
     <input type="text" id="newId" placeholder="السجل المدني">
-    <input type="text" id="newSpec" placeholder="التخصص">
+    <input type="text" id="newSpec" placeholder="الصف الدراسي">
     <input type="text" id="newQual" placeholder="...">
     <button class="mgmt-btn" onclick="addTeacher()" style="background:#059669;border-color:#059669"><i class="fa-solid fa-check"></i> إضافة</button>
     <button class="mgmt-btn danger" onclick="toggleAddForm()">إلغاء</button>
@@ -311,7 +311,7 @@
     <div class="sheet-content">
 
         <!-- Title -->
-        <div class="eval-title">${form.title}</div>
+        <div class="eval-title">استمارة حصر ومتابعة الطلاب المتأخرين دراسياً</div>
 
         <!-- Teacher Info -->
         <table class="teacher-info">
@@ -321,8 +321,8 @@
             <tbody><tr>
                 <td><input type="text" id="teName" placeholder="..." oninput="document.getElementById('teSig1').value = this.value;"></td>
                 <td><input type="text" id="teId"   placeholder="..."></td>
-                <td><input type="text" id="teSpec" placeholder="التخصص"></td>
-                <td><input type="text" id="teQual" placeholder="المؤهل"></td>
+                <td><input type="text" id="teSpec" placeholder="الصف الدراسي"></td>
+                <td><input type="text" id="teQual" placeholder="المادة / مجال التفوق"></td>
                 <td><input type="date" id="teDate"></td>
             </tr></tbody>
         </table>
@@ -428,7 +428,7 @@
         <!-- Signatures -->
         <table class="sig-table">
             <tr>
-                <th>اسم المعلم</th>
+                <th>اسم الطالب</th>
                 <td><input type="text" id="teSig1" data-save="1" readonly style="color:#0f766e; font-weight:700;"></td>
                 <th>التوقيع</th>
                 <td><input type="text" id="teSig2" data-save="1" placeholder="التوقيع"></td>
@@ -447,7 +447,7 @@
 
 <script>
 // ── Teacher DB ──────────────────────────────────────────────
-var DB_KEY   = '${form.dbKey}';
+var DB_KEY   = 'global_students_db';
 var EVAL_KEY = 'te_eval_';
 var currentTeacherId = null;
 
@@ -694,7 +694,7 @@ function printAll(){
 }
 
 // ── Evaluation logic ────────────────────────────────────────
-window.currentPageKey = '${form.dbKey}_eval';
+window.currentPageKey = 'global_students_db_eval';
 
 var items = ${form.items};
 

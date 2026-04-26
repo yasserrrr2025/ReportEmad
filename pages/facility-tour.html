@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${form.title}</title>
+    <title>استمارة الجولة الإشرافية اليومية لمرافق المدرسة</title>
     <link rel="stylesheet" href="../assets/styles.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
@@ -287,7 +287,7 @@
 <!-- Teacher Management Panel (screen only) -->
 <div class="mgmt-bar noprint">
   <div class="mgmt-toolbar">
-    <h4><i class="fa-solid fa-users"></i> إدارة المعلمين</h4>
+    <h4><i class="fa-solid fa-building"></i> إدارة الجولات</h4>
     <button class="mgmt-btn" onclick="document.getElementById('xlFile').click()"><i class="fa-solid fa-file-excel"></i> استيراد Excel</button>
     <input type="file" id="xlFile" hidden accept=".xlsx,.xls,.csv" onchange="importExcel(event)">
     <button class="mgmt-btn" onclick="toggleAddForm()"><i class="fa-solid fa-user-plus"></i> إضافة يدوي</button>
@@ -298,7 +298,7 @@
   </div>
   <div class="teacher-list-wrap" id="teacherListWrap"><em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون. استورد Excel أو أضف يدوياً.</em></div>
   <div class="add-teacher-form" id="addForm">
-    <input type="text" id="newName" placeholder="اسم المعلم *">
+    <input type="text" id="newName" placeholder="المرفق المتفقد *">
     <input type="text" id="newId" placeholder="السجل المدني">
     <input type="text" id="newSpec" placeholder="التخصص">
     <input type="text" id="newQual" placeholder="...">
@@ -311,7 +311,7 @@
     <div class="sheet-content">
 
         <!-- Title -->
-        <div class="eval-title">${form.title}</div>
+        <div class="eval-title">استمارة الجولة الإشرافية اليومية لمرافق المدرسة</div>
 
         <!-- Teacher Info -->
         <table class="teacher-info">
@@ -428,7 +428,7 @@
         <!-- Signatures -->
         <table class="sig-table">
             <tr>
-                <th>اسم المعلم</th>
+                <th>المرفق المتفقد</th>
                 <td><input type="text" id="teSig1" data-save="1" readonly style="color:#0f766e; font-weight:700;"></td>
                 <th>التوقيع</th>
                 <td><input type="text" id="teSig2" data-save="1" placeholder="التوقيع"></td>
@@ -447,7 +447,7 @@
 
 <script>
 // ── Teacher DB ──────────────────────────────────────────────
-var DB_KEY   = '${form.dbKey}';
+var DB_KEY   = 'global_facilities_db';
 var EVAL_KEY = 'te_eval_';
 var currentTeacherId = null;
 
@@ -694,7 +694,7 @@ function printAll(){
 }
 
 // ── Evaluation logic ────────────────────────────────────────
-window.currentPageKey = '${form.dbKey}_eval';
+window.currentPageKey = 'global_facilities_db_eval';
 
 var items = ${form.items};
 
