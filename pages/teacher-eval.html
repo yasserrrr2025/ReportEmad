@@ -534,11 +534,31 @@ function importExcel(evt){
         var rows = XLSX.utils.sheet_to_json(ws, {header:1});
         var ts = getTeachers();
         var added=0;
+        
+        var header = rows[0] || [];
+        var nameIdx=-1, idIdx=-1, specIdx=-1, qualIdx=-1;
+        header.forEach(function(h, i){
+            var val = (h||'').toString().trim();
+            if(val.match(/هوية|سجل|مدني/)) idIdx = i;
+            else if(val.match(/اسم|موظف|معلم|الاسم/)) nameIdx = i;
+            else if(val.match(/تخصص/)) specIdx = i;
+            else if(val.match(/مؤهل/)) qualIdx = i;
+        });
+        
+        if(nameIdx===-1) nameIdx = 0;
+        if(idIdx===-1) idIdx = 1;
+        if(specIdx===-1) specIdx = 2;
+        if(qualIdx===-1) qualIdx = 3;
+
         rows.forEach(function(row,i){
             if(i===0) return; // skip header
-            var name = (row[0]||'').toString().trim();
+            var name = (row[nameIdx]||'').toString().trim();
             if(!name) return;
-            ts.push({ id:Date.now()+i, name:name, civil:(row[1]||'').toString(), spec:(row[2]||'').toString(), qual:(row[3]||'').toString() });
+            var civil = idIdx!==-1 ? (row[idIdx]||'').toString() : '';
+            var spec = specIdx!==-1 ? (row[specIdx]||'').toString() : '';
+            var qual = qualIdx!==-1 ? (row[qualIdx]||'').toString() : '';
+            
+            ts.push({ id:Date.now()+i, name:name, civil:civil, spec:spec, qual:qual });
             added++;
         });
         saveTeachers(ts);
@@ -563,38 +583,42 @@ function printAll(){
     if(!ts.length){ alert('لا يوجد معلمون'); return; }
     var evaluated=ts.filter(function(t){ return getEval(t.id); });
     if(!evaluated.length){ alert('لم يتم تقييم أي معلم بعد'); return; }
-    var win=window.open('','_blank');
-    var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'+
-        '<style>body{font-family:Tajawal,sans-serif;direction:rtl} '+
-        '.page{page-break-after:always;padding:20mm;} '+
-        'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px} '+
-        'th{background:#0d9488;color:#fff;padding:6px;border:1px solid #0f766e} '+
-        'td{border:1px solid #b2dfdb;padding:4px 6px} '+
-        '.title{text-align:center;font-size:24px;font-weight:900;color:#e63946;margin-bottom:14px} '+
-        '.done{color:#059669;font-weight:900} '+
-        '</style></head><body>';
-    evaluated.forEach(function(t){
-        var ev=getEval(t.id)||{};
-        html+='<div class="page"><div class="title">عناصر تقييم المعلم</div>';
-        html+='<table><tr><th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th></tr>';
-        html+='<tr><td>'+t.name+'</td><td>'+(t.civil||'')+'</td><td>'+(t.spec||'')+'</td><td>'+(t.qual||'')+'</td></tr></table>';
-        var total=0;
-        html+='<table><tr><th>م</th><th>عنصر الأداء</th><th>الوزن</th><th>١</th><th>٢</th><th>٣</th><th>٤</th><th>٥</th></tr>';
-        items.forEach(function(item,idx){
-            var r=(ev.ratings||{})[idx]||0;
-            if(r) total+=(r/5)*item.w;
-            html+='<tr><td>'+(idx+1)+'</td><td>'+item.text+'</td><td>%'+item.w+'</td>';
-            for(var s=1;s<=5;s++) html+='<td style="text-align:center">'+(s===r?'✓':'□')+'</td>';
-            html+='</tr>';
+    
+    var oldTeacherId = currentTeacherId;
+    var container = document.querySelector('.sheet-content');
+    var originalHTML = container.innerHTML;
+    var allPages = document.createElement('div');
+    
+    evaluated.forEach(function(t, i){
+        selectTeacher(t.id);
+        var clone = container.cloneNode(true);
+        var inputs = container.querySelectorAll('input, textarea, select');
+        var cloneInputs = clone.querySelectorAll('input, textarea, select');
+        inputs.forEach(function(input, idx){
+            if(input.type === 'checkbox' || input.type === 'radio'){
+                if(input.checked) cloneInputs[idx].setAttribute('checked', 'checked');
+            } else if (input.tagName === 'TEXTAREA') {
+                cloneInputs[idx].innerHTML = input.value;
+            } else {
+                cloneInputs[idx].setAttribute('value', input.value);
+            }
         });
-        html+='<tr><td colspan="7">الدرجة الكلية</td><td class="done">'+Math.round(total*10)/10+'/100</td></tr></table>';
-        html+='<p>مدير المدرسة: عابد عبيد الجدعاني &nbsp;&nbsp; توقيعه: ___________</p>';
-        html+='</div>';
+        
+        var pageWrap = document.createElement('div');
+        if(i > 0) pageWrap.style.pageBreakBefore = 'always';
+        pageWrap.innerHTML = clone.innerHTML;
+        allPages.appendChild(pageWrap);
     });
-    html+='</body></html>';
-    win.document.write(html);
-    win.document.close();
-    setTimeout(function(){ win.print(); },500);
+    
+    container.innerHTML = '';
+    container.appendChild(allPages);
+    
+    setTimeout(function(){
+        window.print();
+        container.innerHTML = originalHTML;
+        if(oldTeacherId) selectTeacher(oldTeacherId);
+        else clearFormEval();
+    }, 500);
 }
 
 // ── Evaluation logic ────────────────────────────────────────
