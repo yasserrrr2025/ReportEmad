@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عناصر تقييم المعلم</title>
+    <link rel="stylesheet" href="../assets/styles.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="../shared/layout.js?v=4"></script>
+    <script src="../shared/storage.js?v=3"></script>
+    <script src="../shared/pdf.js?v=7"></script>
+    <script src="../shared/ui.js?v=3"></script>
+    <style>
+        /* ── Page title ─────────────────────────────────────── */
+        .eval-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 900;
+            color: #e63946;
+            margin: 10px 0 14px;
+            font-family: 'Tajawal', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* ── Teacher info row ───────────────────────────────── */
+        .teacher-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 12px;
+        }
+        .teacher-info th {
+            background: #0d9488;
+            color: #fff;
+            padding: 6px 8px;
+            border: 1px solid #0f766e;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .teacher-info td {
+            border: 1px solid #b2dfdb;
+            padding: 0;
+        }
+        .teacher-info td input {
+            width: 100%; border: none; outline: none;
+            font-family: inherit; font-size: 12px;
+            background: transparent; padding: 5px 6px;
+            color: #1e293b;
+        }
+
+        /* ── Evaluation table ───────────────────────────────── */
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+        .eval-table th {
+            background: #0d9488;
+            color: #fff;
+            padding: 7px 5px;
+            border: 1px solid #0f766e;
+            text-align: center;
+            font-weight: 800;
+        }
+        .eval-table .scale-header {
+            background: #b2dfdb;
+            color: #0f766e;
+            padding: 5px 4px;
+            border: 1px solid #0f766e;
+            text-align: center;
+            font-weight: 900;
+            font-size: 13px;
+        }
+        .eval-table td {
+            border: 1px solid #b2dfdb;
+            padding: 5px 6px;
+            vertical-align: middle;
+        }
+        .eval-table tr:nth-child(even) td { background: #f0fdfa; }
+        .eval-table td.num  { text-align: center; font-weight: 800; color: #0f766e; width: 4%; }
+        .eval-table td.item { text-align: right; font-weight: 600; }
+        .eval-table td.wt   { text-align: center; color: #0f766e; font-weight: 700; width: 8%; }
+        .eval-table td.cb   { text-align: center; width: 7%; }
+
+        /* Rating checkboxes — styled as boxes like the original form */
+        .eval-table td.cb input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: #0d9488;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* Total row */
+        .eval-table .total-row td {
+            background: #e0f2f1;
+            font-weight: 900;
+            color: #0f766e;
+            text-align: center;
+            border-top: 2px solid #0d9488;
+        }
+
+        /* ── Four analysis boxes ─────────────────────────────── */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .analysis-box {
+            border: 1.5px solid #b2dfdb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .analysis-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d9488;
+            color: #fff;
+            padding: 6px 10px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        /* Pre-defined checkable points */
+        .analysis-points {
+            padding: 6px 10px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            padding: 4px 2px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0f2f1;
+            font-size: 12px;
+            color: #1e293b;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .point-item:last-of-type { border-bottom: none; }
+        .point-item input[type="checkbox"] {
+            width: 14px; height: 14px;
+            accent-color: #0d9488;
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        /* Strike-through when checked */
+        .point-item input[type="checkbox"]:checked + span {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        .point-extra { margin-top: 4px; }
+
+        .analysis-box-header input[type="checkbox"] {
+            width: 15px; height: 15px;
+            accent-color: #fff;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        /* Lined paper area for handwriting */
+        .lined-area {
+            background-color: #fff;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent calc(22px - 1px),
+                #b2dfdb calc(22px - 1px),
+                #b2dfdb 22px
+            );
+            background-size: 100% 22px;
+            min-height: 88px; /* 4 lines */
+            padding: 4px 8px;
+            line-height: 22px;
+            position: relative;
+        }
+
+        /* Optional: typed notes on top of lines */
+        .lined-area textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 12px;
+            line-height: 22px;
+            color: #1e40af;
+            resize: none;
+            min-height: 88px;
+            display: block;
+        }
+
+        /* ── Signatures ─────────────────────────────────────── */
+        .sig-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .sig-table th {
+            background: #f0fdfa;
+            color: #0f766e;
+            border: 1px solid #b2dfdb;
+            padding: 6px 12px;
+            font-weight: 800;
+            text-align: right;
+            width: 25%;
+        }
+        .sig-table td {
+            border: 1px solid #b2dfdb;
+            padding: 0;
+        }
+        .sig-table td input {
+            width: 100%; border: none; outline: none;
+            font-family: inherit; font-size: 12px;
+            background: transparent; padding: 6px 8px;
+        }
+
+        @media print {
+            .noprint, .header-actions-bar { display: none !important; }
+            input[type="checkbox"] {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .lined-area {
+                background-image: repeating-linear-gradient(
+                    to bottom,
+                    transparent,
+                    transparent calc(22px - 1px),
+                    #b2dfdb calc(22px - 1px),
+                    #b2dfdb 22px
+                ) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+    <div id="appHeader"></div>
+    <div class="sheet-content">
+
+        <!-- Title -->
+        <div class="eval-title">عناصر تقييم المعلم</div>
+
+        <!-- Teacher Info -->
+        <table class="teacher-info">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>السجل المدني</th>
+                    <th>التخصص</th>
+                    <th>المؤهل</th>
+                    <th>سنوات الخبرة</th>
+                    <th>تاريخ المراجعة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" id="teName"   data-save="1" placeholder="الاسم الكامل"></td>
+                    <td><input type="text" id="teId"     data-save="1" placeholder="رقم السجل"></td>
+                    <td><input type="text" id="teSpec"   data-save="1" placeholder="التخصص"></td>
+                    <td><input type="text" id="teQual"   data-save="1" placeholder="المؤهل"></td>
+                    <td><input type="text" id="teExp"    data-save="1" placeholder="سنوات"></td>
+                    <td><input type="date" id="teDate"   data-save="1"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Evaluation Table -->
+        <table class="eval-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width:4%">م</th>
+                    <th rowspan="2">عناصر الأداء الوظيفي</th>
+                    <th rowspan="2" style="width:8%">الوزن النسبي</th>
+                    <th colspan="5">سلم التقدير</th>
+                </tr>
+                <tr>
+                    <th class="scale-header">١</th>
+                    <th class="scale-header">٢</th>
+                    <th class="scale-header">٣</th>
+                    <th class="scale-header">٤</th>
+                    <th class="scale-header">٥</th>
+                </tr>
+            </thead>
+            <tbody id="evalBody">
+                <!-- Rows injected by JS -->
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="2">الدرجة الكلية</td>
+                    <td>100%</td>
+                    <td colspan="4"></td>
+                    <td id="totalScore" style="font-size:15px">—</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Analysis — 4 boxes with pre-defined checkable points -->
+        <div class="analysis-grid">
+
+            <!-- نقاط القوة -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-circle-check" style="color:#bbf7d0"></i>
+                    نقاط القوة
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>أداء الواجبات الوظيفية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>استخدام التقنية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>التواصل مع أولياء الأمور.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtStrength" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نقاط الضعف -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-circle-xmark" style="color:#fecaca"></i>
+                    نقاط الضعف
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>عدم الالتزام بأوقات الدوام.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>عدم استخدام المنصة.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>عدم التواصل مع أولياء الأمور.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>ضعف نواتج التعلم.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>عدم تصنيف الطلاب وفق نواتج التعلم.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtWeakness" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- فرص التحسين -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-arrow-trend-up" style="color:#bfdbfe"></i>
+                    فرص التحسين
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>المبادرات التعليمية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>التجديد والابتكار في عرض العملية التعليمية.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtOpportunity" data-save="1" placeholder="إضافة..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الملاحظات ومجالات التطوير -->
+            <div class="analysis-box">
+                <div class="analysis-box-header">
+                    <i class="fa-solid fa-lightbulb" style="color:#fde68a"></i>
+                    الملاحظات ومجالات التطوير المهني المقترحة
+                </div>
+                <div class="analysis-points">
+                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الحصول على دورات تساهم في تطوير العملية التعليمية.</span></label>
+                    <div class="point-extra">
+                        <div class="lined-area"><textarea id="txtNotes" data-save="1" placeholder="إضافة ملاحظات أخرى..."></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Signatures -->
+        <table class="sig-table">
+            <tr>
+                <th>اسم المعلم</th>
+                <td><input type="text" id="teSig1" data-save="1" placeholder="الاسم الكامل"></td>
+                <th>التوقيع</th>
+                <td><input type="text" id="teSig2" data-save="1" placeholder="التوقيع"></td>
+            </tr>
+            <tr>
+                <th>مدير المدرسة</th>
+                <td><input type="text" id="teSig3" data-save="1" value="عابد عبيد الجدعاني"></td>
+                <th>التوقيع</th>
+                <td><input type="text" id="teSig4" data-save="1" placeholder="التوقيع"></td>
+            </tr>
+        </table>
+
+    </div>
+    <div id="appFooter"></div>
+</div>
+
+<script>
+window.currentPageKey = 'storage_teacher_eval_v1';
+
+var items = [
+    { text: 'أداء الواجبات الوظيفية',                               w: 10 },
+    { text: 'التفاعل مع المجتمع المبني',                            w: 10 },
+    { text: 'التفاعل مع أولياء الأمور',                             w: 10 },
+    { text: 'التنويع في استراتيجيات التدريس',                       w: 10 },
+    { text: 'تحسين نتائج المتعلمين',                                w: 10 },
+    { text: 'إعداد وتنفيذ خطة التعلم',                              w: 10 },
+    { text: 'توظيف تقنيات ووسائل التعلم المناسبة',                  w: 10 },
+    { text: 'تهيئة البيئة التعليمية',                               w: 5  },
+    { text: 'الإدارة الصفية',                                       w: 5  },
+    { text: 'تحليل نتائج المتعلمين وتشخيص مستوياتهم',              w: 10 },
+    { text: 'تنويع أساليب التقويم',                                  w: 10 }
+];
+
+function buildTable() {
+    var tbody = document.getElementById('evalBody');
+    items.forEach(function(item, idx) {
+        var row = document.createElement('tr');
+        var cbs = '';
+        for (var s = 1; s <= 5; s++) {
+            var id = 'cb_' + idx + '_' + s;
+            cbs += '<td class="cb">' +
+                   '<input type="checkbox" id="' + id + '" data-save="1" ' +
+                   'onchange="onRatingChange(' + idx + ',' + s + ',this)">' +
+                   '</td>';
+        }
+        row.innerHTML =
+            '<td class="num">' + (idx + 1) + '</td>' +
+            '<td class="item">' + item.text + '</td>' +
+            '<td class="wt">%' + item.w + '</td>' +
+            cbs;
+        tbody.appendChild(row);
+    });
+}
+
+// Allow only one checkbox per row (radio behaviour)
+function onRatingChange(rowIdx, score, el) {
+    if (el.checked) {
+        for (var s = 1; s <= 5; s++) {
+            if (s !== score) {
+                var other = document.getElementById('cb_' + rowIdx + '_' + s);
+                if (other) other.checked = false;
+            }
+        }
+    }
+    calcTotal();
+    saveEval();
+}
+
+function calcTotal() {
+    var total = 0;
+    items.forEach(function(item, idx) {
+        for (var s = 1; s <= 5; s++) {
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb && cb.checked) {
+                // Score = (rating / 5) * weight
+                total += (s / 5) * item.w;
+                break;
+            }
+        }
+    });
+    var el = document.getElementById('totalScore');
+    if (el) {
+        var rounded = Math.round(total * 10) / 10;
+        el.textContent = rounded + ' / 100';
+        el.style.color = rounded >= 90 ? '#059669' : rounded >= 75 ? '#d97706' : '#dc2626';
+    }
+}
+
+function saveEval() {
+    var ratings = {};
+    items.forEach(function(item, idx) {
+        for (var s = 1; s <= 5; s++) {
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb && cb.checked) { ratings[idx] = s; break; }
+        }
+    });
+    localStorage.setItem(currentPageKey + '_ratings', JSON.stringify(ratings));
+}
+
+function loadEval() {
+    try {
+        var ratings = JSON.parse(localStorage.getItem(currentPageKey + '_ratings') || '{}');
+        Object.keys(ratings).forEach(function(idx) {
+            var s = ratings[idx];
+            var cb = document.getElementById('cb_' + idx + '_' + s);
+            if (cb) cb.checked = true;
+        });
+        calcTotal();
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    buildTable();
+    window.appStorage.restorePage(window.currentPageKey);
+    loadEval();
+    window.appStorage.setupAutoSave(window.currentPageKey);
+});
+</script>
+</body>
+</html>
