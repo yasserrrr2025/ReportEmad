@@ -621,7 +621,17 @@ function clearAll(){
     var ts=getTeachers();
     ts.forEach(function(t){ localStorage.removeItem(EVAL_KEY+t.id); });
     localStorage.removeItem(DB_KEY);
+    localStorage.removeItem(window.currentPageKey);
     currentTeacherId=null;
+    
+    document.getElementById('teName').value = '';
+    document.getElementById('teId').value = '';
+    document.getElementById('teSpec').value = '';
+    document.getElementById('teQual').value = '';
+    document.getElementById('teSig1').value = '';
+    document.getElementById('teSig2').value = '';
+    clearFormEval();
+    
     renderTeacherList();
 }
 
@@ -789,6 +799,33 @@ document.addEventListener('DOMContentLoaded', function() {
     if(!document.getElementById('teDate').value) {
         document.getElementById('teDate').value = window.todayDate;
     }
+    
+    // اعتراض زر تفريغ الاستمارة لمنع مسح التاريخ واسم المدير
+    setTimeout(function() {
+        var btnClear = document.querySelector('.btn-clear');
+        if(btnClear) {
+            btnClear.onclick = function() {
+                if(!confirm('هل تريد تفريغ الاستمارة الحالية (مع الاحتفاظ باسم المدير والتاريخ)؟')) return;
+                
+                document.getElementById('teName').value = '';
+                document.getElementById('teId').value = '';
+                document.getElementById('teSpec').value = '';
+                document.getElementById('teQual').value = '';
+                document.getElementById('teSig1').value = '';
+                document.getElementById('teSig2').value = '';
+                
+                clearFormEval();
+                
+                currentTeacherId = null;
+                renderTeacherList();
+                
+                // حفظ الحالة الجديدة الفارغة
+                if(window.appStorage) {
+                    window.appStorage.savePage(window.currentPageKey);
+                }
+            };
+        }
+    }, 200);
 });
 </script>
 </body>
