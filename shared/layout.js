@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     var fh = footer ? footer.offsetHeight : 0;
 
     // Set CSS custom properties on :root so @media print can use them
-    document.documentElement.style.setProperty('--print-header-h', (hh + 6) + 'px');
+    document.documentElement.style.setProperty('--print-header-h', (hh + 25) + 'px');
     document.documentElement.style.setProperty('--print-footer-h', (fh + 4) + 'px');
 
     // Also set screen padding-bottom to reserve footer space
@@ -105,3 +105,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   var observer = new MutationObserver(function () { initAutoGrow(); });
   observer.observe(document.body, { childList: true, subtree: true });
 });
+

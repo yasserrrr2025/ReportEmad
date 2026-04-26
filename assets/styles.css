@@ -366,7 +366,7 @@ body {
 /* ═══════════════════════════════════════════════════════════
    PRINT STYLES
    ═══════════════════════════════════════════════════════════ */
-@media print {
+@media print { .eval-title { margin-top: 20px !important; } 
   body { background: none; margin: 0; padding: 0; }
 
   /* Zero page margins — header/footer handle their own spacing */
@@ -511,7 +511,7 @@ body {
 .ios-instructions-row { display:flex; align-items:center; gap:.5rem; }
 .ios-share-icon { color:var(--primary); font-size:1.1rem; }
 
-@media print {
+@media print { .eval-title { margin-top: 20px !important; } 
   .pwa-banner, .header-actions-bar, .noprint, [data-nopdf], input[type="file"] {
     display: none !important;
   }

@@ -319,7 +319,7 @@
                 <th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th><th>تاريخ المراجعة</th>
             </tr></thead>
             <tbody><tr>
-                <td><input type="text" id="teName" placeholder="الاسم الكامل"></td>
+                <td><input type="text" id="teName" placeholder="الاسم الكامل" oninput="document.getElementById('teSig1').value = this.value;"></td>
                 <td><input type="text" id="teId"   placeholder="رقم السجل"></td>
                 <td><input type="text" id="teSpec" placeholder="التخصص"></td>
                 <td><input type="text" id="teQual" placeholder="المؤهل"></td>
@@ -832,5 +832,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
 
