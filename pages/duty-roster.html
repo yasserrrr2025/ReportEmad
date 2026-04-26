@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نموذج تقييم أداء الموجه الطلابي</title>
+    <title>${form.title}</title>
     <link rel="stylesheet" href="../assets/styles.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
@@ -311,12 +311,12 @@
     <div class="sheet-content">
 
         <!-- Title -->
-        <div class="eval-title">نموذج تقييم أداء الموجه الطلابي</div>
+        <div class="eval-title">${form.title}</div>
 
         <!-- Teacher Info -->
         <table class="teacher-info">
             <thead><tr>
-                <th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th><th>تاريخ المراجعة</th>
+                <th>الاسم</th><th>تاريخ المراجعة</th><th>التخصص</th><th>مقر المناوبة</th><th>يوم المناوبة</th>
             </tr></thead>
             <tbody><tr>
                 <td><input type="text" id="teName" placeholder="الاسم الكامل" oninput="document.getElementById('teSig1').value = this.value;"></td>
@@ -367,9 +367,9 @@
                     نقاط القوة
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>تعزيز القيم والسلوكيات بفعالية.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>التدخلات النفسية والاجتماعية الناجحة.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>تصنيف الحالات بدقة وتقديم الدعم.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>أداء الواجبات الوظيفية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>استخدام التقنية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>التواصل مع أولياء الأمور.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtStrength" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -383,11 +383,11 @@
                     نقاط الضعف
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>قصور في إعداد خطط التوجيه.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>تأخر في معالجة حالات الضعف الدراسي.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>ضعف التواصل مع أولياء الأمور.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>القصور في تعزيز الانضباط المدرسي.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>ضعف توعية المتعلمين بقواعد السلوك.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>عدم الالتزام بأوقات الدوام.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>عدم استخدام المنصة.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>عدم التواصل مع أولياء الأمور.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>ضعف نواتج التعلم.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>عدم تصنيف الطلاب وفق نواتج التعلم.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtWeakness" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -401,8 +401,8 @@
                     فرص التحسين
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>تصميم برامج مبتكرة لتعزيز القيم.</span></label>
-                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>الاستفادة من الشراكة المجتمعية للتوجيه.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>المبادرات التعليمية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>التجديد والابتكار في عرض العملية التعليمية.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtOpportunity" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -416,7 +416,7 @@
                     الملاحظات ومجالات التطوير المهني المقترحة
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الالتحاق بدورات في التعامل مع المشكلات النفسية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الحصول على دورات تساهم في تطوير العملية التعليمية.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtNotes" data-save="1" placeholder="إضافة ملاحظات أخرى..."></textarea></div>
                     </div>
@@ -447,8 +447,8 @@
 
 <script>
 // ── Teacher DB ──────────────────────────────────────────────
-var DB_KEY   = 'global_staff_db';
-var EVAL_KEY = 'co_eval_';
+var DB_KEY   = '${form.dbKey}';
+var EVAL_KEY = 'te_eval_';
 var currentTeacherId = null;
 
 var dDate = new Date();
@@ -694,23 +694,9 @@ function printAll(){
 }
 
 // ── Evaluation logic ────────────────────────────────────────
-window.currentPageKey = 'storage_co_eval_v1';
+window.currentPageKey = '${form.dbKey}_eval';
 
-var items = [
-    { text: 'أداء الواجبات الوظيفية', w: 20 },
-    { text: 'التفاعل مع المجتمع المهني', w: 5 },
-    { text: 'التفاعل مع أولياء الأمور', w: 5 },
-    { text: 'يقدم التدخلات المناسبة لتعزيز الانضباط', w: 5 },
-    { text: 'تقديم برامج تربوية لتعزيز دافعية الطلبة للتعلم', w: 5 },
-    { text: 'إعداد خطة لبرامج التوجيه الطلابي', w: 10 },
-    { text: 'يصنف الحالات ويقدم برامج الدعم المناسبة', w: 10 },
-    { text: 'يعزز القيم والسلوكيات للمتعلمين', w: 10 },
-    { text: 'يقدم التدخلات النفسية والاجتماعية', w: 10 },
-    { text: 'يساعد المتعلمين على التخطيط المهني والتعليمي', w: 5 },
-    { text: 'يعزز التفوق الدراسي', w: 5 },
-    { text: 'يقدم تدخلات تربوية للمتأخرين دراسياً والمعيدين', w: 5 },
-    { text: 'توعية المتعلمين وأولياء أمورهم بقواعد السلوك والمواظبة', w: 5 }
-];
+var items = ${form.items};
 
 function buildTable() {
     var tbody = document.getElementById('evalBody');
@@ -832,8 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
-
 
 
 
