@@ -357,74 +357,6 @@
             </tfoot>
         </table>
 
-        <!-- Analysis — 4 boxes with pre-defined checkable points -->
-        <div class="analysis-grid">
-
-            <!-- نقاط القوة -->
-            <div class="analysis-box">
-                <div class="analysis-box-header">
-                    <i class="fa-solid fa-circle-check" style="color:#bbf7d0"></i>
-                    نقاط القوة
-                </div>
-                <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>أداء الواجبات الوظيفية.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>استخدام التقنية.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>التواصل مع أولياء الأمور.</span></label>
-                    <div class="point-extra">
-                        <div class="lined-area"><textarea id="txtStrength" data-save="1" placeholder="إضافة..."></textarea></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- نقاط الضعف -->
-            <div class="analysis-box">
-                <div class="analysis-box-header">
-                    <i class="fa-solid fa-circle-xmark" style="color:#fecaca"></i>
-                    نقاط الضعف
-                </div>
-                <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>عدم الالتزام بأوقات الدوام.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>عدم استخدام المنصة.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>عدم التواصل مع أولياء الأمور.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>ضعف نواتج التعلم.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>عدم تصنيف الطلاب وفق نواتج التعلم.</span></label>
-                    <div class="point-extra">
-                        <div class="lined-area"><textarea id="txtWeakness" data-save="1" placeholder="إضافة..."></textarea></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- فرص التحسين -->
-            <div class="analysis-box">
-                <div class="analysis-box-header">
-                    <i class="fa-solid fa-arrow-trend-up" style="color:#bfdbfe"></i>
-                    فرص التحسين
-                </div>
-                <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>المبادرات التعليمية.</span></label>
-                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>التجديد والابتكار في عرض العملية التعليمية.</span></label>
-                    <div class="point-extra">
-                        <div class="lined-area"><textarea id="txtOpportunity" data-save="1" placeholder="إضافة..."></textarea></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الملاحظات ومجالات التطوير -->
-            <div class="analysis-box">
-                <div class="analysis-box-header">
-                    <i class="fa-solid fa-lightbulb" style="color:#fde68a"></i>
-                    الملاحظات ومجالات التطوير المهني المقترحة
-                </div>
-                <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الحصول على دورات تساهم في تطوير العملية التعليمية.</span></label>
-                    <div class="point-extra">
-                        <div class="lined-area"><textarea id="txtNotes" data-save="1" placeholder="إضافة ملاحظات أخرى..."></textarea></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
         <!-- Signatures -->
         <table class="sig-table">
             <tr>
@@ -696,7 +628,13 @@ function printAll(){
 // ── Evaluation logic ────────────────────────────────────────
 window.currentPageKey = 'global_classes_db_eval';
 
-var items = ${form.items};
+var items = [
+    { text: 'الاستعداد المبكر والجاهزية قبل بداية الطابور', w: 20 },
+    { text: 'تنوع الفقرات ومناسبتها للمرحلة العمرية', w: 20 },
+    { text: 'جودة الإلقاء وسلامة اللغة العربية لدى الطلاب', w: 20 },
+    { text: 'تفاعل الطلاب وانتباههم أثناء تقديم الإذاعة', w: 20 },
+    { text: 'الالتزام بالوقت المحدد لبرنامج الإذاعة', w: 20 }
+];
 
 function buildTable() {
     var tbody = document.getElementById('evalBody');
