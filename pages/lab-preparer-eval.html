@@ -367,9 +367,9 @@
                     نقاط القوة
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>تعزيز القيم والسلوكيات بفعالية.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>التدخلات النفسية والاجتماعية الناجحة.</span></label>
-                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>تصنيف الحالات بدقة وتقديم الدعم.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp1" data-save="1"><span>تجهيز المختبر بكفاءة عالية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp2" data-save="1"><span>الالتزام بإجراءات السلامة المهنية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="sp3" data-save="1"><span>الترتيب الدقيق للأجهزة والمعدات.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtStrength" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -383,11 +383,11 @@
                     نقاط الضعف
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>قصور في إعداد خطط التوجيه.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>تأخر في معالجة حالات الضعف الدراسي.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>ضعف التواصل مع أولياء الأمور.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>القصور في تعزيز الانضباط المدرسي.</span></label>
-                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>ضعف توعية المتعلمين بقواعد السلوك.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp1" data-save="1"><span>تأخر في إعداد خطة المختبر اليومية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp2" data-save="1"><span>قصور في الصيانة الدورية للأجهزة.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp3" data-save="1"><span>عدم توفير مستلزمات التجارب في الوقت.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp4" data-save="1"><span>ضعف توثيق التجارب الأسبوعية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="wp5" data-save="1"><span>غياب الالتزام ببرامج الصيانة الوقائية.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtWeakness" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -401,8 +401,8 @@
                     فرص التحسين
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>تصميم برامج مبتكرة لتعزيز القيم.</span></label>
-                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>الاستفادة من الشراكة المجتمعية للتوجيه.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op1" data-save="1"><span>تطوير آليات جديدة لتنظيم المختبر.</span></label>
+                    <label class="point-item"><input type="checkbox" id="op2" data-save="1"><span>رفع كفاءة التواصل مع المعلمين المستفيدين.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtOpportunity" data-save="1" placeholder="إضافة..."></textarea></div>
                     </div>
@@ -416,7 +416,7 @@
                     الملاحظات ومجالات التطوير المهني المقترحة
                 </div>
                 <div class="analysis-points">
-                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الالتحاق بدورات في التعامل مع المشكلات النفسية.</span></label>
+                    <label class="point-item"><input type="checkbox" id="nt1" data-save="1"><span>الالتحاق بدورات في الأمن والسلامة المخبرية.</span></label>
                     <div class="point-extra">
                         <div class="lined-area"><textarea id="txtNotes" data-save="1" placeholder="إضافة ملاحظات أخرى..."></textarea></div>
                     </div>
@@ -447,8 +447,8 @@
 
 <script>
 // ── Teacher DB ──────────────────────────────────────────────
-var DB_KEY   = 'co_teachers';
-var EVAL_KEY = 'co_eval_';
+var DB_KEY   = 'lp_teachers';
+var EVAL_KEY = 'lp_eval_';
 var currentTeacherId = null;
 
 var dDate = new Date();
@@ -694,22 +694,22 @@ function printAll(){
 }
 
 // ── Evaluation logic ────────────────────────────────────────
-window.currentPageKey = 'storage_co_eval_v1';
+window.currentPageKey = 'storage_lp_eval_v1';
 
 var items = [
-    { text: 'أداء الواجبات الوظيفية', w: 20 },
-    { text: 'التفاعل مع المجتمع المهني', w: 5 },
-    { text: 'التفاعل مع أولياء الأمور', w: 5 },
-    { text: 'يقدم التدخلات المناسبة لتعزيز الانضباط', w: 5 },
-    { text: 'تقديم برامج تربوية لتعزيز دافعية الطلبة للتعلم', w: 5 },
-    { text: 'إعداد خطة لبرامج التوجيه الطلابي', w: 10 },
-    { text: 'يصنف الحالات ويقدم برامج الدعم المناسبة', w: 10 },
-    { text: 'يعزز القيم والسلوكيات للمتعلمين', w: 10 },
-    { text: 'يقدم التدخلات النفسية والاجتماعية', w: 10 },
-    { text: 'يساعد المتعلمين على التخطيط المهني والتعليمي', w: 5 },
-    { text: 'يعزز التفوق الدراسي', w: 5 },
-    { text: 'يقدم تدخلات تربوية للمتأخرين دراسياً والمعيدين', w: 5 },
-    { text: 'توعية المتعلمين وأولياء أمورهم بقواعد السلوك والمواظبة', w: 5 }
+    { text: 'أداء الواجبات الوظيفية', w: 10 },
+    { text: 'التفاعل مع المجتمع المهني', w: 10 },
+    { text: 'التفاعل مع أولياء الأمور', w: 10 },
+    { text: 'التنويع في استراتيجيات التدريس', w: 10 },
+    { text: 'تحسين نتائج المتعلمين', w: 10 },
+    { text: 'يعد خطة يومية لأنشطة المختبر', w: 5 },
+    { text: 'المعرفة بالأسس والمفاهيم الفنية', w: 5 },
+    { text: 'يوفر المستلزمات اللازمة لأداء التجارب العلمية', w: 5 },
+    { text: 'يلتزم بسياسات وإجراءات السلامة المهنية', w: 5 },
+    { text: 'يحضر ويجهز المختبر', w: 5 },
+    { text: 'تهيئة وتسليم الأجهزة المطلوبة للمعلمين وتخزينها بطريقة سليمة', w: 5 },
+    { text: 'يعد تقرير أنشطة ومهام المختبر الأسبوعية', w: 10 },
+    { text: 'يعد تقارير دورية عن حالة الأجهزة والمعدات', w: 10 }
 ];
 
 function buildTable() {
@@ -832,5 +832,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
 
