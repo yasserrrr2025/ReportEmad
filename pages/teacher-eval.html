@@ -6,6 +6,7 @@
     <title>عناصر تقييم المعلم</title>
     <link rel="stylesheet" href="../assets/styles.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="../shared/layout.js?v=4"></script>
     <script src="../shared/storage.js?v=3"></script>
     <script src="../shared/pdf.js?v=7"></script>
@@ -150,10 +151,10 @@
             margin-top: 2px;
             cursor: pointer;
         }
-        /* Strike-through when checked */
+        /* Checked = bold highlight */
         .point-item input[type="checkbox"]:checked + span {
-            text-decoration: line-through;
-            color: #94a3b8;
+            font-weight: 900;
+            color: #0f766e;
         }
         .point-extra { margin-top: 4px; }
 
@@ -222,27 +223,77 @@
             background: transparent; padding: 6px 8px;
         }
 
+        /* Teacher management panel */
+        .mgmt-bar {
+            width: 210mm; margin: 0 auto 10px;
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(13,148,136,.15);
+            overflow: hidden;
+        }
+        .mgmt-toolbar {
+            display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg,#0f766e,#0d9488);
+            padding: 8px 14px; flex-wrap: wrap;
+        }
+        .mgmt-toolbar h4 { color:#fff; font-size:13px; font-weight:800; flex:1; }
+        .mgmt-btn {
+            display:inline-flex; align-items:center; gap:5px;
+            background:rgba(255,255,255,.18); color:#fff;
+            border:1px solid rgba(255,255,255,.35); border-radius:7px;
+            padding:5px 12px; font-family:inherit; font-size:12px;
+            font-weight:700; cursor:pointer; transition:.2s;
+        }
+        .mgmt-btn:hover { background:rgba(255,255,255,.3); }
+        .mgmt-btn.danger { background:rgba(239,68,68,.3); border-color:rgba(239,68,68,.5); }
+        .teacher-list-wrap { max-height:180px; overflow-y:auto; padding:8px; display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:6px; }
+        .t-card {
+            border:1.5px solid #b2dfdb; border-radius:8px; padding:8px 10px;
+            cursor:pointer; transition:.18s; position:relative;
+            background:#f0fdfa;
+        }
+        .t-card:hover { border-color:#0d9488; box-shadow:0 2px 8px rgba(13,148,136,.2); }
+        .t-card.active { border-color:#0d9488; background:#ccfbf1; }
+        .t-card.evaluated { background:#d1fae5; }
+        .t-card.evaluated::after { content:'✓'; position:absolute; top:4px; left:6px; color:#059669; font-weight:900; font-size:14px; }
+        .t-name { font-size:12px; font-weight:800; color:#0f766e; }
+        .t-spec { font-size:10px; color:#64748b; margin-top:2px; }
+        .add-teacher-form { padding:10px 14px; border-top:1px solid #e0f2f1; display:none; gap:8px; flex-wrap:wrap; align-items:flex-end; }
+        .add-teacher-form input { border:1px solid #b2dfdb; border-radius:6px; padding:5px 8px; font-family:inherit; font-size:12px; flex:1; min-width:120px; }
+        .add-teacher-form input:focus { outline:none; border-color:#0d9488; }
+
         @media print {
-            .noprint, .header-actions-bar { display: none !important; }
-            input[type="checkbox"] {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
+            .noprint, .header-actions-bar, .mgmt-bar { display: none !important; }
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
             .lined-area {
-                background-image: repeating-linear-gradient(
-                    to bottom,
-                    transparent,
-                    transparent calc(22px - 1px),
-                    #b2dfdb calc(22px - 1px),
-                    #b2dfdb 22px
-                ) !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                background-image: repeating-linear-gradient(to bottom,transparent,transparent calc(22px - 1px),#b2dfdb calc(22px - 1px),#b2dfdb 22px) !important;
+                -webkit-print-color-adjust:exact; print-color-adjust:exact;
             }
         }
     </style>
 </head>
 <body>
+
+<!-- Teacher Management Panel (screen only) -->
+<div class="mgmt-bar noprint">
+  <div class="mgmt-toolbar">
+    <h4><i class="fa-solid fa-users"></i> إدارة المعلمين</h4>
+    <button class="mgmt-btn" onclick="document.getElementById('xlFile').click()"><i class="fa-solid fa-file-excel"></i> استيراد Excel</button>
+    <input type="file" id="xlFile" hidden accept=".xlsx,.xls,.csv" onchange="importExcel(event)">
+    <button class="mgmt-btn" onclick="toggleAddForm()"><i class="fa-solid fa-user-plus"></i> إضافة يدوي</button>
+    <button class="mgmt-btn" onclick="saveCurrentEval()" style="background:rgba(16,185,129,.35)"><i class="fa-solid fa-floppy-disk"></i> حفظ التقييم</button>
+    <button class="mgmt-btn" onclick="printAll()" style="background:rgba(99,102,241,.35)"><i class="fa-solid fa-print"></i> طباعة الكل</button>
+    <button class="mgmt-btn danger" onclick="clearAll()"><i class="fa-solid fa-trash"></i> مسح الكل</button>
+  </div>
+  <div class="teacher-list-wrap" id="teacherListWrap"><em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون. استورد Excel أو أضف يدوياً.</em></div>
+  <div class="add-teacher-form" id="addForm">
+    <input type="text" id="newName" placeholder="اسم المعلم *">
+    <input type="text" id="newId" placeholder="السجل المدني">
+    <input type="text" id="newSpec" placeholder="التخصص">
+    <input type="text" id="newQual" placeholder="المؤهل">
+    <button class="mgmt-btn" onclick="addTeacher()" style="background:#059669;border-color:#059669"><i class="fa-solid fa-check"></i> إضافة</button>
+    <button class="mgmt-btn danger" onclick="toggleAddForm()">إلغاء</button>
+  </div>
+</div>
 <div class="sheet">
     <div id="appHeader"></div>
     <div class="sheet-content">
@@ -252,26 +303,16 @@
 
         <!-- Teacher Info -->
         <table class="teacher-info">
-            <thead>
-                <tr>
-                    <th>الاسم</th>
-                    <th>السجل المدني</th>
-                    <th>التخصص</th>
-                    <th>المؤهل</th>
-                    <th>سنوات الخبرة</th>
-                    <th>تاريخ المراجعة</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" id="teName"   data-save="1" placeholder="الاسم الكامل"></td>
-                    <td><input type="text" id="teId"     data-save="1" placeholder="رقم السجل"></td>
-                    <td><input type="text" id="teSpec"   data-save="1" placeholder="التخصص"></td>
-                    <td><input type="text" id="teQual"   data-save="1" placeholder="المؤهل"></td>
-                    <td><input type="text" id="teExp"    data-save="1" placeholder="سنوات"></td>
-                    <td><input type="date" id="teDate"   data-save="1"></td>
-                </tr>
-            </tbody>
+            <thead><tr>
+                <th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th><th>تاريخ المراجعة</th>
+            </tr></thead>
+            <tbody><tr>
+                <td><input type="text" id="teName" placeholder="الاسم الكامل"></td>
+                <td><input type="text" id="teId"   placeholder="رقم السجل"></td>
+                <td><input type="text" id="teSpec" placeholder="التخصص"></td>
+                <td><input type="text" id="teQual" placeholder="المؤهل"></td>
+                <td><input type="date" id="teDate"></td>
+            </tr></tbody>
         </table>
 
         <!-- Evaluation Table -->
@@ -393,6 +434,170 @@
 </div>
 
 <script>
+// ── Teacher DB ──────────────────────────────────────────────
+var DB_KEY   = 'te_teachers';
+var EVAL_KEY = 'te_eval_';
+var currentTeacherId = null;
+
+function getTeachers(){ try{ return JSON.parse(localStorage.getItem(DB_KEY)||'[]'); }catch(e){ return []; } }
+function saveTeachers(arr){ localStorage.setItem(DB_KEY, JSON.stringify(arr)); }
+function getEval(id){ try{ return JSON.parse(localStorage.getItem(EVAL_KEY+id)||'null'); }catch(e){ return null; } }
+function setEval(id, data){ localStorage.setItem(EVAL_KEY+id, JSON.stringify(data)); }
+
+function renderTeacherList(){
+    var wrap = document.getElementById('teacherListWrap');
+    var ts = getTeachers();
+    if(!ts.length){ wrap.innerHTML='<em style="color:#94a3b8;font-size:12px;padding:8px">لا يوجد معلمون بعد.</em>'; return; }
+    wrap.innerHTML = ts.map(function(t){
+        var ev = getEval(t.id);
+        var cls = 't-card' + (t.id===currentTeacherId?' active':'') + (ev?' evaluated':'');
+        return '<div class="'+cls+'" onclick="selectTeacher('+t.id+')" title="'+t.name+'">' +
+               '<div class="t-name">'+t.name+'</div>' +
+               '<div class="t-spec">'+( t.spec||'—')+'</div></div>';
+    }).join('');
+}
+
+function selectTeacher(id){
+    currentTeacherId = id;
+    var ts = getTeachers();
+    var t = ts.find(function(x){ return x.id===id; });
+    if(!t) return;
+    document.getElementById('teName').value  = t.name||'';
+    document.getElementById('teId').value    = t.civil||'';
+    document.getElementById('teSpec').value  = t.spec||'';
+    document.getElementById('teQual').value  = t.qual||'';
+    document.getElementById('teDate').value  = t.date||'';
+    // load eval
+    clearFormEval();
+    var ev = getEval(id);
+    if(ev){
+        Object.keys(ev.ratings||{}).forEach(function(idx){
+            var cb = document.getElementById('cb_'+idx+'_'+ev.ratings[idx]);
+            if(cb) cb.checked = true;
+        });
+        calcTotal();
+        ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(cid){
+            var el = document.getElementById(cid);
+            if(el && ev.checks) el.checked = !!ev.checks[cid];
+        });
+        ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(tid){
+            var el = document.getElementById(tid);
+            if(el && ev.texts) el.value = ev.texts[tid]||'';
+        });
+    }
+    renderTeacherList();
+}
+
+function clearFormEval(){
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb) cb.checked=false; } });
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('totalScore').textContent='—';
+}
+
+function saveCurrentEval(){
+    if(!currentTeacherId){ alert('اختر معلماً أولاً من القائمة'); return; }
+    var ratings={};
+    items.forEach(function(_,idx){ for(var s=1;s<=5;s++){ var cb=document.getElementById('cb_'+idx+'_'+s); if(cb&&cb.checked){ ratings[idx]=s; break; } } });
+    var checks={};
+    ['sp1','sp2','sp3','wp1','wp2','wp3','wp4','wp5','op1','op2','nt1'].forEach(function(id){ var el=document.getElementById(id); if(el) checks[id]=el.checked; });
+    var texts={};
+    ['txtStrength','txtWeakness','txtOpportunity','txtNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) texts[id]=el.value; });
+    setEval(currentTeacherId,{ ratings:ratings, checks:checks, texts:texts });
+    renderTeacherList();
+    alert('تم حفظ تقييم المعلم ✓');
+}
+
+function addTeacher(){
+    var name = document.getElementById('newName').value.trim();
+    if(!name){ alert('الاسم مطلوب'); return; }
+    var ts = getTeachers();
+    var id = Date.now();
+    ts.push({ id:id, name:name, civil:document.getElementById('newId').value.trim(), spec:document.getElementById('newSpec').value.trim(), qual:document.getElementById('newQual').value.trim() });
+    saveTeachers(ts);
+    ['newName','newId','newSpec','newQual'].forEach(function(i){ document.getElementById(i).value=''; });
+    toggleAddForm();
+    renderTeacherList();
+}
+
+function toggleAddForm(){
+    var f = document.getElementById('addForm');
+    f.style.display = f.style.display==='flex' ? 'none' : 'flex';
+}
+
+function importExcel(evt){
+    var file = evt.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+        var wb = XLSX.read(e.target.result, {type:'binary'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(ws, {header:1});
+        var ts = getTeachers();
+        var added=0;
+        rows.forEach(function(row,i){
+            if(i===0) return; // skip header
+            var name = (row[0]||'').toString().trim();
+            if(!name) return;
+            ts.push({ id:Date.now()+i, name:name, civil:(row[1]||'').toString(), spec:(row[2]||'').toString(), qual:(row[3]||'').toString() });
+            added++;
+        });
+        saveTeachers(ts);
+        renderTeacherList();
+        alert('تم استيراد '+added+' معلم ✓');
+    };
+    reader.readAsBinaryString(file);
+    evt.target.value='';
+}
+
+function clearAll(){
+    if(!confirm('هل تريد حذف جميع المعلمين وتقييماتهم؟')) return;
+    var ts=getTeachers();
+    ts.forEach(function(t){ localStorage.removeItem(EVAL_KEY+t.id); });
+    localStorage.removeItem(DB_KEY);
+    currentTeacherId=null;
+    renderTeacherList();
+}
+
+function printAll(){
+    var ts=getTeachers();
+    if(!ts.length){ alert('لا يوجد معلمون'); return; }
+    var evaluated=ts.filter(function(t){ return getEval(t.id); });
+    if(!evaluated.length){ alert('لم يتم تقييم أي معلم بعد'); return; }
+    var win=window.open('','_blank');
+    var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'+
+        '<style>body{font-family:Tajawal,sans-serif;direction:rtl} '+
+        '.page{page-break-after:always;padding:20mm;} '+
+        'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px} '+
+        'th{background:#0d9488;color:#fff;padding:6px;border:1px solid #0f766e} '+
+        'td{border:1px solid #b2dfdb;padding:4px 6px} '+
+        '.title{text-align:center;font-size:24px;font-weight:900;color:#e63946;margin-bottom:14px} '+
+        '.done{color:#059669;font-weight:900} '+
+        '</style></head><body>';
+    evaluated.forEach(function(t){
+        var ev=getEval(t.id)||{};
+        html+='<div class="page"><div class="title">عناصر تقييم المعلم</div>';
+        html+='<table><tr><th>الاسم</th><th>السجل المدني</th><th>التخصص</th><th>المؤهل</th></tr>';
+        html+='<tr><td>'+t.name+'</td><td>'+(t.civil||'')+'</td><td>'+(t.spec||'')+'</td><td>'+(t.qual||'')+'</td></tr></table>';
+        var total=0;
+        html+='<table><tr><th>م</th><th>عنصر الأداء</th><th>الوزن</th><th>١</th><th>٢</th><th>٣</th><th>٤</th><th>٥</th></tr>';
+        items.forEach(function(item,idx){
+            var r=(ev.ratings||{})[idx]||0;
+            if(r) total+=(r/5)*item.w;
+            html+='<tr><td>'+(idx+1)+'</td><td>'+item.text+'</td><td>%'+item.w+'</td>';
+            for(var s=1;s<=5;s++) html+='<td style="text-align:center">'+(s===r?'✓':'□')+'</td>';
+            html+='</tr>';
+        });
+        html+='<tr><td colspan="7">الدرجة الكلية</td><td class="done">'+Math.round(total*10)/10+'/100</td></tr></table>';
+        html+='<p>مدير المدرسة: عابد عبيد الجدعاني &nbsp;&nbsp; توقيعه: ___________</p>';
+        html+='</div>';
+    });
+    html+='</body></html>';
+    win.document.write(html);
+    win.document.close();
+    setTimeout(function(){ win.print(); },500);
+}
+
+// ── Evaluation logic ────────────────────────────────────────
 window.currentPageKey = 'storage_teacher_eval_v1';
 
 var items = [
@@ -492,6 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.appStorage.restorePage(window.currentPageKey);
     loadEval();
     window.appStorage.setupAutoSave(window.currentPageKey);
+    renderTeacherList();
 });
 </script>
 </body>
