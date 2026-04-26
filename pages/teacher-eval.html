@@ -219,8 +219,11 @@
             padding: 4px 10px;
             font-weight: 800;
             text-align: right;
-            width: 25%;
         }
+        .sig-table th:nth-child(1) { width: 15%; }
+        .sig-table td:nth-child(2) { width: 40%; }
+        .sig-table th:nth-child(3) { width: 15%; }
+        .sig-table td:nth-child(4) { width: 30%; }
         .sig-table td {
             border: 1px solid #b2dfdb;
             padding: 0;
@@ -426,15 +429,15 @@
         <table class="sig-table">
             <tr>
                 <th>اسم المعلم</th>
-                <td><input type="text" id="teSig1" data-save="1" placeholder="الاسم الكامل"></td>
+                <td><input type="text" id="teSig1" data-save="1" readonly style="color:#0f766e; font-weight:700;"></td>
                 <th>التوقيع</th>
                 <td><input type="text" id="teSig2" data-save="1" placeholder="التوقيع"></td>
             </tr>
             <tr>
                 <th>مدير المدرسة</th>
-                <td><input type="text" id="teSig3" data-save="1" value="عابد عبيد الجدعاني"></td>
+                <td><input type="text" id="teSig3" data-save="1" value="عابد عبيد الجدعاني" readonly style="color:#0f766e; font-weight:700;"></td>
                 <th>التوقيع</th>
-                <td><input type="text" id="teSig4" data-save="1" placeholder="التوقيع"></td>
+                <td style="text-align:center; padding: 2px;"><img src="https://f.top4top.io/p_3768sbxl41.png" style="max-height: 25px; vertical-align: middle;"></td>
             </tr>
         </table>
 
@@ -479,6 +482,7 @@ function selectTeacher(id){
     document.getElementById('teSpec').value  = t.spec||'';
     document.getElementById('teQual').value  = t.qual||'';
     document.getElementById('teDate').value  = t.date||window.todayDate;
+    document.getElementById('teSig1').value  = t.name||'';
     // load eval
     clearFormEval();
     var ev = getEval(id);
